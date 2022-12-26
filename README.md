@@ -213,9 +213,9 @@ body {
 
 ### 번들링(Bundling)
 
-Next, we'll create the rollup configuration file. This file has to be called `rollup.config.js` and includes the reference to the plugins we have previously installed.
+다음은 rollup 구성 파일을 만들 것입니다. 이 파일의 이름은 `rollup.config.js`이어야 합니다. 그리고 예전에 설치한 플러그인들에 대한 레퍼런스를 포함해야 합니다.
 
-* Rollup? Rollup is a very popular bundling library. For instance, it's the bundler used by Three.js. Take a look at the [rollup docs](https://rollupjs.org/guide/en/) to learn more.
+* Rollup? Rollup이란 매우 유명한 번들링 라이브러리입니다. 한 예로 Three.js가 사용하는 번들러입니다. 더 자세한 것은 [rollup 문서](https://rollupjs.org/guide/en/)를 보십시오.
 
 ```
 import resolve from "@rollup/plugin-node-resolve";
@@ -232,11 +232,11 @@ export default {
 };
 ```
 
-Also, the `package.json` file needs to be modified to contain the commands to control rollup easily. In each command, you'll have to specify the relative path to your rollup configuration file. If we have installed everything correctly, we should see the same dependencies in this file (the version of the libraries may differ).
+또한 `package.json` 파일은 rollup을 쉽게 제어하는 커맨드들을 포함하도록 수정해야 합니다. 각 커맨드에서는 rollup 구성 파일의 상대 경로를 지정해야 합니다. 모두 제대로 설치했다면 이 파일에서 동일한 디펜던시(dependencies)를 확인해야 합니다. (라이브러리의 버전은 다를 수 있음)
 
-* `npm run build` will bundle the project and create a file called `bundle.js` in the root directory of the project.
+* `npm run build`는 프로젝트를 번들화하고 프로젝트의 루트 디렉토리에 `bundle.js`라는 파일을 만들 것입니다.
 
-* `npm run watch` will activate the `watch mode`, updating that file automatically every time we make changes to the code and save it.
+* `npm run watch`는 `watch mode`를 활성화할 것입니다. 이 모드는 코드를 변경하고 저장할 때마다 자동으로 파일을 업데이트합니다.
 
 ```
 {
@@ -263,13 +263,13 @@ Also, the `package.json` file needs to be modified to contain the commands to co
 
 ### WebAssembly
 
-The next thing to do is to copy the `web-ifc.wasm` and `web-ifc-mt.wasm` files to a directory in your project. It can be found in `node_modules\web-ifc` (or `node_modules\three\examples\jsm\loaders\ifc` if you are only using Three's IFCLoader). We can copy them wherever we want; in this example, they will be copied to a folder called wasm in the root directory of the project.
+다음 해야 할 것은 프로젝트 내 한 디렉토리에 `web-ifc.wasm`와 `web-ifc-mt.wasm` 파일을 복사하는 것입니다. 이것은 `node_modules\web-ifc`에서 찾을 수 있습니다. (또는 Three의 IFCLoader만 사용하고 있을 경우 `node_modules\three\examples\jsm\loaders\ifc`에서 찾을 수 있음) 원하는 곳에 복사할 수 있습니다; 이 예제에서는 프로젝트의 루트 디렉토리 내 wasm 폴더에 복사할 것입니다.
 
-These files are necessary because they contain the compiled C++ logic of [web-ifc](https://github.com/IFCjs/web-ifc), which is the parsing core to read and write IFC files with native speed.
+이 파일들은 반드시 있어야 합니다. 왜냐하면 이것은 네이티브 속도로 IFC 파일을 읽고 쓰기 위한 파싱 코어인 [web-ifc](https://github.com/IFCjs/web-ifc)의 컴파일된 C++ 로직을 포함하고 있기 때문입니다.
 
-* These files have to be served statically in your application. This might need different tweaks if you are using frameworks or libraries like React, Angular, Vue or Svelte.
+* 이 파일들은 애플리케이션에서 정적으로 제공되어야 합니다. React, Angular, Vue, Svelte와 같은 프레임워크나 라이브러리를 사용하고 있을 경우 다른 조정이 필요할 수도 있습니다.
 
-## Setting up a 3D scene
+## 3D 장면 설정하기
 
 Finally, we are going to create the JavaScript file to write the code for our application. This file can be located anywhere and have any name, but you must reflect this in the `rollup.config.js`.
 
@@ -279,23 +279,23 @@ We are going to create a basic 3D scene using Three.js.
 import { AmbientLight, AxesHelper, DirectionalLight, GridHelper, PerspectiveCamera, Scene, WebGLRenderer } from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 
-//Creates the Three.js scene
+// Creates the Three.js scene
 const scene = new Scene();
 
-//Object to store the size of the viewport
+// Object to store the size of the viewport
 const size = {
   width: window.innerWidth,
   height: window.innerHeight,
 };
 
-//Creates the camera (point of view of the user)
+// Creates the camera (point of view of the user)
 const aspect = size.width / size.height;
 const camera = new PerspectiveCamera(75, aspect);
 camera.position.z = 15;
 camera.position.y = 13;
 camera.position.x = 8;
 
-//Creates the lights of the scene
+// Creates the lights of the scene
 const lightColor = 0xffffff;
 
 const ambientLight = new AmbientLight(lightColor, 0.5);
@@ -307,7 +307,7 @@ directionalLight.target.position.set(-5, 0, 0);
 scene.add(directionalLight);
 scene.add(directionalLight.target);
 
-//Sets up the renderer, fetching the canvas of the HTML
+// Sets up the renderer, fetching the canvas of the HTML
 const threeCanvas = document.getElementById("three-canvas");
 const renderer = new WebGLRenderer({
   canvas: threeCanvas,
@@ -317,7 +317,7 @@ const renderer = new WebGLRenderer({
 renderer.setSize(size.width, size.height);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-//Creates grids and axes in the scene
+// Creates grids and axes in the scene
 const grid = new GridHelper(50, 30);
 scene.add(grid);
 
@@ -326,12 +326,12 @@ axes.material.depthTest = false;
 axes.renderOrder = 1;
 scene.add(axes);
 
-//Creates the orbit controls (to navigate the scene)
+// Creates the orbit controls (to navigate the scene)
 const controls = new OrbitControls(camera, threeCanvas);
 controls.enableDamping = true;
 controls.target.set(-2, 0, 0);
 
-//Animation loop
+// Animation loop
 const animate = () => {
   controls.update();
   renderer.render(scene, camera);
@@ -340,7 +340,7 @@ const animate = () => {
 
 animate();
 
-//Adjust the viewport to the size of the browser
+// Adjust the viewport to the size of the browser
 window.addEventListener("resize", () => {
   size.width = window.innerWidth;
   size.height = window.innerHeight;
