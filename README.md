@@ -410,33 +410,33 @@ ifcLoader.load("models/Example_model.ifc", (ifcModel) => scene.add(ifcModel));
 
 # 시작하기
 
-## Understanding IFC.js
+## IFC.js 이해하기
 
-IFC.js is not just a library: it is an ecosystem of libraries and projects that make creating BIM tools trivial. There are two reasons for this modularity:
+IFC.js는 단순한 라이브러리가 아닙니다: 이것은 BIM 도구들을 쉽게 만들 수 있게 해주는 라이브러리 및 프로젝트의 생태계입니다. 이 모듈 방식에 대한 2가지 이유가 있습니다:
 
-* To be able to use in our applications only what we need.
+* 애플리케이션에서 필요한 것만 사용할 수 있음
 
-* To make the library more maintainable.
+* 라이브러리의 유지보수 관리성을 높이기 위함
 
-It is important to understand which pieces make it up in order to know what to use in each case. IFC.js is essentially composed of 3 layers, each with a unique responsibility.
+각각의 경우에 무엇을 사용해야 하는지 알기 위해서는 어떤 조각들이 그것을 구성하는지 이해하는 것이 중요합니다. IFC.js는 기본적으로 3개의 레이어로 구성되어 있으며 각 레이어는 고유한 역할이 있습니다.
 
 |web-ifc|
 |-|
-|An IFC file parser. It is able to read all information from an IFC, edit it and write new files. It has no 3d viewer, it only works with data.|
-|When to use: When you want to read or write IFC files without any viewer. This library gives full power over the data, but requires more understanding of the IFC schema to use it.|
-|Depends on: -|
+|IFC 파일 파서(parser)입니다. 이것은 IFC 파일에서 모든 정보를 읽어올 수 있으며 IFC 파일을 편집하거나 아예 새로운 IFC 파일을 만들 수도 있습니다. 이것은 3D 뷰어를 갖고 있지 않으며 단지 데이터를 다룰 뿐입니다.|
+|사용하는 시기: 뷰어 없이 IFC 파일을 읽거나 쓰고 싶을 때. 이 라이브러리는 데이터에 대한 모든 권한을 제공하지만 제대로 사용하려면 IFC 스키마에 대한 많은 이해도를 요구합니다.|
+|다음에 의존함: -|
 
 |web-ifc-three|
 |-|
-|A 3D BIM viewer. It allows to view and navigate the 3d model at 60 fps, select elements and easily read all the IFC data to display it to the end user. It is the official IFC Loader of three.js.|
-|When to use: When you want to make a BIM viewer for your application and you want to have full control over all implemented functionalities.|
-|Depends on: web-ifc|
+|3D BIM 뷰어입니다. It allows to view and navigate the 3d model at 60 fps, select elements and easily read all the IFC data to display it to the end user. It is the official IFC Loader of three.js.|
+|사용하는 시기: When you want to make a BIM viewer for your application and you want to have full control over all implemented functionalities.|
+|다음에 의존함: web-ifc|
 
 |web-ifc-viewer|
 |-|
 |A 3D BIM viewer with many tools and functionalities already implemented (section drawings, dimensions, etc.), allowing you to create BIM tools with very little effort.|
-|When to use: When you want to create a BIM viewer and you don't want to spend time implementing all the model navigation tools you would like to have.|
-|Depends on: web-ifc-three|
+|사용하는 시기: When you want to create a BIM viewer and you don't want to spend time implementing all the model navigation tools you would like to have.|
+|다음에 의존함: web-ifc-three|
 
 ---
 
