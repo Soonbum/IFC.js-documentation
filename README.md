@@ -442,17 +442,17 @@ IFC.js는 단순한 라이브러리가 아닙니다: 이것은 BIM 도구들을 
 
 # web-ifc
 
-## Web-ifc guide
+## Web-ifc 가이드
 
-**web-ifc** is a javascript library to read and write ifc files, at native speeds. **web-ifc** is part of the [ifc.js](https://ifcjs.github.io/info/) project, which aims to lower the threshold for developing open BIM applications.
+**web-ifc**는 네이티브 속도로 ifc 파일을 읽고 쓸 수 있는 자바스크립트 라이브러리입니다. **web-ifc**는 [ifc.js](https://ifcjs.github.io/info/) 프로젝트의 일부입니다. 이 프로젝트는 개방형 BIM 애플리케이션을 개발하기 위한 문턱을 낮추는 데 목적을 두고 있습니다.
 
-### But I know nothing about the project!
+### 하지만 나는 프로젝트에 대해 아무 것도 모릅니다!
 
-Don't worry: if you want to participate, we will give **top priority to your onboarding** so that you can start using the library right away and help us with whatever you want.
+걱정하지 마십시오: 만약 참여를 원하신다면 **당신의 onboarding을 최우선으로 고려하여** 당신이 라이브러리를 바로 사용할 수 있게 해주고 당신이 원하는 것으로 저희를 도우실 수 있습니다.
 
-## Cloning the repository locally
+## 로컬에 리포지토리 클로닝(Cloning)하기
 
-The first thing to do is to clone the repository to your local machine.
+1번째로 해야 할 것은 당신의 로컬 머신에 리포지토리를 클론을 만드는 것입니다.
 Start by forking the project (click on fork button on the top right) and choosing yourself as the owner of the fork (if asked).
 Now go to the forked repository, click on code button (generally green in color) and copy the https URL.
 
