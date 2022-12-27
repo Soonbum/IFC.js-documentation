@@ -271,31 +271,31 @@ export default {
 
 ## 3D 장면 설정하기
 
-Finally, we are going to create the JavaScript file to write the code for our application. This file can be located anywhere and have any name, but you must reflect this in the `rollup.config.js`.
+마지막으로 애플리케이션을 위한 코드를 작성하기 위해 JavaScript 파일을 만들 것입니다. 이 파일은 아무 곳에 있을 수 있으며 아무 이름을 가질 수 있습니다만 이것을 `rollup.config.js`에 반영해야 합니다.
 
-We are going to create a basic 3D scene using Three.js.
+Three.js를 이용하여 기본 3D 장면을 생성할 것입니다.
 
 ```
 import { AmbientLight, AxesHelper, DirectionalLight, GridHelper, PerspectiveCamera, Scene, WebGLRenderer } from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 
-// Creates the Three.js scene
+// Three.js 장면 생성하기
 const scene = new Scene();
 
-// Object to store the size of the viewport
+// 뷰포트 크기를 저장하기 위한 객체
 const size = {
   width: window.innerWidth,
   height: window.innerHeight,
 };
 
-// Creates the camera (point of view of the user)
+// 카메라 생성 (사용자의 관점)
 const aspect = size.width / size.height;
 const camera = new PerspectiveCamera(75, aspect);
 camera.position.z = 15;
 camera.position.y = 13;
 camera.position.x = 8;
 
-// Creates the lights of the scene
+// 장면의 광원들을 생성함
 const lightColor = 0xffffff;
 
 const ambientLight = new AmbientLight(lightColor, 0.5);
@@ -307,7 +307,7 @@ directionalLight.target.position.set(-5, 0, 0);
 scene.add(directionalLight);
 scene.add(directionalLight.target);
 
-// Sets up the renderer, fetching the canvas of the HTML
+// HTML의 canvas를 가져오면서 렌더러 설정하기
 const threeCanvas = document.getElementById("three-canvas");
 const renderer = new WebGLRenderer({
   canvas: threeCanvas,
@@ -317,7 +317,7 @@ const renderer = new WebGLRenderer({
 renderer.setSize(size.width, size.height);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-// Creates grids and axes in the scene
+// 장면 내 그리드, 축 생성
 const grid = new GridHelper(50, 30);
 scene.add(grid);
 
@@ -326,12 +326,12 @@ axes.material.depthTest = false;
 axes.renderOrder = 1;
 scene.add(axes);
 
-// Creates the orbit controls (to navigate the scene)
+// 궤도 제어 생성 (장면을 탐색하기 위함)
 const controls = new OrbitControls(camera, threeCanvas);
 controls.enableDamping = true;
 controls.target.set(-2, 0, 0);
 
-// Animation loop
+// 애니메이션 루프
 const animate = () => {
   controls.update();
   renderer.render(scene, camera);
@@ -340,7 +340,7 @@ const animate = () => {
 
 animate();
 
-// Adjust the viewport to the size of the browser
+// 뷰포트를 브라우저 크기에 맞게 조정
 window.addEventListener("resize", () => {
   size.width = window.innerWidth;
   size.height = window.innerHeight;
@@ -350,18 +350,18 @@ window.addEventListener("resize", () => {
 });
 ```
 
-To run the application locally we will need a local server. If you are using VS Code as IDE, one option is to install the [Live Server extension](https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer), which allows us to open an instance of Google Chrome, run our web application and see the changes we make to the code in real-time.
+애플리케이션을 로컬에서 실행하려면 로컬 서버가 필요합니다. 만약 VS Code를 IDE로 사용 중이라면 [Live Server 확장](https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer)을 설치하는 옵션이 있습니다. 이것은 저희가 만든 애플리케이션을 실행해서 실시간으로 코드의 변화를 볼 수 있는 Google Chrome 인스턴스를 열 수 있게 해줍니다.
 
-## Loading IFC files
+## IFC 파일 로드하기
 
-### Loading user's models
+### 사용자의 모델 로드하기
 
-Finally, we will use IFC.js to load IFC files. This can be done by instantiating the loader and creating an event for when the user uploads an IFC file to the HTML input element.
+마지막으로 IFC 파일을 로드하기 위해 IFC.js를 사용할 것입니다. 이것은 로더를 인스턴스화하고 사용자가 IFC 파일을 HTML input 요소에 업로드할 때 이벤트를 생성하여 수행할 수 있습니다.
 
 ```
 import { IFCLoader } from "web-ifc-three/IFCLoader";
 
-// Sets up the IFC loading
+// IFC 로딩 설정
 const ifcLoader = new IFCLoader();
 
 const input = document.getElementById("file-input");
@@ -376,51 +376,199 @@ input.addEventListener(
 );
 ```
 
-Keep in mind that if you haven't saved the wasm files in the root of served files of the project, you'll need to specify its location with `setWasmPath`. For instance, if we had them stored in a folder called `wasm` contained in a folder called `static` in the root of the project, we would do the following:
+만약 프로젝트의 제공된 파일들의 루트에 wasm 파일들을 저장하지 않았다면 `setWasmPath`로 해당 위치를 지정해 주어야 합니다. 예를 들어 프로젝트의 루트에 있는 `static`이라는 폴더에 포함된 `wasm`이라는 폴더에 저장했다면 다음과 같이 진행하시면 됩니다:
 
 ```
 ifcLoader.ifcManager.setWasmPath("static/wasm/");
 ```
 
-If you have done everything correctly, you should be able to see something similar to [this](https://ifcjs.github.io/hello-world/examples/web-ifc-three/helloworld/) in your local server. From here, the possibilities are endless.
+모두 제대로 했다면, 로컬 서버에서 [이것](https://ifcjs.github.io/hello-world/examples/web-ifc-three/helloworld/)과 비슷한 뭔가를 보게 될 것입니다. 이제부터는 가능성이 무궁무진합니다.
 
-### Loading our models
+### 모델 로드하기
 
-In the previous point we saw how to load BIM models directly, and that's great. What if we want to show our BIM models instead of allowing the user to upload theirs? This is very simple. Generally there are two possibilities:
+앞에서는 BIM 모델을 직접 로드하는 방법을 보여 드렸습니다. 아주 훌륭했습니다. 만약 사용자가 업로드하는 것을 허용하지 않고 대신 저희의 BIM 모델들을 보여주고 싶다면? 이는 매우 간단합니다. 일반적으로 2가지 방법이 있습니다:
 
-* Having the IFC in the same application where you want to display it.
+* 보여주고자 하는 IFC 파일을 애플리케이션과 동일한 곳에 두기.
 
-* Having to get it from an external storage service.
+* 보여주고자 하는 IFC 파일을 외부 저장소로부터 가져오기.
 
-In the first case, it is sufficient to reference the URL of the IFC file. That is, its relative path in the application. For example, if the IFC is in a folder called "models" in the root of the project, we could load that IFC when starting the application as follows:
+1번째의 경우 IFC 파일의 URL을 참조하는 것으로 충분합니다. 즉, 애플리케이션의 상대 경로를 이용하는 것입니다. 예를 들어, IFC 파일이 프로젝트의 루트에 있는 "models" 폴더 안에 있다면 애플리케이션을 시작할 때 다음과 같이 IFC를 로드할 수 있습니다:
 
 ```
 ifcLoader.load("models/Example_model.ifc", (ifcModel) => scene.add(ifcModel));
 ```
 
-* Getting a file from a remote storage service varies depending on the service used. However, the logic is the same: get the information, create a URL and pass it as an argument to the IFCLoader.
+* 원격 저장소에서 파일을 가져오는 방법은 사용하는 서비스에 따라 달라질 수 있습니다. 그러나 로직은 동일합니다: 정보를 가져오고, URL을 생성한 후 IFCLoader에게 인자로 넘겨줍니다.
 
-## Conclusion
+## 결론
 
-Congratulations! You have just created your first IFC viewer. Go to the next pages of the docs to find out what else can you do with IFC.js.
+축하합니다! 당신은 이제 1번째 IFC 뷰어를 생성했습니다. 이제 IFC.js로 당신이 할 수 있는 다른 것들을 알아보기 위해 문서의 다음 페이지로 넘어가십시오.
 
-* What else can I do with IFC.js? This is just the beginning. You can take a look at [web-ifc-viewer](https://github.com/IFCjs/web-ifc-viewer), which includes tools for object selection, changing geometry appearance, section planes and much more. You can try it [here](https://ifcjs.github.io/web-ifc-viewer/example/index).
+* IFC.js로 무엇을 할 수 있습니까? 이것은 시작에 불과합니다. 당신은 객체 선택, 지오메트리 외형 변경, 단면도 등 여러 가지 도구들을 포함하는 [web-ifc-viewer](https://github.com/IFCjs/web-ifc-viewer)를 보실 수 있습니다. [여기](https://ifcjs.github.io/web-ifc-viewer/example/index)에서 시도해 보십시오.
 
 ---
 
 # 시작하기
 
-?
+## Understanding IFC.js
+
+IFC.js is not just a library: it is an ecosystem of libraries and projects that make creating BIM tools trivial. There are two reasons for this modularity:
+
+* To be able to use in our applications only what we need.
+
+* To make the library more maintainable.
+
+It is important to understand which pieces make it up in order to know what to use in each case. IFC.js is essentially composed of 3 layers, each with a unique responsibility.
+
+|web-ifc|
+|-|
+|An IFC file parser. It is able to read all information from an IFC, edit it and write new files. It has no 3d viewer, it only works with data.|
+|When to use: When you want to read or write IFC files without any viewer. This library gives full power over the data, but requires more understanding of the IFC schema to use it.|
+|Depends on: -|
+
+|web-ifc-three|
+|-|
+|A 3D BIM viewer. It allows to view and navigate the 3d model at 60 fps, select elements and easily read all the IFC data to display it to the end user. It is the official IFC Loader of three.js.|
+|When to use: When you want to make a BIM viewer for your application and you want to have full control over all implemented functionalities.|
+|Depends on: web-ifc|
+
+|web-ifc-viewer|
+|-|
+|A 3D BIM viewer with many tools and functionalities already implemented (section drawings, dimensions, etc.), allowing you to create BIM tools with very little effort.|
+|When to use: When you want to create a BIM viewer and you don't want to spend time implementing all the model navigation tools you would like to have.|
+|Depends on: web-ifc-three|
 
 ---
 
 # 바운티 다루기
 
-?
+## Let's learn to handle bounties
+
+We follow the steps to take the selected reward and claim the payment
+
+## Bounty Bot & Take
+
+To interact with the bounty bot and manipulate its status, submit a comment containing only one of these commands:
+
+### ::take
+
+To assign a bounty we will have to write `(::take)` in the comment box of the selected bounty. The due date of your assignment is the next 21st date UTC.
+
+* Taked bounty successfully: Hi, **YOUR_NAME**! Thanks for taking this bounty! The due date is **DATE_TIME**.
+
+If you've received a comment like this... Congratulations, you just took this bounty.
+
+Requeriments:
+
+* Sender: Anyone,
+
+* Status: Available
+
+### ::extend
+
+Extend the due date by 21 days. Can only be done once.
+
+Requeriments:
+
+* Sender: Assignee,
+
+* Status: In progress
+
+### ::freeze
+
+Freeze the bounty clock. The due date will be adjusted once the `!::unfreeze` is executed. The bounty manager can use this while reviewing the works without decreasing the duration available for the assignee.
+
+Requeriments:
+
+* Sender: Manager,
+
+* Status: In progress,
+
+* Frozen: False
+
+### ::unfreeze#
+
+Unfreeze the bounty clock. The new due date will be informed.
+
+Requeriments:
+
+* Sender: Manager,
+
+* Status: In progress,
+
+* Frozen: True
+
+### ::done
+
+Change the status of this bounty to done. If your tasks require you to create pull requests, a PR title that either starts with the bounty ID or is exactly the same as the bounty name will automatically do the same thing when merged.
+
+Requeriments:
+
+* Sender: Manager,
+
+* Status: In progress
+
+### ::undone
+
+Change the status of this bounty to in progress. Use this if the bounty is marked as done by mistake.
+
+Requeriments:
+
+* Sender: Manager,
+
+* Status: done
+
+### ::drop
+
+Give up on this bounty.
+
+Requeriments:
+
+* Sender: Assignee,
+
+* Status: In progress
+
+### ::expense::____
+
+After you’re done with the tasks, you need to submit an expense to IFC.js Open Collective. To ensure the authenticity of the expense, you need to tell us the invoice number via this command. Replace the ____ with the invoice number (only the number).
+
+Requeriments:
+
+* Sender: Assignee,
+
+* Status: Done
+
+## Create Pull Request
+
+The tutorial should be made in the repository [IFCjs/info](https://github.com/ifcjs/info).
+
+You need to submit some Pull Request(PR) to complete the task, make sure that the last and only the last PR has a title that either starts with the bounty ID or is exactly the same as the bounty name.
+
+If you have to develop an example for the tutorial do it [here](https://github.com/ifcjs/hello-world).
+
+* Pull Request Status: After the PR is merged, this bounty`s status will automatically changed to done.
+
+## Generate Payment Request
+
+This step is done through `Open Collective` if you still do not have your user you can create it [here](https://opencollective.com/create-account?next=%2F).
+
+To generate a payment request linked to your user, you must be logged in and access your account. You can do it through the following [link](https://opencollective.com/ifcjs).
+
+Once the invoice is generated, we need the ID number to attach it to the command `::expense::`. (E.g. ::expense::**ID_INVOICE**)
+
+* Pull Request Status: Thank you for the confirmation. We will proceed to review the expense. Once approved, payment will be scheduled
+
+Your request is being studied, in case it is approved. We will send a message like this:
+
+* Your expense has been approved!
+
+Congratulations and thanks for contributing to IFCjs.
 
 ---
 
 # web-ifc
+
+## Web-ifc guide
 
 ?
 
