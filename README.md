@@ -444,6 +444,155 @@ IFC.js는 단순한 라이브러리가 아닙니다: 이것은 BIM 도구들을 
 
 ## Web-ifc guide
 
+**web-ifc** is a javascript library to read and write ifc files, at native speeds. **web-ifc** is part of the [ifc.js](https://ifcjs.github.io/info/) project, which aims to lower the threshold for developing open BIM applications.
+
+### But I know nothing about the project!
+
+Don't worry: if you want to participate, we will give **top priority to your onboarding** so that you can start using the library right away and help us with whatever you want.
+
+## Cloning the repository locally
+
+The first thing to do is to clone the repository to your local machine.
+Start by forking the project (click on fork button on the top right) and choosing yourself as the owner of the fork (if asked).
+Now go to the forked repository, click on code button (generally green in color) and copy the https URL.
+
+Now open terminal on your machine and change the current working directory to the location where you want to clone the directory. Enter these commands:
+
+```
+// Type git clone, and then paste the URL you copied earlier like this
+git clone https://github.com/YOUR-USERNAME/YOUR-REPOSITORY
+
+// change the current directory and enter the cloned repository using cd, and then name of the repository like this
+cd web-ifc
+
+// Using git checkout -b will create a new branch and immediately switch to it
+git checkout -b ＜new-branch-name＞
+// <new-branch-name> -> name your branch exactly same as the bounty name or the name starts with bounty ID
+
+// Minimise this terminal instead of closing it
+```
+
+## Setting up the project
+
+### Build it locally
+
+```
+// To install web-ifc
+npm install web-ifc
+```
+
+## Quick setup
+
+```
+//Use these in your project whenever needed not in the terminal right now
+const WebIFC = require("web-ifc/web-ifc-api.js");
+
+// initialize the API
+const ifcApi = new WebIFC.IfcAPI();
+
+// initialize the library
+await ifcApi.Init();
+
+// open a model from data
+let modelID = ifcApi.OpenModel(/* IFC data as a string or UInt8Array */, /* optional settings object */, );
+
+// the model is now loaded! use modelID to fetch geometry or properties
+// checkout examples/usage for some details on how to read/write IFC
+
+// close the model, all memory is freed
+ifcApi.CloseModel(modelID);
+```
+
+See [examples](https://github.com/tomvandig/web-ifc/tree/main/examples/usage/src) for more details on how to use web-ifc.
+
+## Building WASM module
+
+### Setting up emscripten
+
+The WASM library is built through emscripten, please see [the emscripten installation guide](https://emscripten.org/docs/getting_started/downloads.html) for information on how to set up emscripten. Afterwards `emsdk_env` needs to be in your path(environment variable).
+
+### WASM library
+
+Open the terminal again and run these commands:
+
+Run `npm install` to install all dependencies.
+Run `npm run setup-env` whenever you open a new terminal, this will set up the required emscripten environment variables for you to compile code.
+Run `npm run build-release-all` to build a release version of the wasm binary and the accompanying web-ifc api. It will be placed in ./dist.
+Run `npm run dev` to launch a development server with a basic ifc file viewer.
+
+## Writing code on it
+
+### Using an IDE (Integrated Development Environment)#
+
+VS Code - You can install VS Code from [here](https://code.visualstudio.com/download).
+
+### Compiler for code
+
+GCC with MinGW (for windows) - You can configure GCC C++ compiler from [here](https://code.visualstudio.com/docs/cpp/config-mingw). Clang (for macOS) - You can configure Clang compiler from [here](https://code.visualstudio.com/docs/cpp/config-clang-mac).
+
+Although the primary focus of the library is to be used through WebAssembly in the browser/nodejs, the project can be used stand-alone as a c++ library or executable. See [here](https://github.com/tomvandig/web-ifc/blob/main/src/wasm/web-ifc-test.cpp) for a simple entry point to get started.
+
+## Creating a submit pull request
+
+Open you terminal and enter these commands:
+
+use `git status` to review your changes.
+use `git checkout master` to checkout to master branch.
+use `git pull` to sync your cloned repository with the origin repository.
+use `git checkout <branch-name>` to go back to your working branch.
+use `git pull` to sync with the the main branch.
+use `git add .` to stage your changes.
+use `git commit -m "type a message to display for changes"` to commit the changes made.
+use `git push` to push the changes to the main repository.
+
+Now go to your github, inside the forked version of the repository. You will see a notification on the right (if not click on pull requests) 'compare & pull request' (generally green color button), click on it. Now describe the changes you made in short and click on 'create pull request'.
+
+### How do I get started?
+
+[Talk to us!](https://discord.gg/FXfyR4XrKT) Tell us about your situation and your ideas and we will help you get started as soon as possible.
+  
+## Introduction
+
+### Full IFC control at native speed
+
+It is often thought that web applications are not as powerful as desktop applications. Relatively recently, however, [WebAssembly](https://webassembly.org/) appeared on the scene.
+
+* WebAssembly is a technology that allows the use of languages like C++ to create web applications.
+
+This means we can have the best of both worlds: the **flexibility** of a web application and the **full performance** of a machine. And this is what web-ifc is all about. You can install it with `npm i web-ifc` or `yarn add web-ifc` and it has the following features:
+
+* It is as **fast** as native applications thanks to its parsing core, written from scratch in C++.
+
+* It can be run directly on the **client** or as a **backend service**. Bring BIM to all parts of your system!
+
+* It can read **100% of the IFC data, including IFC types**. This allows data to be easily extracted, structured, traversed and entered into databases.
+
+* It can **edit data and write entire IFCs from scratch**. Create apps that communicate with the large software vendors.
+
+In the following points, the API and its functionalities will be shown step by step. However, there are a **some issues** that are important to be clear about before using `web-ifc`.
+
+### But wait, I don't know C++!
+
+Don't worry! Although the parser is written in C++, it is compiled in a file called `web-ifc.wasm` that **browsers understand automatically**. Just include this file in your application and you will have access to the full API with native speed with **JavaScript** or **TypeScript**. How cool is that?
+
+### What is the .wasm file for?
+
+The web-ifc.wasm file contains the IFC **parsing core**. It is pre-compiled and **hyper-efficient**; unlike JavaScript, which has to be compiled line by line, this file can be sent directly to the CPU and executed without prior interpretation.
+
+You can find this file in the `node-modules/web-ifc/web-ifc.wasm` folder. You will need to serve this file with your application (if frontend) or have it on your server (if backend).
+
+* Beware: when you update the web-ifc version in your application, you will also have to update (copy) the corresponding version of web-ifc.wasm.
+
+### When should I use web-ifc?
+
+`Web-ifc` is the **lightest** and **most flexible** module of IFC.js. However, this flexibility also means that you have to know what you are doing, and therefore know the internals of the IFC schema relatively well.
+
+Moreover, web-ifc **does not implement a 3d viewer**. This is an advantage, because it means that you can get IFC geometry without relying on a particular 3d renderer in a more agile way.
+
+* If you want to see 3d geometry easily, you will either have to implement it yourself, or use **web-ifc-three** or **web-ifc-viewer**.
+
+## Hello World
+
 ?
 
 ---
