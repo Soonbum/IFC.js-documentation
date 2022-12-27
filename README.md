@@ -593,17 +593,312 @@ Moreover, web-ifc **does not implement a 3d viewer**. This is an advantage, beca
 
 ## Hello World
 
+## Introduction
+
+Web-ifc provides an easy way to read and manipulate your ifc file. you can as example to get the spatial tree information or project, geometries, add new entities etc... In this tutorial we will **Load an ifc file** and **Retrieves all its IFCSPACE**.
+
+Thanks to web-ifc all of these are just a breeze
+
+* You can get the full code [here](https://github.com/ifcjs/hello-world/tree/main/examples/web-ifc/hello-world).
+
+## Setting up the project
+
+Node JS must be install on your machine, and to makes thing easier i recommand to use Visual Code studio with the plugin Live server.
+
+### install dependencies
+
+```
+npm init
+npm install web-ifc
+npm install rollup --save-dev
+npm install @rollup/plugin-node-resolve --save-dev
+npm install @open-wc/building-rollup --save-dev
+```
+
+### add scripts in your package.json
+
+open your package.json and add aliases build and watch in the scripts section,
+
+```
+  "scripts": {
+    "build": "rollup -c ./rollup.config.js",
+    "watch": "rollup -w -c ./rollup.config.js"
+  },
+```
+
+### configure Rollup
+
+on your project root add a config file **rollup.config.js** with these configs values:
+
+```
+import resolve from "@rollup/plugin-node-resolve";
+
+export default {
+  input: "app.js",
+  output: [
+
+    {
+      format: "esm",
+      file: "bundle.js",
+    },
+  ],
+  plugins: [resolve()],
+};
+```
+
+## Feed your root folder :)
+
+To make things easier we drop all in the root folder :
+
+* app.js
+* index.html
+* drop an .ifc file of your choice for testing.
+* copy **web-ifc-mt.wasm** and **web-ifc.wasm** from **node_modules/web-ifc** here in the root folder
+
+### Serving files from a server
+
+for Visual code studio lovers there is an extension which remove all headaches, this will give you the possibility to serve your bundled app. elsewhere you can run your code throught node server directly
+
+https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer
+
+## How to do it
+
+Ok now you've got your folder ready to start, let's complete these 2 objectives :
+
+* load your ifc file
+
+* grab some datas from this loaded ifc file
+
+### get an .ifc file
+
+If you don't have a sample ifcModel you can grab one from [here](https://github.com/IFCjs/test-ifc-files)
+
+### index.html
+
+```
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WEB-IFC</title>
+</head>
+<body>
+  <div id="main">
+      <div id="result"></div>
+  </div>
+  <script src="bundle.js"></script>
+</body>
+</html>
+```
+
+### app.js
+
+#### definitions
+
+We will only need **web-ifc/web-ifc-api** just pay attention on ifcFileLocation its an ifcModel stored in the root folder in this demo.
+
+```
+import {IfcAPI} from "web-ifc/web-ifc-api";
+const ifcFileLocation = "duplex-apartment.ifc"; // dont forget to modify for your ifc filename
+let modelID = 0;
+const ifcapi = new IfcAPI();
+//ifcapi.SetWasmPath("./wasm/"); only if the wasm file are note at the same level as app.js
+```
+
+#### fetching ifcFile function
+
+i've chosen the XMLHttpRequest to fetch my file you can chose any method of your choice. The only required thing is `new Uint8Array(oReq.response)` at the end.
+
+```
+/**
+ * resolve a Uint8Array().
+ * 
+ * @param string url location of your ifc file
+ * @returns {Promise}
+ */
+function getIfcFile(url) {
+    return new Promise((resolve, reject) => {
+        var oReq = new XMLHttpRequest();
+        oReq.responseType = "arraybuffer";
+        oReq.addEventListener("load", () => {
+            resolve(new Uint8Array(oReq.response));
+        });
+        oReq.open("GET", url);
+        oReq.send();
+    });
+}
+```
+
+#### loadFile with Web-ifc
+
+We are almost done ;) . ifcapi is initialized we fetch our ifcFile and with ifcapi we can work with the loaded file
+
+```
+ifcapi.Init().then(()=>{
+  getIfcFile(ifcFileLocation).then((ifcData) => {
+    modelID = ifcapi.OpenModel(ifcData);
+    let isModelOpened = ifcapi.IsModelOpen(modelID);
+    console.log({isModelOpened});
+    ifcapi.CloseModel(modelID);
+  });
+});
+```
+
+#### Let's Build
+
+run this command before opening your app **npm run build** rollup will build your app and then you will have to serve your app. If you have live server extension installed on Visual code studio you can simply run it and go to the hello_world example. At any code changes don't forget to rebuild OR you can use **npm run watch** while the job is not done rollup will rebuild on code save
+
+if in your console you got this message `{isModelOpened: true}`
+
+**congratulations**
+
+All is setup and running but now i want **ALL** IFCSPACES
+
+###Retrieve a list of spaces.
+
+Okay, now i want to get all the IFCSPACES and display them somewhere. Lets make a function wich grab all IFCSPACE. You can fetch by any type you need. i've made a total arbitrary decision to take IFCSPACE.
+
+```
+/**
+ * Get all IFCSPACE from ifc file
+ * @param integer modelID 
+ * @returns array
+ */
+function getAllSpaces(modelID) {
+    // Get all the propertyset lines in the IFC file
+    let lines = ifcapi.GetLineIDsWithType(modelID, IFCSPACE);
+    let lineSize = lines.size();
+    let spaces = [];
+    for (let i = 0; i < lineSize; i++) {
+        // Getting the ElementID from Lines
+        let relatedID = lines.get(i);
+        // Getting Element Data using the relatedID
+        let relDefProps = ifcapi.GetLine(modelID, relatedID);
+        spaces.push(relDefProps);
+
+    }
+    return spaces;
+}
+```
+
+If your attentive you will notice the const IFSPACE from **let lines = ifcapi.GetLineIDsWithType(modelID, IFCSPACE);** it means I want to get all IFCSPACE from my ifc file. Don't forget to import this as follow.
+
+```
+import {IfcAPI,IFCSPACE} from "web-ifc/web-ifc-api";
+```
+
+#### call getAllSpaces
+
+after the .ifc file has been retrieved and loaded in ifcapi i can call my function to get all spaces.
+
+```
+ifcapi.Init().then(() => {
+    getIfcFile(ifcFileLocation).then((ifcData) => {
+        modelID = ifcapi.OpenModel(ifcData);
+        let isModelOpened = ifcapi.IsModelOpen(modelID);
+        console.log({isModelOpened});
+        let spaces = getAllSpaces(modelID);
+        console.log({spaces});
+        ifcapi.CloseModel(modelID);
+    });
+});
+```
+
+## Next steps
+
+**congratulations** you can load your .ifc file and find any element you want. However it could be nice to navigate in your spatial tree, or describe an IFCSPACE... To be continued
+
+## Editing Properties
+
+?
+
+## Properties
+
+?
+
+## web-ifc-API
+
 ?
 
 ---
 
 # web-ifc-three
 
+## Introduction
+
+?
+
+## Setup
+
+?
+
+## API
+
+?
+
+## Picking
+
+?
+
+## Subsets
+
+?
+
+## Properties
+
+?
+
+## Hiding
+
+?
+
+## Memory
+
+?
+
+## Multithreading
+
+?
+
+## Mapbox
+
 ?
 
 ---
 
 # web-ifc-viewer
+
+## Contribute
+
+?
+
+## Introduction
+
+?
+
+## Json Property
+
+?
+
+## Picking
+
+?
+
+## Socket.IO
+
+?
+
+## IFC to gLTF
+
+?
+
+## Memory
+
+?
+
+## web-ifc-viewer-API
 
 ?
 
