@@ -453,67 +453,67 @@ IFC.js는 단순한 라이브러리가 아닙니다: 이것은 BIM 도구들을 
 ## 로컬에 리포지토리 클로닝(Cloning)하기
 
 1번째로 해야 할 것은 당신의 로컬 머신에 리포지토리를 클론을 만드는 것입니다.
-Start by forking the project (click on fork button on the top right) and choosing yourself as the owner of the fork (if asked).
-Now go to the forked repository, click on code button (generally green in color) and copy the https URL.
+(우상단의 fork 버튼을 클릭하여) 프로젝트를 포크(fork)하여 시작하시고 (만약 물어본다면) 포크의 소유자를 당신 자신으로 선택하십시오.
+이제 포크된 리포지토리로 가서 (일반적으로 녹색으로 된) 코드(code) 버튼을 클릭하시고 https URL을 복사하십시오.
 
-Now open terminal on your machine and change the current working directory to the location where you want to clone the directory. Enter these commands:
+이제 당신의 머신에서 터미널을 여시고 현재 작업 디렉토리를 복제하고 싶은 디렉토리로 변경하십시오. 다음 커맨드들을 입력하십시오:
 
 ```
-// Type git clone, and then paste the URL you copied earlier like this
+// git clone을 타이핑하고 나서 다음과 같이 앞에서 복사한 URL을 붙여넣으세요.
 git clone https://github.com/YOUR-USERNAME/YOUR-REPOSITORY
 
-// change the current directory and enter the cloned repository using cd, and then name of the repository like this
+// 현재 디렉토리를 변경하십시오 그리고 cd를 이용하여 복제된 리포지토리를 입력하십시오. 그리고 나서 다음과 같이 리포지토리의 이름을 넣으십시오.
 cd web-ifc
 
-// Using git checkout -b will create a new branch and immediately switch to it
+// git checkout -b를 이용하면 새로운 브랜치(branch)를 생성하게 되고 즉시 해당 브랜치로 전환하게 됩니다.
 git checkout -b ＜new-branch-name＞
-// <new-branch-name> -> name your branch exactly same as the bounty name or the name starts with bounty ID
+// <new-branch-name> -> 당신의 브랜치 이름은 정확하게 바운티 이름 또는 바운티 ID로 시작하는 이름과 동일해야 합니다.
 
-// Minimise this terminal instead of closing it
+// 이 터미널을 닫지 마시고 최소화하십시오.
 ```
 
-## Setting up the project
+## 프로젝트 설정하기
 
-### Build it locally
+### 로컬에서 빌드
 
 ```
-// To install web-ifc
+// web-ifc 설치하기
 npm install web-ifc
 ```
 
-## Quick setup
+## 빠른 설정
 
 ```
-//Use these in your project whenever needed not in the terminal right now
+// 현재 터미널에 있지 않을 때마다 프로젝트에서 이것을 사용하십시오.
 const WebIFC = require("web-ifc/web-ifc-api.js");
 
-// initialize the API
+// API 초기화
 const ifcApi = new WebIFC.IfcAPI();
 
-// initialize the library
+// 라이브러리 초기화
 await ifcApi.Init();
 
-// open a model from data
-let modelID = ifcApi.OpenModel(/* IFC data as a string or UInt8Array */, /* optional settings object */, );
+// 데이터로부터 모델 열기
+let modelID = ifcApi.OpenModel(/* string 또는 UInt8Array 타입으로 된 IFC 데이터 */, /* 선택적 설정 객체 */, );
 
-// the model is now loaded! use modelID to fetch geometry or properties
-// checkout examples/usage for some details on how to read/write IFC
+// 이제 모델이 로드되었습니다! 지오메트리 또는 속성들을 가져오려면 modelID를 사용하십시오.
+// IFC 읽기/쓰기에 대한 더 자세한 방법은 examples/usage를 확인하십시오.
 
-// close the model, all memory is freed
+// 모델을 닫습니다. 모든 메모리가 해제됩니다.
 ifcApi.CloseModel(modelID);
 ```
 
-See [examples](https://github.com/tomvandig/web-ifc/tree/main/examples/usage/src) for more details on how to use web-ifc.
+web-ifc를 사용하는 방법을 더 자세히 알고 싶으시면 [예제](https://github.com/tomvandig/web-ifc/tree/main/examples/usage/src)를 보십시오.
 
-## Building WASM module
+## WASM 모듈 빌드하기
 
-### Setting up emscripten
+### emscripten 설정하기
 
-The WASM library is built through emscripten, please see [the emscripten installation guide](https://emscripten.org/docs/getting_started/downloads.html) for information on how to set up emscripten. Afterwards `emsdk_env` needs to be in your path(environment variable).
+WASM 라이브러리는 emscripten을 통해 빌드됩니다. emscripten 설정 방법에 대한 정보는 [emscripten 설치 가이드](https://emscripten.org/docs/getting_started/downloads.html)를 보십시오. 그 후에 당신의 경로(환경 변수)에 Afterwards `emsdk_env`를 추가하십시오.
 
-### WASM library
+### WASM 라이브러리
 
-Open the terminal again and run these commands:
+다시 터미널을 열어서 다음 커맨드들을 실행하십시오:
 
 Run `npm install` to install all dependencies.
 Run `npm run setup-env` whenever you open a new terminal, this will set up the required emscripten environment variables for you to compile code.
