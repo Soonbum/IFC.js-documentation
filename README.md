@@ -423,146 +423,20 @@ IFC.js는 단순한 라이브러리가 아닙니다: 이것은 BIM 도구들을 
 |web-ifc|
 |-|
 |IFC 파일 파서(parser)입니다. 이것은 IFC 파일에서 모든 정보를 읽어올 수 있으며 IFC 파일을 편집하거나 아예 새로운 IFC 파일을 만들 수도 있습니다. 이것은 3D 뷰어를 갖고 있지 않으며 단지 데이터를 다룰 뿐입니다.|
-|사용하는 시기: 뷰어 없이 IFC 파일을 읽거나 쓰고 싶을 때. 이 라이브러리는 데이터에 대한 모든 권한을 제공하지만 제대로 사용하려면 IFC 스키마에 대한 많은 이해도를 요구합니다.|
+|사용하는 시기: 뷰어 없이 IFC 파일을 읽거나 쓰고 싶을 때입니다. 이 라이브러리는 데이터에 대한 모든 권한을 제공하지만 제대로 사용하려면 IFC 스키마에 대한 많은 이해도를 요구합니다.|
 |다음에 의존함: -|
 
 |web-ifc-three|
 |-|
-|3D BIM 뷰어입니다. It allows to view and navigate the 3d model at 60 fps, select elements and easily read all the IFC data to display it to the end user. It is the official IFC Loader of three.js.|
-|사용하는 시기: When you want to make a BIM viewer for your application and you want to have full control over all implemented functionalities.|
+|3D BIM 뷰어입니다. 이것은 60 fps로 3D 모델을 보거나 탐색할 수 있게 해주고, 요소들을 선택하거나, IFC 데이터를 모두 읽어서 최종 사용자에게 표시해줄 수 있습니다. 이것은 three.js의 공식 IFC Loader입니다.|
+|사용하는 시기: 당신의 애플리케이션을 위한 BIM 뷰어를 만들고 싶고, 구현된 모든 기능을 모두 제어하고 싶을 때입니다.|
 |다음에 의존함: web-ifc|
 
 |web-ifc-viewer|
 |-|
-|A 3D BIM viewer with many tools and functionalities already implemented (section drawings, dimensions, etc.), allowing you to create BIM tools with very little effort.|
-|사용하는 시기: When you want to create a BIM viewer and you don't want to spend time implementing all the model navigation tools you would like to have.|
+|이미 구현된 많은 도구와 기능(단면도, 치수 등)을 갖춘 3D BIM 뷰어입니다. 조금만 수고해서 BIM 도구들을 만들 수 있게 만들었습니다.|
+|사용하는 시기: BIM 뷰어를 만들고는 싶은데 당신이 원하는 모든 모델 탐색 도구들을 구현하는 데 시간을 쓰고 싶지는 않을 때입니다.|
 |다음에 의존함: web-ifc-three|
-
----
-
-# 바운티 다루기
-
-## Let's learn to handle bounties
-
-We follow the steps to take the selected reward and claim the payment
-
-## Bounty Bot & Take
-
-To interact with the bounty bot and manipulate its status, submit a comment containing only one of these commands:
-
-### ::take
-
-To assign a bounty we will have to write `(::take)` in the comment box of the selected bounty. The due date of your assignment is the next 21st date UTC.
-
-* Taked bounty successfully: Hi, **YOUR_NAME**! Thanks for taking this bounty! The due date is **DATE_TIME**.
-
-If you've received a comment like this... Congratulations, you just took this bounty.
-
-Requeriments:
-
-* Sender: Anyone,
-
-* Status: Available
-
-### ::extend
-
-Extend the due date by 21 days. Can only be done once.
-
-Requeriments:
-
-* Sender: Assignee,
-
-* Status: In progress
-
-### ::freeze
-
-Freeze the bounty clock. The due date will be adjusted once the `!::unfreeze` is executed. The bounty manager can use this while reviewing the works without decreasing the duration available for the assignee.
-
-Requeriments:
-
-* Sender: Manager,
-
-* Status: In progress,
-
-* Frozen: False
-
-### ::unfreeze#
-
-Unfreeze the bounty clock. The new due date will be informed.
-
-Requeriments:
-
-* Sender: Manager,
-
-* Status: In progress,
-
-* Frozen: True
-
-### ::done
-
-Change the status of this bounty to done. If your tasks require you to create pull requests, a PR title that either starts with the bounty ID or is exactly the same as the bounty name will automatically do the same thing when merged.
-
-Requeriments:
-
-* Sender: Manager,
-
-* Status: In progress
-
-### ::undone
-
-Change the status of this bounty to in progress. Use this if the bounty is marked as done by mistake.
-
-Requeriments:
-
-* Sender: Manager,
-
-* Status: done
-
-### ::drop
-
-Give up on this bounty.
-
-Requeriments:
-
-* Sender: Assignee,
-
-* Status: In progress
-
-### ::expense::____
-
-After you’re done with the tasks, you need to submit an expense to IFC.js Open Collective. To ensure the authenticity of the expense, you need to tell us the invoice number via this command. Replace the ____ with the invoice number (only the number).
-
-Requeriments:
-
-* Sender: Assignee,
-
-* Status: Done
-
-## Create Pull Request
-
-The tutorial should be made in the repository [IFCjs/info](https://github.com/ifcjs/info).
-
-You need to submit some Pull Request(PR) to complete the task, make sure that the last and only the last PR has a title that either starts with the bounty ID or is exactly the same as the bounty name.
-
-If you have to develop an example for the tutorial do it [here](https://github.com/ifcjs/hello-world).
-
-* Pull Request Status: After the PR is merged, this bounty`s status will automatically changed to done.
-
-## Generate Payment Request
-
-This step is done through `Open Collective` if you still do not have your user you can create it [here](https://opencollective.com/create-account?next=%2F).
-
-To generate a payment request linked to your user, you must be logged in and access your account. You can do it through the following [link](https://opencollective.com/ifcjs).
-
-Once the invoice is generated, we need the ID number to attach it to the command `::expense::`. (E.g. ::expense::**ID_INVOICE**)
-
-* Pull Request Status: Thank you for the confirmation. We will proceed to review the expense. Once approved, payment will be scheduled
-
-Your request is being studied, in case it is approved. We will send a message like this:
-
-* Your expense has been approved!
-
-Congratulations and thanks for contributing to IFCjs.
 
 ---
 
