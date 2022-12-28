@@ -515,18 +515,18 @@ WASM 라이브러리는 emscripten을 통해 빌드됩니다. emscripten 설정 
 
 다시 터미널을 열어서 다음 커맨드들을 실행하십시오:
 
-Run `npm install` to install all dependencies.
-Run `npm run setup-env` whenever you open a new terminal, this will set up the required emscripten environment variables for you to compile code.
-Run `npm run build-release-all` to build a release version of the wasm binary and the accompanying web-ifc api. It will be placed in ./dist.
-Run `npm run dev` to launch a development server with a basic ifc file viewer.
+`npm install`을 실행하여 모든 디펜던시(dependencies)를 설치하십시오.
+새 터미널을 열 때마다 `npm run setup-env`를 실행하십시오. 이렇게 하면 코드를 컴파일하는데 필요한 emscripten 환경 변수들을 설정하게 됩니다.
+`npm run build-release-all`을 실행하여 wasm 바이너리와 web-ifc API의 릴리즈 버전을 빌드하십시오. 결과물은 ./dist에 배치될 것입니다.
+`npm run dev`를 실행하여 기본 ifc 파일 뷰어와 함께 개발 서버를 실행하십시오.
 
-## Writing code on it
+## 코드 작성하기
 
-### Using an IDE (Integrated Development Environment)#
+### IDE (Integrated Development Environment) 이용하기
 
-VS Code - You can install VS Code from [here](https://code.visualstudio.com/download).
+VS Code - [여기](https://code.visualstudio.com/download)에서 VS Code를 설치할 수 있습니다.
 
-### Compiler for code
+### 코드를 위한 컴파일러
 
 GCC with MinGW (for windows) - You can configure GCC C++ compiler from [here](https://code.visualstudio.com/docs/cpp/config-mingw). Clang (for macOS) - You can configure Clang compiler from [here](https://code.visualstudio.com/docs/cpp/config-clang-mac).
 
