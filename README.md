@@ -515,10 +515,13 @@ WASM 라이브러리는 emscripten을 통해 빌드됩니다. emscripten 설정 
 
 다시 터미널을 열어서 다음 커맨드들을 실행하십시오:
 
-`npm install`을 실행하여 모든 디펜던시(dependencies)를 설치하십시오.
-새 터미널을 열 때마다 `npm run setup-env`를 실행하십시오. 이렇게 하면 코드를 컴파일하는데 필요한 emscripten 환경 변수들을 설정하게 됩니다.
-`npm run build-release-all`을 실행하여 wasm 바이너리와 web-ifc API의 릴리즈 버전을 빌드하십시오. 결과물은 ./dist에 배치될 것입니다.
-`npm run dev`를 실행하여 기본 ifc 파일 뷰어와 함께 개발 서버를 실행하십시오.
+* `npm install`을 실행하여 모든 디펜던시(dependencies)를 설치하십시오.
+
+* 새 터미널을 열 때마다 `npm run setup-env`를 실행하십시오. 이렇게 하면 코드를 컴파일하는데 필요한 emscripten 환경 변수들을 설정하게 됩니다.
+
+* `npm run build-release-all`을 실행하여 wasm 바이너리와 web-ifc API의 릴리즈 버전을 빌드하십시오. 결과물은 ./dist에 배치될 것입니다.
+
+* `npm run dev`를 실행하여 기본 ifc 파일 뷰어와 함께 개발 서버를 실행하십시오.
 
 ## 코드 작성하기
 
@@ -528,46 +531,55 @@ VS Code - [여기](https://code.visualstudio.com/download)에서 VS Code를 설�
 
 ### 코드를 위한 컴파일러
 
-GCC with MinGW (for windows) - You can configure GCC C++ compiler from [here](https://code.visualstudio.com/docs/cpp/config-mingw). Clang (for macOS) - You can configure Clang compiler from [here](https://code.visualstudio.com/docs/cpp/config-clang-mac).
+* GCC with MinGW (windows용) - [여기](https://code.visualstudio.com/docs/cpp/config-mingw) 설명을 따라 GCC C++ 컴파일러를 구성할 수 있습니다.
 
-Although the primary focus of the library is to be used through WebAssembly in the browser/nodejs, the project can be used stand-alone as a c++ library or executable. See [here](https://github.com/tomvandig/web-ifc/blob/main/src/wasm/web-ifc-test.cpp) for a simple entry point to get started.
+* Clang (macOS용) - [여기](https://code.visualstudio.com/docs/cpp/config-clang-mac) 설명을 따라 Clang 컴파일러를 구성할 수 있습니다.
 
-## Creating a submit pull request
+비록 라이브러리의 기본 목적은 WebAssembly를 통해 브라우저/nodejs에서 사용되는 것이지만 이 프로젝트는 C++ 라이브러리 또는 실행파일 형태로서 독립적으로 사용될 수 있습니다. 시작하기 위한 간단한 엔트리 포인트에 대해서는 [여기](https://github.com/tomvandig/web-ifc/blob/main/src/wasm/web-ifc-test.cpp)를 보십시오.
 
-Open you terminal and enter these commands:
+## submit pull request 만들기
 
-use `git status` to review your changes.
-use `git checkout master` to checkout to master branch.
-use `git pull` to sync your cloned repository with the origin repository.
-use `git checkout <branch-name>` to go back to your working branch.
-use `git pull` to sync with the the main branch.
-use `git add .` to stage your changes.
-use `git commit -m "type a message to display for changes"` to commit the changes made.
-use `git push` to push the changes to the main repository.
+터미널을 열고 다음 커맨드들을 입력하십시오:
 
-Now go to your github, inside the forked version of the repository. You will see a notification on the right (if not click on pull requests) 'compare & pull request' (generally green color button), click on it. Now describe the changes you made in short and click on 'create pull request'.
+* 변경사항을 다시 보려면 `git status`를 사용하십시오.
 
-### How do I get started?
+* master branch를 확인하려면 `git checkout master`를 사용하십시오.
 
-[Talk to us!](https://discord.gg/FXfyR4XrKT) Tell us about your situation and your ideas and we will help you get started as soon as possible.
+* 복제된 리포지토리를 원래 리포지토리와 동기화하려면 `git pull`을 사용하십시오.
+
+* 작업 중인 branch로 돌아오려면 `git checkout <branch-name>`을 사용하십시오.
+
+* main branch와 동기화하려면 `git pull`을 사용하십시오.
+
+* 변경사항을 올리려면 `git add .`를 사용하십시오.
+
+* 변경사항을 기록(commit)하려면 `git commit -m "type a message to display for changes"`를 사용하십시오.
+
+* main 리포지토리로 변경사항을 업로드(push)하려면 `git push`를 사용하십시오.
+
+이제 당신의 깃허브로 가서 리포지토리의 복제된(forked) 버전으로 들어가십시오. (pull request를 클릭하지 않았다면) 오른쪽 'compare & pull request' (일반적으로 녹색 버튼) 알림을 보게 될 것입니다. 그것을 클릭하십시오. 이제 간략하게 당신이 변경한 내용에 대한 설명을 넣고 'create pull request'를 클릭하십시오.
+
+### 어떻게 시작하나요
+
+[저희에게 말해보세요!](https://discord.gg/FXfyR4XrKT) 당신이 처한 상황과 당신의 아이디어를 말해주세요. 그러면 가능한 빨리 시작할 수 있도록 도와줄게요.
   
-## Introduction
+## 소개
 
-### Full IFC control at native speed
+### 네이티브 속도로 전체 IFC 제어
 
-It is often thought that web applications are not as powerful as desktop applications. Relatively recently, however, [WebAssembly](https://webassembly.org/) appeared on the scene.
+사람들은 웹 애플리케이션이 데스크톱 애플리케이션만큼 강력하지 않다고 흔히 생각합니다. 그러나 비교적 최근에 [WebAssembly](https://webassembly.org/)가 등장했습니다.
 
-* WebAssembly is a technology that allows the use of languages like C++ to create web applications.
+* WebAssembly는 웹 애플리케이션을 만들기 위해 C++과 같은 언어들을 사용하는 것을 허용하는 기술입니다.
 
-This means we can have the best of both worlds: the **flexibility** of a web application and the **full performance** of a machine. And this is what web-ifc is all about. You can install it with `npm i web-ifc` or `yarn add web-ifc` and it has the following features:
+이것은 2가지 세상의 가장 좋은 것을 얻을 수 있다는 것을 의미합니다: 웹 애플리케이션의 **유연성**과 머신의 **완전한 성능**. 그리고 이것이 web-ifc의 모든 것입니다. 당신은 `npm i web-ifc` 또는 `yarn add web-ifc`로 이것을 설치할 수 있습니다. 그리고 이것은 다음 기능들을 갖고 있습니다:
 
-* It is as **fast** as native applications thanks to its parsing core, written from scratch in C++.
+* 맨 처음부터 C++로 작성된 파싱 코어 덕분에 네이티브 애플리케이션만큼 **빠릅니다**.
 
-* It can be run directly on the **client** or as a **backend service**. Bring BIM to all parts of your system!
+* **클라이언트**에서 직접 실행하거나 **백엔드 서비스**에서 작동할 수도 있습니다. BIM을 시스템의 모든 부분으로 가져오십시오!
 
-* It can read **100% of the IFC data, including IFC types**. This allows data to be easily extracted, structured, traversed and entered into databases.
+* **IFC 타입들을 포함한 100% IFC 데이터**를 읽을 수 있습니다. 데이터를 쉽게 추출하거나 구조화하거나 순회하거나 데이터베이스로 입력하는 것이 가능합니다.
 
-* It can **edit data and write entire IFCs from scratch**. Create apps that communicate with the large software vendors.
+* **IFC 데이터를 편집하거나 맨 처음부터 전체 IFC 파일을 작성**할 수 있습니다. 대형 소프트웨어 벤더들과 통신하는 앱들을 만드십시오.
 
 In the following points, the API and its functionalities will be shown step by step. However, there are a **some issues** that are important to be clear about before using `web-ifc`.
 
