@@ -581,43 +581,43 @@ VS Code - [여기](https://code.visualstudio.com/download)에서 VS Code를 설�
 
 * **IFC 데이터를 편집하거나 맨 처음부터 전체 IFC 파일을 작성**할 수 있습니다. 대형 소프트웨어 벤더들과 통신하는 앱들을 만드십시오.
 
-In the following points, the API and its functionalities will be shown step by step. However, there are a **some issues** that are important to be clear about before using `web-ifc`.
+이후에는 API와 그 기능들을 단계적으로 보여줄 것입니다. 그러나 `web-ifc`를 사용하기 전에 명확하게 해야 할 중대한 **몇 가지 이슈들**이 있습니다.
 
-### But wait, I don't know C++!
+### 잠깐만요? 전 C++을 모르는데요!
 
-Don't worry! Although the parser is written in C++, it is compiled in a file called `web-ifc.wasm` that **browsers understand automatically**. Just include this file in your application and you will have access to the full API with native speed with **JavaScript** or **TypeScript**. How cool is that?
+걱정하지 마세요! 비록 파서(parser)가 C++로 작성되어 있기는 하지만 **브라우저가 자동으로 이해할 수 있는** `web-ifc.wasm` 파일로 컴파일됩니다. 당신의 애플리케이션이 이 파일을 include 시키기만 하면 **JavaScript** 또는 **TypeScript**를 이용하여 네이티브 속도로 전체 API에 접근할 수 있습니다. 대단하지 않나요?
 
-### What is the .wasm file for?
+### .wasm 파일은 무엇을 위한 것입니까?
 
-The web-ifc.wasm file contains the IFC **parsing core**. It is pre-compiled and **hyper-efficient**; unlike JavaScript, which has to be compiled line by line, this file can be sent directly to the CPU and executed without prior interpretation.
+web-ifc.wasm 파일은 IFC **파싱 코어**를 포함하고 있습니다. 이것은 미리 컴파일되어 있으며 **극도로 효율적**입니다; 한 줄씩 컴파일되는 JavaScript와 달리 이 파일은 사전 해석 없이 CPU에 직접 전송되고 실행될 수 있습니다.
 
-You can find this file in the `node-modules/web-ifc/web-ifc.wasm` folder. You will need to serve this file with your application (if frontend) or have it on your server (if backend).
+`node-modules/web-ifc/web-ifc.wasm` 폴더에서 이 파일을 찾을 수 있습니다. (프론트엔드일 경우) 이 파일을 당신의 애플리케이션에 제공하거나 (백엔드일 경우) 서버에 저장해야 합니다.
 
-* Beware: when you update the web-ifc version in your application, you will also have to update (copy) the corresponding version of web-ifc.wasm.
+* 주의사항: 당신의 애플리케이션에서 web-ifc 버전을 업데이트할 때, web-ifc.wasm의 해당 버전도 업데이트(복사)해야 합니다.
 
-### When should I use web-ifc?
+### 언제 web-ifc를 사용해야 합니까?
 
-`Web-ifc` is the **lightest** and **most flexible** module of IFC.js. However, this flexibility also means that you have to know what you are doing, and therefore know the internals of the IFC schema relatively well.
+`Web-ifc`는 **초경량**이며 **매우 유연한 ** IFC.js의 모듈입니다. 그러나 이 유연성은 당신이 무엇을 하고 있는지 알고 있어야 하며 IFC 스키마의 내부를 비교적 잘 알고 있어야 함을 의미합니다.
 
-Moreover, web-ifc **does not implement a 3d viewer**. This is an advantage, because it means that you can get IFC geometry without relying on a particular 3d renderer in a more agile way.
+게다가 web-ifc는 **3D 뷰어를 구현하지 않습니다**. 특정 3D 렌더러에 의존하지 않고도 민첩한 방식으로 IFC 지오메트리를 얻을 수 있기 때문에 이것은 오히려 장점이라고 할 수 있습니다.
 
-* If you want to see 3d geometry easily, you will either have to implement it yourself, or use **web-ifc-three** or **web-ifc-viewer**.
+* 만약 3D 지오메트리를 쉽게 보고 싶다면, 당신이 직접 구현하든가, **web-ifc-three** 또는 **web-ifc-viewer**를 이용해야 합니다.
 
 ## Hello World
 
-## Introduction
+## 소개
 
-Web-ifc provides an easy way to read and manipulate your ifc file. you can as example to get the spatial tree information or project, geometries, add new entities etc... In this tutorial we will **Load an ifc file** and **Retrieves all its IFCSPACE**.
+Web-ifc는 ifc 파일을 쉽게 읽고 조작하는 방법을 제공해줍니다. 예제에 나온대로 공간 트리 정보 또는 프로젝트, 지오메트리, 새로운 엔티티 추가 등이 가능합니다. 이 튜토리얼에서는 **ifc 파일 로드하기**와 **IFCSPACE로부터 모두 가져오기**를 해보겠습니다.
 
-Thanks to web-ifc all of these are just a breeze
+web-ifc 덕분에 이 모든 것이 용이합니다.
 
-* You can get the full code [here](https://github.com/ifcjs/hello-world/tree/main/examples/web-ifc/hello-world).
+* 전체 코드는 [여기](https://github.com/ifcjs/hello-world/tree/main/examples/web-ifc/hello-world)에서 얻을 수 있습니다.
 
-## Setting up the project
+## 프로젝트 설정하기
 
-Node JS must be install on your machine, and to makes thing easier i recommand to use Visual Code studio with the plugin Live server.
+당신의 머신에 Node JS를 반드시 설치해야 합니다. 그리고 Visual Studio Code에 Live server 플러그인을 설치하는 것을 권장합니다.
 
-### install dependencies
+### 디펜던시(dependencies) 설치하기
 
 ```
 npm init
@@ -627,9 +627,9 @@ npm install @rollup/plugin-node-resolve --save-dev
 npm install @open-wc/building-rollup --save-dev
 ```
 
-### add scripts in your package.json
+### package.json에 스크립트 추가하기
 
-open your package.json and add aliases build and watch in the scripts section,
+package.json을 열고 scripts 섹션에 build와 watch라는 이름을 추가합니다.
 
 ```
   "scripts": {
@@ -638,9 +638,9 @@ open your package.json and add aliases build and watch in the scripts section,
   },
 ```
 
-### configure Rollup
+### Rollup 구성하기
 
-on your project root add a config file **rollup.config.js** with these configs values:
+프로젝트 루트에 구성 파일 **rollup.config.js**를 추가하십시오. 구성 파일의 내용은 다음과 같습니다:
 
 ```
 import resolve from "@rollup/plugin-node-resolve";
@@ -658,32 +658,35 @@ export default {
 };
 ```
 
-## Feed your root folder :)
+## 루트 폴더를 채우십시오. :)
 
-To make things easier we drop all in the root folder :
+쉽게 하려면 루트 폴더에 다음을 모두 넣으십시오:
 
 * app.js
+
 * index.html
-* drop an .ifc file of your choice for testing.
-* copy **web-ifc-mt.wasm** and **web-ifc.wasm** from **node_modules/web-ifc** here in the root folder
 
-### Serving files from a server
+* 테스트하려고 당신이 선택한 .ifc 파일을 넣어 두십시오.
 
-for Visual code studio lovers there is an extension which remove all headaches, this will give you the possibility to serve your bundled app. elsewhere you can run your code throught node server directly
+* **node_modules/web-ifc**로부터 **web-ifc-mt.wasm**과 **web-ifc.wasm**을 루트 폴더에 복사하십시오.
+
+### 서버로부터 파일 제공하기
+
+Visual Studio Code를 애용하는 분들을 위해 모든 고민거리를 없애줄 확장이 있습니다. 이것은 당신의 번들화된 앱을 제공하기 위한 기능을 제공해 줄 것입니다. 다른 경우에는 node 서버를 통해 코드를 직접 실행할 수 있습니다.
 
 https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer
 
-## How to do it
+## 어떻게 해야 합니까?
 
-Ok now you've got your folder ready to start, let's complete these 2 objectives :
+이제 시작하기에 앞서 당신은 폴더를 갖고 있을 것입니다. 다음 2가지를 완료해 봅시다:
 
-* load your ifc file
+* ifc 파일 로드하기
 
-* grab some datas from this loaded ifc file
+* 로드된 ifc 파일로부터 데이터 가져오기
 
-### get an .ifc file
+### .ifc 파일 획득하기
 
-If you don't have a sample ifcModel you can grab one from [here](https://github.com/IFCjs/test-ifc-files)
+만약 샘플 ifcModel이 없다면 [여기](https://github.com/IFCjs/test-ifc-files)에서 하나 가져오실 수 있습니다.
 
 ### index.html
 
