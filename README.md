@@ -911,7 +911,7 @@ async function getLevels() {
 
 프로퍼티들은 각각 값들을 감싸고(nested) 있습니다. 즉, Name 프로퍼티는 해당하는 값을 리턴하지 않을 것입니다. 객체는 `type: 1, value: "Nivel 2"`을 가진 채로 리턴할 것입니다.
 
-So in order to return the name value we will have to refer to it as lvl.Name.value
+그래서 name 값을 리턴하기 위해 lvl.Name.value로 참조할 것입니다.
 
 ```
 {
@@ -954,9 +954,9 @@ So in order to return the name value we will have to refer to it as lvl.Name.val
 }
 ```
 
-### Creating the modified file
+### 변경된 파일 생성하기
 
-After processing all changes, we will create a new file and add a download link to the web page so the user can download the file
+모든 변경사항을 처리한 후에, 새로운 파일을 생성하고 웹 페이지에 다운로드 링크를 추가할 것입니다. 그러면 사용자가 파일을 다운로드할 수 있을 것입니다.
 
 ```
 function createDownloadLink(lvl) {
@@ -973,19 +973,19 @@ function createDownloadLink(lvl) {
 }
 ```
 
-## Next steps
+## 다음 단계
 
-Congratulations! You should now be able to **traverse any IFC** and extract the properties you are looking for.
+축하합니다! 당신은 이제 **어떤 IFC 파일이라도 순회**할 수 있고 원하는 프로퍼티를 추축할 수 있을 것입니다.
 
-You can use the web-ifc APIs to edit properties and store the edited data into a new IFC file.
+당신은 web-ifc API를 이용하여 프로퍼티를 편집하고, 편집된 데이터를 새로운 IFC 파일에 저장할 수 있습니다.
 
-## Properties
+## 프로퍼티(Properties)
 
-One of the coolest thing you can do is traverse the IFC file and fetch the relevant information, web-ifc provides us with the capability to read and write IFC file from within the browser, In this tutorial we will **Read Properties** from IFC file and **Output it on Frontend**.
+당신이 할 수 있는 대단한 것들 중 하나는 IFC 파일을 순회하고 관련 정보를 가져오는 것입니다. web-ifc는 브라우저에서 IFC 파일을 읽고 쓸 수 있는 기능을 제공해 줍니다. 이 튜토리얼에서는 IFC 파일로부터 **프로퍼티 읽기**와 **프론트엔드에서 프로퍼티 출력**을 할 것입니다.
 
-This tutorial will help us to get the **Analysis** of IFC without a viewer.
+이 튜토리얼은 뷰어 없이 IFC의 **분석**을 가져오는 데 도움을 줄 것입니다.
 
-You can check out the final result deployed [here](https://ifcjs.github.io/hello-world/examples/web-ifc/ifc-to-json/properties/index.html) and the full code [here](https://github.com/ifcjs/hello-world/tree/main/examples/web-ifc/ifc-to-json/properties).
+[여기](https://ifcjs.github.io/hello-world/examples/web-ifc/ifc-to-json/properties/index.html)에서 배치된 최종 결과를 확인할 수 있고 [여기](https://github.com/ifcjs/hello-world/tree/main/examples/web-ifc/ifc-to-json/properties)에서 전체 코드를 확인할 수 있습니다.
 
 There are several types of properties in the IFC scheme, each with a specific purpose, and IFC.js can get **all of them**. Some of the most common are:
 
