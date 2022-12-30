@@ -827,29 +827,29 @@ ifcapi.Init().then(() => {
 
 ## 프로퍼티 편집하기
 
-IFC.js does not only read and parse data from IFC files; the web-ifc library has writing capabilities. This cool feature allow users to edit or create ifc items. In this tutorial we will explore the methods of **editing properties** in an IFC file and save changes to a new file.
+IFC.js는 IFC 파일을 읽고 데이터를 파싱(parse)하는 것만 하지 않습니다; web-ifc 라이브러리는 작성 기능도 갖고 있습니다. 이 멋진 기능은 사용자가 ifc 항목들을 편집하거나 생성할 수 있게 해줍니다. 이 튜토리얼에서는 IFC 파일에서 **프로퍼티 편집** 방법과 변경사항을 새로운 파일로 저장하는 방법을 찾아볼 것입니다.
 
-This tutorial will help us to **Edit Properties** of IFC without a viewer.
+이 튜토리얼은 뷰어 없이 IFC의 **프로퍼티 편집**하는 것을 도와줄 것입니다.
 
-* You can check out the final result deployed [here](https://ifcjs.github.io/hello-world/examples/web-ifc/ifc-to-json/properties/index.html) and the full code [here](https://github.com/ifcjs/hello-world/tree/main/examples/web-ifc/ifc-to-json/editing-properties).
+* [여기](https://ifcjs.github.io/hello-world/examples/web-ifc/ifc-to-json/properties/index.html)에서 배치된 최종 결과를 확인할 수 있습니다. 그리고 [여기](https://github.com/ifcjs/hello-world/tree/main/examples/web-ifc/ifc-to-json/editing-properties)에서 전체 코드를 볼 수 있습니다.
 
-📚 There are several types of properties in the IFC scheme, each with a specific purpose, and IFC.js can get **all of them**. The list of all properties and how to retrieve them has been explained in details in the properties tutorial.
+IFC scheme 내에는 여러 타입의 프로퍼티들이 있습니다. 각각은 특정 목적을 갖고 있습니다. 그리고 IFC.js는 **이 모든 것**을 가져올 수 있습니다. 모든 프로퍼티들의 목록과 그것들을 가져오는 방법은 프로퍼티 튜토리얼에 자세히 설명이 되어 있습니다.
 
-* Native properties: Specific to each IFC class.
+* 네이티브 프로퍼티: 각 IFC 클래스에 적용됨.
 
- But enough theory! Let's get down to work.
+이론은 충분합니다! 이제 다음부터 작업을 해봅시다.
 
-## How to do it
+## 어떻게 해야 하는가?
 
-### Setting up
+### 설정하기
 
-#### Install web-ifc package
+#### web-ifc 패키지 설치하기
 
 `npm install web-ifc`
 
-#### Imports and Global Variables
+#### 가져오기 및 글로벌 변수
 
-Make sure you copy the wasm files into the root directory or copy wasm files to a directory of your choice but you will have to call setWasmPath
+wasm 파일을 루트 디렉토리나 당신이 선택한 디렉토리에 복사했는지 확인해 보십시오. setWasmPath를 호출해야 합니다.
 
 ```
 import {
@@ -861,15 +861,15 @@ import {
 ..
 ```
 
-#### Reading File
+#### 파일 읽기
 
-We will read file and call [`LoadFileData()`](https://github.com/IFCjs/hello-world/blob/main/examples/web-ifc/ifc-to-json/properties/app.js#:~:text=async%20function%20LoadFile(ifcAsText)) and send IFC data as Text
+이제 파일을 읽고 [`LoadFileData()`](https://github.com/IFCjs/hello-world/blob/main/examples/web-ifc/ifc-to-json/properties/app.js#:~:text=async%20function%20LoadFile(ifcAsText))를 호출하고 IFC 데이터를 텍스트 형태로 보낼 것입니다.
 
 ```
 fetch("../../../../IFC/01.ifc")
   .then((response) => response.text())
   .then((data) => {
-    // This will send the file data to our LoadFileData method
+    // 파일 데이터를 LoadFileData 메소드로 보낼 것입니다
     LoadFileData(data);
   });
 ..
@@ -882,11 +882,11 @@ fetch("../../../../IFC/01.ifc")
 ..
 ```
 
-#### Let's say we want to change the name of building storey i.e. level.
+#### 건물 층, 즉 레벨의 이름을 바꿔보기로 합시다.
 
-First we need to get all items of type building storey or IFCBUILDINGSTOREY In this example we will get all items of type IFC building elements then we will filter by the Name property for Nivel 2 when the selected level is found, we will change the name to 'Level 2' and save the line to a new file.
+먼저 건물 층 타입 또는 IFCBUILDINGSTOREY 항목을 모두 가져와야 합니다. 이 예제에서는 IFC 건물 요소 타입인 모든 항목을 가져올 것입니다. 그리고 나서 선택된 레벨을 발견했을 때 'Nivel 2'라는 Name 프로퍼티를 걸러낼 것입니다. 이제 이름을 'Level 2'로 바꾸고 해당 라인을 새로운 파일로 저장할 것입니다.
 
-web-ifc api has a function GetLineIDsWithType which returns IDs of all elements in a given model for a specific type. the function takes two arguments model id and element type. IFC types are included in the web-ifc api as enumerations and should be imported to be used with GetLineIDsWithType function
+web-ifc API는 특정 타입에 대해 주어진 모델 안에서 모든 요소들의 ID를 리턴하는 GetLineIDsWithType 함수를 갖고 있습니다. 이 함수는 2가지 인자를 갖는데 모델 id와 요소 타입입니다. web-ifc API에 포함된 IFC 타입들은 enumeration으로 되어 있으며 GetLineIDsWithType 함수와 함께 사용하기 위해 반드시 가져와야 합니다.
 
 ```
 ..
@@ -907,9 +907,9 @@ async function getLevels() {
 }
 ```
 
-The returned object lvl is an array of objects coresponding to the selected type (IFCBUILDINGSTOREY in our case). This object contains the properties An example of the returned object for IFCBUILDINGSTOREY is shown below.
+리턴된 객체 lvl은 선택한 타입(저희의 경우 IFCBUILDINGSTOREY)에 해당하는 객체 배열입니다. 이 객체는 프로퍼티들을 포함하고 있습니다. IFCBUILDINGSTOREY에 대하여 리턴된 객체의 예시는 아래에 나와 있습니다.
 
-the properties have their values nested. i.e. Name property will not return the value corresponding to it, an object will be return having `type: 1, value: "Nivel 2"`.
+프로퍼티들은 각각 값들을 감싸고(nested) 있습니다. 즉, Name 프로퍼티는 해당하는 값을 리턴하지 않을 것입니다. 객체는 `type: 1, value: "Nivel 2"`을 가진 채로 리턴할 것입니다.
 
 So in order to return the name value we will have to refer to it as lvl.Name.value
 
