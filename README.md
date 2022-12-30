@@ -658,7 +658,7 @@ export default {
 };
 ```
 
-## 루트 폴더를 채우십시오. :)
+## 루트 폴더를 채우십시오 :)
 
 쉽게 하려면 루트 폴더에 다음을 모두 넣으십시오:
 
@@ -710,27 +710,27 @@ https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer
 
 ### app.js
 
-#### definitions
+#### 정의
 
-We will only need **web-ifc/web-ifc-api** just pay attention on ifcFileLocation its an ifcModel stored in the root folder in this demo.
+**web-ifc/web-ifc-api**만 필요합니다. ifcFileLocation만 신경쓰시면 됩니다. 이 데모에서 루트 폴더에 저장된 ifcModel입니다.
 
 ```
 import {IfcAPI} from "web-ifc/web-ifc-api";
-const ifcFileLocation = "duplex-apartment.ifc"; // dont forget to modify for your ifc filename
+const ifcFileLocation = "duplex-apartment.ifc"; // 당신의 ifc 파일명으로 변경하는 것을 명심하세요
 let modelID = 0;
 const ifcapi = new IfcAPI();
-//ifcapi.SetWasmPath("./wasm/"); only if the wasm file are note at the same level as app.js
+ifcapi.SetWasmPath("./wasm/"); // wasm 파일이 app.js와 같은 레벨에 있는 노트일 경우에만
 ```
 
-#### fetching ifcFile function
+#### ifcFile 함수 가져오기
 
-i've chosen the XMLHttpRequest to fetch my file you can chose any method of your choice. The only required thing is `new Uint8Array(oReq.response)` at the end.
+파일을 가져오기 위해 XMLHttpRequest를 선택했습니다. 당신이 원하는 아무 방식을 선택하셔도 됩니다. 마지막에 필요한 것은 `new Uint8Array(oReq.response)` 뿐입니다.
 
 ```
 /**
  * resolve a Uint8Array().
  * 
- * @param string url location of your ifc file
+ * @param string ifc 파일의 url 위치
  * @returns {Promise}
  */
 function getIfcFile(url) {
@@ -746,9 +746,9 @@ function getIfcFile(url) {
 }
 ```
 
-#### loadFile with Web-ifc
+#### Web-ifc로 파일 로드하기
 
-We are almost done ;) . ifcapi is initialized we fetch our ifcFile and with ifcapi we can work with the loaded file
+거의 다 했습니다 ;) ifcapi가 초기화되면 ifcFile을 가져옵니다. 그리고 ifcapi를 이용해서 로드된 파일을 가지고 작업할 수 있습니다.
 
 ```
 ifcapi.Init().then(()=>{
@@ -761,35 +761,35 @@ ifcapi.Init().then(()=>{
 });
 ```
 
-#### Let's Build
+#### 빌드해 봅시다.
 
-run this command before opening your app **npm run build** rollup will build your app and then you will have to serve your app. If you have live server extension installed on Visual code studio you can simply run it and go to the hello_world example. At any code changes don't forget to rebuild OR you can use **npm run watch** while the job is not done rollup will rebuild on code save
+앱을 열기 전에 커맨드 **npm run build**를 실행하십시오. rollup이 앱을 빌드할 것입니다. 그리고 나서 앱을 제공할 수 있게 됩니다. 만약 Visual Studio Code에 live server 확장이 설치되어 있다면 그저 실행해서 hello_world 예제로 갈 수 있습니다. 코드가 변경되면 다시 빌드하는 것을 잊지 마십시오. 그렇지 않으면 작업이 완료되지 전에 **npm run watch**를 사용할 수 있습니다. rollup은 코드가 저장될 때 다시 빌드할 것입니다.
 
-if in your console you got this message `{isModelOpened: true}`
+콘솔에서 다음 메시지를 보게 될 것입니다. `{isModelOpened: true}`
 
-**congratulations**
+**축하합니다**
 
-All is setup and running but now i want **ALL** IFCSPACES
+설정이 완료되었고 실행 중입니다. 하지만 이제 **모든** IFCSPACES를 원합니다.
 
-###Retrieve a list of spaces.
+### 공간 목록 가져오기
 
-Okay, now i want to get all the IFCSPACES and display them somewhere. Lets make a function wich grab all IFCSPACE. You can fetch by any type you need. i've made a total arbitrary decision to take IFCSPACE.
+자, 이제 모든 IFCSPACES를 가져와서 어딘가에 표시하고 싶습니다. 모든 IFCSPACES를 가져오는 함수를 만들어봅시다. 원하는 어떤 타입이라도 가져올 수 있습니다. 저는 IFCSPACE를 가져오기 위해 전적으로 자의적인 결정을 내렸습니다.
 
 ```
 /**
- * Get all IFCSPACE from ifc file
+ * ifc 파일로부터 모든 IFCSPACE 가져오기
  * @param integer modelID 
  * @returns array
  */
 function getAllSpaces(modelID) {
-    // Get all the propertyset lines in the IFC file
+    // IFC 파일에 있는 모든 프로퍼티셋 라인 가져오기
     let lines = ifcapi.GetLineIDsWithType(modelID, IFCSPACE);
     let lineSize = lines.size();
     let spaces = [];
     for (let i = 0; i < lineSize; i++) {
-        // Getting the ElementID from Lines
+        // 각 라인으로부터 ElementID 가져오기
         let relatedID = lines.get(i);
-        // Getting Element Data using the relatedID
+        // relatedID를 이용하여 요소 데이터 가져오기
         let relDefProps = ifcapi.GetLine(modelID, relatedID);
         spaces.push(relDefProps);
 
@@ -798,15 +798,15 @@ function getAllSpaces(modelID) {
 }
 ```
 
-If your attentive you will notice the const IFSPACE from **let lines = ifcapi.GetLineIDsWithType(modelID, IFCSPACE);** it means I want to get all IFCSPACE from my ifc file. Don't forget to import this as follow.
+주위를 기울이면 **let lines = ifcapi.GetLineIDsWithType(modelID, IFCSPACE);**로부터 const IFCSPACE가 보일 것입니다. 이것은 ifc 파일로부터 모든 IFCSPACE를 가져온다는 것을 의미합니다. 다음과 같이 이것을 가져오는 것을 명심하십시오.
 
 ```
 import {IfcAPI,IFCSPACE} from "web-ifc/web-ifc-api";
 ```
 
-#### call getAllSpaces
+#### getAllSpaces 호출하기
 
-after the .ifc file has been retrieved and loaded in ifcapi i can call my function to get all spaces.
+.ifc 파일을 가져온 후에 ifcapi에서 로드되면 이제 모든 공간을 가져오기 위해 나의 함수를 호출할 수 있습니다.
 
 ```
 ifcapi.Init().then(() => {
@@ -821,17 +821,501 @@ ifcapi.Init().then(() => {
 });
 ```
 
+## 다음 단계
+
+**축하합니다** 이제 .ifc 파일을 로드하고 원하는 아무 요소를 찾을 수 있습니다. 그러나 공간 트리를 탐색하거나 IFCSPACE를 설명하는 것이 더 좋을 수도 있습니다... 다음에 계속
+
+## 프로퍼티 편집하기
+
+IFC.js does not only read and parse data from IFC files; the web-ifc library has writing capabilities. This cool feature allow users to edit or create ifc items. In this tutorial we will explore the methods of **editing properties** in an IFC file and save changes to a new file.
+
+This tutorial will help us to **Edit Properties** of IFC without a viewer.
+
+* You can check out the final result deployed [here](https://ifcjs.github.io/hello-world/examples/web-ifc/ifc-to-json/properties/index.html) and the full code [here](https://github.com/ifcjs/hello-world/tree/main/examples/web-ifc/ifc-to-json/editing-properties).
+
+📚 There are several types of properties in the IFC scheme, each with a specific purpose, and IFC.js can get **all of them**. The list of all properties and how to retrieve them has been explained in details in the properties tutorial.
+
+* Native properties: Specific to each IFC class.
+
+ But enough theory! Let's get down to work.
+
+## How to do it
+
+### Setting up
+
+#### Install web-ifc package
+
+`npm install web-ifc`
+
+#### Imports and Global Variables
+
+Make sure you copy the wasm files into the root directory or copy wasm files to a directory of your choice but you will have to call setWasmPath
+
+```
+import {
+    IfcAPI, IFCBUILDINGSTOREY
+} from "web-ifc/web-ifc-api";
+..
+
+..
+..
+```
+
+#### Reading File
+
+We will read file and call [`LoadFileData()`](https://github.com/IFCjs/hello-world/blob/main/examples/web-ifc/ifc-to-json/properties/app.js#:~:text=async%20function%20LoadFile(ifcAsText)) and send IFC data as Text
+
+```
+fetch("../../../../IFC/01.ifc")
+  .then((response) => response.text())
+  .then((data) => {
+    // This will send the file data to our LoadFileData method
+    LoadFileData(data);
+  });
+..
+  async function LoadFileData(ifcAsText) {
+    const uint8array = new TextEncoder().encode(ifcAsText);
+    modelID = await OpenIfc(uint8array);
+    getLevels();
+    ..
+}
+..
+```
+
+#### Let's say we want to change the name of building storey i.e. level.
+
+First we need to get all items of type building storey or IFCBUILDINGSTOREY In this example we will get all items of type IFC building elements then we will filter by the Name property for Nivel 2 when the selected level is found, we will change the name to 'Level 2' and save the line to a new file.
+
+web-ifc api has a function GetLineIDsWithType which returns IDs of all elements in a given model for a specific type. the function takes two arguments model id and element type. IFC types are included in the web-ifc api as enumerations and should be imported to be used with GetLineIDsWithType function
+
+```
+..
+
+async function getLevels() {
+  levels = await ifcapi.GetLineIDsWithType(modelID, IFCBUILDINGSTOREY);
+  for (let i = 0; i < levels.size(); i++) {
+    const lvl = ifcapi.GetLine(modelID, levels.get(i));
+    if (lvl.Name.value === "Nivel 2") {
+      lvl.LongName.value = "Level 2";
+      ifcapi.WriteLine(modelID, lvl);
+      createDownloadLink(lvl);
+    }
+  }
+}
+..
+
+}
+```
+
+The returned object lvl is an array of objects coresponding to the selected type (IFCBUILDINGSTOREY in our case). This object contains the properties An example of the returned object for IFCBUILDINGSTOREY is shown below.
+
+the properties have their values nested. i.e. Name property will not return the value corresponding to it, an object will be return having `type: 1, value: "Nivel 2"`.
+
+So in order to return the name value we will have to refer to it as lvl.Name.value
+
+```
+{
+  "expressID": 144,
+  "type": 3124254112,
+  "GlobalId": {
+    "type": 1,
+    "value": "0w984V0GL6yR4z75YWgVzB"
+  },
+  "OwnerHistory": {
+    "type": 5,
+    "value": 41
+  },
+  "Name": {
+    "type": 1,
+    "value": "Nivel 2"
+  },
+  "Description": null,
+  "ObjectType": {
+    "type": 1,
+    "value": "Nivel:Nivel 1"
+  },
+  "ObjectPlacement": {
+    "type": 5,
+    "value": 143
+  },
+  "Representation": null,
+  "LongName": {
+    "type": 1,
+    "value": "Level 2"
+  },
+  "CompositionType": {
+    "type": 3,
+    "value": "ELEMENT"
+  },
+  "Elevation": {
+    "type": 4,
+    "value": 3
+  }
+}
+```
+
+### Creating the modified file
+
+After processing all changes, we will create a new file and add a download link to the web page so the user can download the file
+
+```
+function createDownloadLink(lvl) {
+  const data = ifcapi.ExportFileAsIFC(modelID);
+  const blob = new Blob([data]);
+  const file = new File([blob], "modified.ifc");
+  const url = URL.createObjectURL(file);
+  const link = document.createElement("a");
+  link.innerText = "Download";
+  link.download = "modified.ifc";
+  link.setAttribute("href", url);
+
+  document.body.appendChild(link);
+}
+```
+
 ## Next steps
 
-**congratulations** you can load your .ifc file and find any element you want. However it could be nice to navigate in your spatial tree, or describe an IFCSPACE... To be continued
+Congratulations! You should now be able to **traverse any IFC** and extract the properties you are looking for.
 
-## Editing Properties
-
-?
+You can use the web-ifc APIs to edit properties and store the edited data into a new IFC file.
 
 ## Properties
 
-?
+One of the coolest thing you can do is traverse the IFC file and fetch the relevant information, web-ifc provides us with the capability to read and write IFC file from within the browser, In this tutorial we will **Read Properties** from IFC file and **Output it on Frontend**.
+
+This tutorial will help us to get the **Analysis** of IFC without a viewer.
+
+You can check out the final result deployed [here](https://ifcjs.github.io/hello-world/examples/web-ifc/ifc-to-json/properties/index.html) and the full code [here](https://github.com/ifcjs/hello-world/tree/main/examples/web-ifc/ifc-to-json/properties).
+
+There are several types of properties in the IFC scheme, each with a specific purpose, and IFC.js can get **all of them**. Some of the most common are:
+
+* Native properties: Specific to each IFC class.
+
+* Type properties: Describe properties of all elements of the same type (e.g. all envelope walls of a particular type).
+
+* Material properties: Describes all the materials that make up the layers of that element.
+
+* Property sets: Arbitrary sets of user-defined properties. There may be multiple sets of properties associated with one or more elements. Each property set contains an arbitrary group of properties related to each other.
+
+* Quantity sets: Sets of properties describing the dimensions of the elements to which they refer. Although it would also be possible to infer element dimensions implicitly from the geometry definition, this explicit description makes it much easier to create applications that measure IFC models.
+
+But enough theory! Let's get down to work.
+
+## How to do it
+
+### Setting up
+
+#### Imports and Global Variables
+
+```
+import {
+    IfcAPI, IFCRELDEFINESBYPROPERTIES
+} from "web-ifc/web-ifc-api";
+..
+// We will show our properties in table, we will talk about this in FrontEnd Section
+const table = document.createElement("table");
+..
+..
+```
+
+#### Reading File
+
+We will read file and call [`LoadFileData()`](https://github.com/IFCjs/hello-world/blob/main/examples/web-ifc/ifc-to-json/properties/app.js#:~:text=async%20function%20LoadFile(ifcAsText)) and send IFC data as Text
+
+```
+fetch("../../../../IFC/01.ifc")
+  .then((response) => response.text())
+  .then((data) => {
+    // This will send the file data to our LoadFileData method
+    LoadFileData(data);
+  });
+```
+
+**Creating a method which will be called for getting Element Properties** All the code for getting **Element Data** goes inside it
+
+```
+function getPropertyWithExpressId(modelID=0) {
+    // Clearing if previous values present
+    const prop = document.getElementById("properties");
+    prop.innerHTML = "";
+    table.innerHTML = "";
+
+    // Getting the Element ID from User and parsing it to
+    const elementID = parseInt(document.getElementById("expressIDLabel").value);
+    ..
+    // Getting Element Data - Refer Below
+    ..
+
+    // Appending Table to our Div
+    prop.appendChild(table);
+}
+```
+
+### Getting Element Data
+
+`GetAllLines()` gives you all the lines, but what if you want to get a line according to that ElementID?
+
+`GetLines()` can be used at times like these when we know ElementID and want the data for it.
+
+#### Getting Element Data by ElementID
+
+```
+// If third parameter is added as true, we get a flatten result
+const element = ifcapi.GetLine(modelID, elementID);
+
+// Now you can fetch GUID of that Element
+const guid = element.GlobalId.value;
+```
+
+#### But what is Element?
+
+Every Entity can be considered as an Element which has it's own unique ElementID, by using the above code we can get various values that are contained in that Element Data. Few values that you can get and what we will **output on Frontend** are
+
+* [GUID](https://technical.buildingsmart.org/resources/ifcimplementationguidance/ifc-guid/) : Globally Unique Identifier for the Element
+
+* Name - Name given to that Element
+
+* IfcType - It refers to the type of Element it is e.g. `IFCWALL`, `IFCWINDOW`
+
+* [IfcObjectType](https://standards.buildingsmart.org/IFC/RELEASE/IFC2x3/TC1/HTML/ifckernel/lexical/ifctypeobject.htm#:~:text=IfcTypeObject&text=Definition%20from%20buildingSMART%3A%20The%20object,%2D%20specific%20%2D%20occurrence%20modeling%20paradigm.) - Defines the specific information about a type
+
+* [Tag](https://www.visualarq.com/features/collaboration/ifc/#:~:text=Tag%20feature.-,The%20IFC%20Tag,-The%20IFC%20tag) - The IFC tag feature lets you assign IFC properties to the objects when they are exported to IFC
+
+* and **Many More**
+
+#### Element Data
+
+Please **Ignore** `createRowInTable()` as of now, it will be covered in Frontend Section
+
+Just remember 1st parameter is the Label and the 2nd parameter is the respected value.
+
+```
+// Now you can fetch GUID of that Element
+const guid = element.GlobalId.value;
+createRowInTable("GUID", guid);
+
+const name = element.Name.value;
+createRowInTable("Name", name);
+
+const ifcType = element.__proto__.constructor.name;
+createRowInTable("IfcType", ifcType);
+
+const type = element.ObjectType.value;
+createRowInTable("Object Type", type);
+
+const tag = element.Tag.value;
+createRowInTable("Tag", tag);
+```
+
+### Element Properties
+
+Now that we have Element Data, we need to get the properties of that Element, the way IFC is structured we can't directly get Properties like we got Element Data, we have to fetch Lines which are Property Data and filter it according to the ExpressID we want.
+
+Feels too hectic? Don't worry, web-ifc with it's **Native Speed** gets us the data easily.
+
+#### Getting All Lines with Type
+
+We will get all `Lines` that has relation as properties with Elements i.e `IFCRELDEFINESBYPROPERTIES`.
+
+```
+// Get all the propertyset lines in the IFC file
+let lines = ifcapi.GetLineIDsWithType(modelID, IFCRELDEFINESBYPROPERTIES);
+```
+
+#### Get ElementID of Property Sets
+
+* After getting the lines we will fetch the ElementID from those lines, next we use those ElementID to get the Element Data same like what we have done above.
+
+* Next, we will go through the Element Data and find out the RelatedObjects and if those RelatedObjects contain the ElementID for which we are trying to find properties we save them in a local array
+
+```
+// In the below array we will store the IDs of the Property Sets found
+let propSetIds = [];
+for (let i = 0; i < lines.size(); i++) {
+  // Getting the ElementID from Lines
+  let relatedID = lines.get(i);
+
+  // Getting Element Data using the relatedID
+  let relDefProps = ifcapi.GetLine(modelID, relatedID);
+
+  // Boolean for Getting the IDs if relevant IDs are present
+  let foundElement = false;
+
+  // RelatedObjects is a property that is an Array of Objects.
+  // The way IFC is structured, Entities that use same property are included inside RelatedObjects
+  // We Search inside RelatedObjects if our ElementID is present or not
+  relDefProps.RelatedObjects.forEach((relID) => {
+    if (relID.value === elementID) {
+      foundElement = true;
+    }
+  });
+
+  if (foundElement) {
+    // Relevant IDs are found we then we go to RelatingPropertyDefinition
+    // RelatingPropertyDefinition contain the IDs of Property Sets
+    // But they should not be array, hence using (!Array.isArray())
+    if (!Array.isArray(relDefProps.RelatingPropertyDefinition)) {
+      console.log("Found");
+      let handle = relDefProps.RelatingPropertyDefinition;
+
+      // Storing and pushing the IDs found in propSetIds Array
+      propSetIds.push(handle.value);
+    }
+  }
+}
+```
+
+The heavy lifting has been done, now we will repeat few of the steps.
+
+#### Getting Property Sets from their ID
+
+* Yes you are right, getting Element Data using Element IDs!, now we will use the IDs from propSetIds and Get Data.
+
+* Then we will check whether they have properties i.e. check if they contain Nominal Values
+
+* If you want you can store Property Sets but in our case we will show them on Frontend, so no need to store.
+
+```
+// Getting the Property Sets from their IDs
+let propsets = propSetIds.map((id) => ifcapi.GetLine(modelID, id, true));
+
+propsets.forEach((set) => {
+  // There can multiple Property Sets
+  set.HasProperties.forEach((p) => {
+    // We will check if the Values that are present are not null
+    if (p.NominalValue != null) {
+      // This is an e.g. filter, you can write down your various conditions to modify the result
+      if (p.NominalValue.label === "IFCBOOLEAN") {
+        // We will talk about this function in Frontend Part
+        createRowInTable(p.Name.value, p.NominalValue.value);
+      } else {
+        // We will talk about this function in Frontend Part
+        createRowInTable(p.NominalValue.label, p.NominalValue.value);
+      }
+    }
+  });
+});
+```
+
+* Your complete code until now should look like [this](https://github.com/IFCjs/hello-world/tree/main/examples/web-ifc/ifc-to-json/properties/app.js)
+
+### FrontEnd
+
+* We are using this example as a [base](https://github.com/IFCjs/hello-world/tree/main/examples/web-ifc/ifc-to-json/frontend) and will be making additions to it
+
+*Method to Create Rows** We will create a function to create rows dynamically, this will help us to insert data directly into table and show it on the FrontEnd.
+
+* We will now use the `table` variable we had created globally while doing the setup
+
+```
+function createRowInTable(label, value) {
+  // Create a New Row Element
+  const row = document.createElement("tr");
+
+  // Add Label to 1st Coloumn and Value to 2nd Coloumn
+  row.innerHTML = "<td>" + label + "</td><td>" + value + "</td>";
+
+  // Appending the Row to Table - It means inserting Row inside Table
+  table.appendChild(row);
+}
+```
+
+#### Your HTML Code inside <body> should like this
+
+```
+<div class="file-opener">
+  <a class="invisible" id="save-button">Save JSON</a>
+  <button class="basic-button" id="file-opener-button">Open IFC</button>
+</div>
+<input class="invisible" id="file-input" type="file" />
+<div class="general-container">
+  <div class="container" id="left-container"></div>
+  <div class="separator"></div>
+  <div class="container" id="right-container">
+    <div class="ifc-container">
+      <pre id="json"></pre>
+    </div>
+    <div class="property-container">
+      <div class="input-container">
+        <input id="expressIDLabel" />
+        <!-- On Clicking this button we call getPropertyWithExpressId() -->
+        <button class="property-button" onclick="getPropertyWithExpressId()">Get Properties</button>
+      </div>
+      <!-- This is the area where our properties will be shown -->
+      <pre id="properties"></pre>
+    </div>
+  </div>
+</div>
+```
+
+#### Now Styling
+
+Containers:
+
+```
+.ifc-container {
+  height: 60%;
+  border-bottom: 5px solid #f3f4f6;
+  overflow: auto;
+}
+.property-container {
+  overflow: auto;
+  height: 40%;
+}
+.input-container {
+  padding: 20px;
+  border-bottom: 5px solid #f3f4f6;
+}
+#properties {
+  padding: 8px;
+}
+```
+
+Input Field and button:
+
+```
+input {
+  font-size: 14px;
+  padding: 4px;
+  width: 60%;
+  border-radius: 8px;
+}
+.property-button {
+  margin-left: 20px;
+  font-size: 14px;
+  padding: 8px 12px;
+  background-color: #e6e6e6;
+  border: unset;
+  border-radius: 8px;
+}
+.property-button:hover {
+  box-shadow: 0 10px 20px 8px #e6e6e6;
+  background-color: white;
+  transition: 0.2s;
+}
+```
+
+Table and Table Row:
+
+```
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+td {
+  border: 1px solid black;
+  padding: 8px;
+}
+```
+
+## Next steps
+
+Congratulations! You should now be able to **traverse any IFC** and extract the properties you are looking for.
+
+You can use the web-ifc APIs to get Material Data as well and many more to query the lines according to your need.
 
 ## web-ifc-API
 
