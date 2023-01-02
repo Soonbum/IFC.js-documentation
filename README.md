@@ -1321,6 +1321,79 @@ web-ifc API를 이용하여 재질 데이터도 가져올 수 있으며 당신�
 
 ## web-ifc-API
 
+The API is documented, so when you use any of the objects or methods listed in this documentation, you should see help from Intellisense, regardless of the IDE you're using.
+
+We realize that with Intellisense or comments it is not the most comfortable. On this page we will give an overview of what the API can do. We can see it in operation in detail in the specific tutorials section below.
+
+## IfcAPI
+
+We import the object from the library. You can use the `FileReader`. Lets web applications asynchronously read the contents of files (or raw data buffers) stored on the user's computer, using File or Blob objects to specify the file or data to read.
+
+```
+import { IfcAPI } from "web-ifc/web-ifc-api";
+
+const IfcAPI = new IfcAPI();
+IfcAPI.SetWasmPath("../../../../");
+
+const input = document.getElementById("file-input");
+IfcAPI.Init();
+input.addEventListener("change", (changed) => {
+  const reader = new FileReader();
+  reader.onload = () => LoadFile(reader.result);
+  reader.readAsText(changed.target.files[0]);
+});
+
+async function LoadFile(ifcAsText) {
+  const uint8array = new TextEncoder().encode(ifcAsText);
+  const modelID = await OpenIfc(uint8array);
+  const allItems = GetAllItems(modelID);
+  const result = JSON.stringify(allItems, undefined, 2);
+}
+
+async function OpenIfc(ifcAsText) {
+  await IfcAPI.Init();
+  return IfcAPI.OpenModel(ifcAsText);
+}
+
+function GetAllItems(modelID, excludeGeometry = false) {
+  const allItems = {};
+  const lines = IfcAPI.GetAllLines(modelID);
+  getAllItemsFromLines(modelID, lines, allItems, excludeGeometry);
+  return allItems;
+}
+
+function getAllItemsFromLines(modelID, lines, allItems, excludeGeometry) {
+  for (let i = 1; i <= lines.size(); i++) {
+    try {
+      saveProperties(modelID, lines, allItems, excludeGeometry, i);
+    } catch (e) {
+      console.log(e);
+    }
+  }
+}
+
+function saveProperties(modelID, lines, allItems, excludeGeometry, index) {
+  const itemID = lines.get(index);
+  const props = IfcAPI.GetLine(modelID, itemID);
+  props.type = props.__proto__.constructor.name;
+  if (!excludeGeometry || !geometryTypes.has(props.type)) {
+    allItems[itemID] = props;
+  }
+}
+```
+
+Load an ifc file and return all the information it contains in plain text
+
+```
+const properties = IfcAPI.properties;
+```
+
+The IfcAPI class includes a property called `properties` that contains all the logic and methods regarding `properties`, `psets`, `qsets`, etc.
+
+## Setup
+
+### setWasmPath
+
 ?
 
 ---
