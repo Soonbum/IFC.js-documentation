@@ -1394,7 +1394,492 @@ The IfcAPI class includes a property called `properties` that contains all the l
 
 ### setWasmPath
 
-?
+```
+IfcAPI.setWasmPath("../../../../");
+```
+
+Specifies the location of the web-ifc.wasm and web-ifc-mt.wasm files. These files are required to build any application with IFC.js. You can find them in node_modules/web-ifc/.
+
+* Be careful with your tools!!: If you use frameworks or libraries like React, Angular, Vue or Svelte it is possible that the root path of the project doesn't correspond to the root path of the served application. You will have to check in [each case](https://github.com/IFCjs/examples) how the paths of the statically served files are managed.
+
+#### Arguments:
+
+* path: Route of `web-ifc.wasm`.
+
+## Tools
+
+### Init
+
+```
+IfcAPI.init(customLocateFileHandler: LocateFileHandlerFn)
+```
+
+#### Arguments:
+
+* `customLocateFileHandler`: An optional locateFile function that let's you override the path from which the wasm module is loaded.
+
+#### Example:
+
+```
+IfcAPI.Init();
+```
+
+Initializes the WASM module `WebIFCWasm`, required before using any other functionality
+
+### OpenModel
+
+```
+IfcAPI.openModel(data: Uint8Array,
+                 settings: LoaderSettings): number
+```
+
+#### Arguments:
+
+* `data`: Buffer containing IFC `data`.
+
+* `settings`: `settings` for loading the model.
+
+#### Example:
+
+```
+IfcAPI.OpenModel(data, { LoaderSettings });
+```
+
+Opens a model and returns a modelID number
+
+### CreateModel
+
+```
+IfcAPI.CreateModel(settings: LoaderSettings): number
+```
+
+#### Arguments:
+
+* `settings`: Creates a new model and returns a `modelID` number.
+
+#### Example:
+
+```
+IfcAPI.CreateModel();
+```
+
+Creates a new model and returns a modelID number.
+
+### ExportFileAsIFC
+
+```
+IfcAPI.ExportFileAsIFC(modelID: number): Uint8Array
+```
+
+#### Arguments:
+
+* `modelID`: Model handle retrieved by `OpenModel`, model must no be closed.
+
+#### Example:
+
+```
+IfcAPI.ExportFileAsIFC(modelID);
+```
+
+Exports a file to IFC using the `modelID`. Returns a `Uint8Array`
+
+### CreateIfcGuidToExpressIdMapping
+
+```
+IfcAPI.CreateIfcGuidToExpressIdMapping(modelID: number)
+```
+
+#### Arguments:
+
+* `modelID`: Model handle retrieved by `OpenModel`.
+
+#### Example:
+
+```
+const expressIdMapping = IfcAPI.CreateIfcGuidToExpressIdMapping(modelID);
+```
+
+Creates a map between element ExpressIDs and GlobalIDs. Each element has two entries, (ExpressID -> GlobalID) and (GlobalID -> ExpressID).
+
+### CloseModel
+
+```
+IfcAPI.CloseModel(modelID: number)
+```
+
+#### Arguments:
+
+* `modelID`: Model handle retrieved by `OpenModel`, model must not be closed
+
+#### Example:
+
+```
+IfcAPI.CloseModel(modelID);
+```
+
+Closes a model and frees all related memory
+
+### IsModelOpen
+
+```
+IfcAPI.IsModelOpen(modelID: number): boolean
+```
+
+#### Arguments:
+
+* `modelID`: Model handle retrieved by `OpenModel`.
+
+#### Example:
+
+```
+IfcAPI.IsModelOpen(modelID);
+```
+
+Checks if a specific model ID is open or closed
+
+### LoadAllGeometry
+
+```
+IfcAPI.LoadAllGeometry(modelID: number): Vector
+```
+
+#### Arguments:
+
+* `modelID`: Model handle retrieved by `OpenModel`.
+
+#### Example:
+
+```
+IfcAPI.LoadAllGeometry(modelID);
+```
+
+Load geometry for a single element
+
+### SetGeometryTransformation
+
+```
+IfcAPI.SetGeometryTransformation(modelID: number,
+                                  transformationMatrix: Array)
+```
+
+#### Arguments:
+
+* `modelID`: Model handle retrieved by `OpenModel`.
+
+* `transformationMatrix` : Use `transformationMatrix` to encode transformations.
+
+#### Example:
+
+```
+IfcAPI.SetGeometryTransformation(modelID, transformationMatrix);
+```
+
+ Configure the transformation of a geometry using `modelID` and `transformationMatrix`
+
+### StreamAllMeshes
+
+```
+IfcAPI.StreamAllMeshes(modelID: number,
+                      meshCallback:(mesh: FlatMesh))
+```
+
+#### Arguments:
+
+* `modelID`: Model handle retrieved by `OpenModel`.
+
+* `meshCallback`: Use `mesh`.
+
+#### Example:
+
+```
+IfcAPI.StreamAllMeshes(modelID, (mesh) => {});
+```
+
+Collect all `meshes` by `modelID` and `messCallback`
+
+### StreamAllMeshesWithTypes
+
+```
+IfcAPI.StreamAllMeshesWithTypes(modelID: number, types: Array<number>,
+                            meshCallback:(mesh: FlatMesh))
+```
+
+#### Arguments:
+
+* modelID: Model handle retrieved by `OpenModel`, model must not be closed
+
+* `types` : Select `type` of the `Array`
+
+* `meshCallback`: Use `mesh`.
+
+#### Example:
+
+```
+IfcAPI.StreamAllMeshesWithTypes(modelID, types, meshCallback);
+```
+
+Collect all `meshes` by `modelID` and `messCallback` with `type`.
+
+### WriteLine
+
+```
+IfcAPI.WriteLine(modelID: number, lineObject: any)
+```
+
+#### Arguments:
+
+* `modelID`: Model handle retrieved by `OpenModel`.
+
+* `lineObject`: Selected `lineObject` in a model.
+
+#### Example:
+
+```
+IfcAPI.WriteLine(modelID, lineObject);
+```
+
+Write a line using `modelID` and `lineObject`
+
+### WriteRawLineData
+
+```
+IfcAPI.WriteRawLineData(modelID: number, data: RawLineData)
+```
+
+#### Arguments:
+
+* `modelID`: Model handle retrieved by `OpenModel`.
+
+* `data` : The raw `data` of each line
+
+#### Example:
+
+```
+IfcAPI.WriteRawLineData(modelID);
+```
+
+Write a line data using `modelID` and `data`
+
+## Get
+
+### GetAllLines
+
+```
+IfcAPI.GetAllLines(modelID: Number): Vector
+```
+
+#### Arguments:
+
+* `modelID`: Express ID of model
+
+#### Example:
+
+```
+IfcAPI.GetAllLines(modelID);
+```
+
+Get all the lines of a model by its modelID
+
+### GetAndClearErrors
+
+```
+IfcAPI.GetAndClearErrors(modelID: number): Vector
+```
+
+#### Arguments:
+
+`modelID`: Express ID of model
+
+#### Example:
+
+```
+return IfcAPI.GetAndClearErrors(modelID);
+```
+
+Get and clear errors using `modelID`
+
+### GetCoordinationMatrix
+
+```
+IfcAPI.GetCoordinationMatrix(modelID: number): Array
+```
+
+#### Arguments:
+
+* `modelID`: Express ID of model
+
+#### Example:
+
+```
+IfcAPI.GetCoordinationMatrix(modelID);
+```
+
+Get the coordinate of a matrix using `modelID`
+
+### GetFlatMesh
+
+```
+IfcAPI.GetFlatMesh(modelID: number, expressID: number): FlatMesh
+```
+
+#### Arguments:
+
+* `modelID`: Model handle retrieved by `OpenModel`.
+
+* `expressID`: `expressID` of model.
+
+#### Example:
+
+```
+IfcAPI.GetFlatMesh(modelID, expressID);
+```
+
+Load geometry for a single element
+
+### GetGeometry
+
+```
+IfcAPI.GetGeometry(modelID: number, geometryExpressID: number): IfcGeometry
+```
+
+#### Arguments:
+
+* `modelID`: `expressID` of ifcModel
+
+* `geometryExpressID`: `expressID` of geometry in ifcModel.
+
+#### Example:
+
+```
+const geometry = IfcAPI.GetGeometry(modelID, geometryExpressID);
+```
+
+Get `mesh` geometry using a `modelID`.
+
+### GetIndexArray
+
+```
+IfcAPI.GetIndexArray(ptr: number, size: number): Uint32Array
+```
+
+#### Arguments:
+
+* `ptr`: Parameter of get.
+* `size`: Set `size`
+
+#### Example:
+
+```
+IfcAPI.GetIndexArray();
+```
+
+Get `index` of `Array` using `ptr` and `size`.
+
+### GetLine
+
+```
+IfcAPI.GetLine(modelID: number, expressID; number,
+                flatten: boolean)
+```
+
+#### Arguments:
+
+* `modelID`: Model handle retrieved by `OpenModel`.
+
+* `expressID`: `expressID` of model.
+
+* `flatten`: Set whether it is `flatten` or not.
+
+#### Example:
+
+```
+const props = IfcAPI.GetLine(modelID, id, (flatten = false));
+```
+
+Get the line using the modelID and expressID
+
+### GetLineIdsWithType
+
+```
+IfcAPI.GetLineIdsWithType(modelId: number, type: number): Vector
+```
+
+#### Arguments:
+
+* `modelID`: `expressID` of ifcModel
+
+* `type`: Set of get `type`
+
+#### Example:
+
+```
+const lines = IfcAPI.GetLineIDsWithType(modelID, type);
+```
+
+Defines the type to get
+
+### GetRawLineData#
+
+```
+IfcAPI.GetRawLineData(modelID: number, expressID: number): RawLineData
+```
+
+#### Arguments:
+
+* `modelID`: Model handle retrieved by `OpenModel`.
+
+* `expressID`: `expressID` of model.
+
+#### Example:
+
+```
+const rawLineData = IfcAPI.GetRawLineData(modelID, expressID);
+```
+
+Get a line of raw data using 'modelID' `and` 'expressID'
+
+### getSubArray
+
+```
+IfcAPI.getSubArray(heap: any, startPtr: any,
+                    sizeBytes: any)
+```
+
+#### Arguments:
+
+* `heap`: Set to `stack`
+
+* `startPtr`: Set to `startPtr` in `subArray`
+
+* `sizeBytes`: Set to `sizeBytes`
+
+#### Example:
+
+```
+const subArray = IfcAPI.getSubArray(heap, startPtr, sizeBytes);
+```
+
+Get a `subArray` in `Array`
+
+### GetVertexArray
+
+```
+IfcAPI.GetVertexArray(ptr: number, size: number): Float32Array
+```
+
+#### Arguments:
+
+* `ptr`: Set parameter of get.
+
+* `size`: Set to `size`.
+
+#### Example:
+
+```
+const vertexArray = IfcAPI.GetVertexArray(ptr, size);
+```
+
+Get the `vertex` of `Array`
 
 ---
 
@@ -1402,7 +1887,7 @@ The IfcAPI class includes a property called `properties` that contains all the l
 
 ## Introduction
 
-?
+???
 
 ## Setup
 
