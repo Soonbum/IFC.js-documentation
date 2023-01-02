@@ -1887,15 +1887,67 @@ Get the `vertex` of `Array`
 
 ## Introduction
 
-???
+...but it has geometry.
+
+[Web-ifc](https://ifcjs.github.io/info/docs/Guide/web-ifc-three/%22https://ifcjs.github.io/info/docs/Guide/web-ifc/Introduction%22) is a very powerful tool capable of reading and writing IFCs with near-native speed. However, almost all BIM applications show the user a 3D view of the models they are working with. You could use `web-ifc` in any graphics engine, but we have already done that for you in **web-ifc-three**.
+
+`web-ifc-three` is a wrapper around `web-ifc` that reads all data from IFC files and transforms it into geometry that can be displayed and edited in any browser. You can install it with `npm i web-ifc-three` or `yarn add web-ifc-three`. Some cool facts about this module:
+
+* It's super easy to use.
+
+* It's the [official IFCLoader of Three.js](https://threejs.org/examples/webgl_loader_ifc.html).
+
+* It's very efficient, being able to display thousands of objects at 60 fps in a browser. It can display multiple models, change materials and filter items.
+
+* It can get and traverse the spatial structure tree of multiple files. Also, it can access the properties of all the items, both clicking on them in the 3d view and with smart filters.
+
+In the following points, the API and its functionalities will be shown step by step. However, there are a couple of issues that are important to be clear about before using web-ifc-three.
+
+### Can I use `web-ifc` directly?
+
+With web-ifc you could build almost any BIM tool capable of reading and writing IFC. So why create a layer on top of it?
+
+Because almost all BIM tools are 3D, and we think it would not make sense for all developers to implement a viewer from scratch. If you are only interested in the data, you may be better off using web-ifc directly.
+
+In addition, web-ifc-three makes working with IFCs much easier and safer even for the developer who has no previous experience with the format.
+
+* Web-ifc is way more flexible but requires more knowledge of the IFC schema and a greater implementation effort.
+
+### Can I use the `THREE.IFCLoader` directly?
+
+As mentioned above, `web-ifc-three` is the official IFCLoader of Three.js. That is, if you import the IFCLoader from Three.js, the code will be the same as the code you will find in the `web-ifc-three` repository.
+
+You might be tempted to import the `IFCLoader` from Three.js to avoid importing `web-ifc-three` in your project. This should work, but beware that Three.js is a very large library, and its update rate is much slower than that of IFC.js.
+
+* Slight delay: Three.js IFCLoader may not have the latest updates and the latest bugs we have fixed will remain unresolved in Three.js until the next version is released.
+
+To use the `THREE.IFCLoader` instead of the original `IFCLoader` you only have to change the import statement:
+
+```
+// Import web-ifc-three (original) IFCLoader
+import { IFCLoader } from "web-ifc-three/IFCLoader";
+
+// Import three.js IFCLoader
+import { IFCLoader } from "three/examples/jsm/loaders/IFCLoader";
+```
 
 ## Setup
 
-?
+### DRY documentation
+
+We don't want to [repeat ourselves](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself); not even in our documentation.
+
+The setup for starting a project with web-ifc has already been seen in [Hello World](https://ifcjs.github.io/info/docs/Hello%20world). If you have skipped that point, we recommend you to go and have a look at it. All tutorials will start from that scene.
+
+* You are free to follow these tutorials using the Three.js IFCLoader instead.
+
+If you get lost in any of the tutorials, don't worry! Take a look at the examples [here](https://github.com/IFCjs/hello-world) or come to the [Discord channel](https://discord.gg/g7Uzn2KSwB) and ask us directly. Also, let us know of any suggestions so we can improve these docs.
+
+* Before going forward: Basic knowledge of Three.js and web development is assumed. If you don't have this background, we recommend that you start [here](https://threejs.org/manual/) before jumping into IFC.js.
 
 ## API
 
-?
+???
 
 ## Picking
 
