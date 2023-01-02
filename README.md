@@ -987,89 +987,91 @@ function createDownloadLink(lvl) {
 
 [여기](https://ifcjs.github.io/hello-world/examples/web-ifc/ifc-to-json/properties/index.html)에서 배치된 최종 결과를 확인할 수 있고 [여기](https://github.com/ifcjs/hello-world/tree/main/examples/web-ifc/ifc-to-json/properties)에서 전체 코드를 확인할 수 있습니다.
 
-There are several types of properties in the IFC scheme, each with a specific purpose, and IFC.js can get **all of them**. Some of the most common are:
+IFC scheme에는 여러 개의 프로퍼티들이 있습니다. 각각은 특정 목적을 갖고 있습니다. 그리고 IFC.js는 **이 모든 것**을 가져올 수 있습니다. 가장 일반적인 것들 중 일부는 다음과 같습니다:
 
-* Native properties: Specific to each IFC class.
+* Native 프로퍼티: 각 IFC 클래스에 해당함.
 
-* Type properties: Describe properties of all elements of the same type (e.g. all envelope walls of a particular type).
+* Type 프로퍼티: 동일한 타입의 모든 요소들의 프로퍼티를 의미함. (예. 특정 타입의 모든 외피 벽들)
 
-* Material properties: Describes all the materials that make up the layers of that element.
+* Material 프로퍼티: 해당 요소의 레이어를 구성하는 모든 재질을 의미함.
 
-* Property sets: Arbitrary sets of user-defined properties. There may be multiple sets of properties associated with one or more elements. Each property set contains an arbitrary group of properties related to each other.
+* Property 세트: 사용자 정의 프로퍼티의 임의 세트. 하나 이상의 요소와 연관된 프로퍼티의 여러 세트가 있을 수 있습니다. 각 프로퍼티 세트는 서로 관련된 임의의 프로퍼티 그룹을 포함합니다.
 
-* Quantity sets: Sets of properties describing the dimensions of the elements to which they refer. Although it would also be possible to infer element dimensions implicitly from the geometry definition, this explicit description makes it much easier to create applications that measure IFC models.
+* Quantity 세트: 참조하는 요소의 치수를 설명하는 프로퍼티 세트입니다. 지오메트리 정의로부터 요소 치수를 암시적으로 추론할 수도 있지만, 이 명시적인 설명을 사용하면 IFC 모델을 측정하는 애플리케이션을 훨씬 쉽게 만들 수 있습니다.
 
-But enough theory! Let's get down to work.
+이제 이론은 충분합니다! 작업을 해봅시다.
 
-## How to do it
+## 어떻게 합니까?
 
-### Setting up
+### 설정하기
 
-#### Imports and Global Variables
+#### 가져오기 및 글로벌 변수
 
 ```
 import {
     IfcAPI, IFCRELDEFINESBYPROPERTIES
 } from "web-ifc/web-ifc-api";
 ..
-// We will show our properties in table, we will talk about this in FrontEnd Section
+// 표 형태로 프로퍼티들을 보여줄 것입니다. FrontEnd 섹션에서 이것에 대해 이야기할 것입니다.
 const table = document.createElement("table");
 ..
 ..
 ```
 
-#### Reading File
+#### 파일 읽기
 
-We will read file and call [`LoadFileData()`](https://github.com/IFCjs/hello-world/blob/main/examples/web-ifc/ifc-to-json/properties/app.js#:~:text=async%20function%20LoadFile(ifcAsText)) and send IFC data as Text
+파일을 읽고 [`LoadFileData()`](https://github.com/IFCjs/hello-world/blob/main/examples/web-ifc/ifc-to-json/properties/app.js#:~:text=async%20function%20LoadFile(ifcAsText))를 호출할 것입니다. 그리고 IFC 데이터를 텍스트 형태로 송신할 것입니다.
 
 ```
 fetch("../../../../IFC/01.ifc")
   .then((response) => response.text())
   .then((data) => {
-    // This will send the file data to our LoadFileData method
+    // 이것은 파일 데이터를 LoadFileData 메소드에 보낼 것입니다.
     LoadFileData(data);
   });
 ```
 
-**Creating a method which will be called for getting Element Properties** All the code for getting **Element Data** goes inside it
+**요소 프로퍼티를 가져오기 위해 호출될 메소드 만들기**
+
+**요소 데이터**를 가져오기 위한 모든 코드는 그 안에 있습니다.
 
 ```
 function getPropertyWithExpressId(modelID=0) {
-    // Clearing if previous values present
+    // 만약 이전 값이 있으면 지움
     const prop = document.getElementById("properties");
     prop.innerHTML = "";
     table.innerHTML = "";
 
-    // Getting the Element ID from User and parsing it to
+    // 사용자로부터 요소 ID를 가져오고 다음과 같이 파싱함
     const elementID = parseInt(document.getElementById("expressIDLabel").value);
     ..
-    // Getting Element Data - Refer Below
+    // 요소 데이터 가져오기 - 아래를 참조할 것
     ..
 
-    // Appending Table to our Div
+    // Div에 표 첨부하기
     prop.appendChild(table);
 }
 ```
 
-### Getting Element Data
+### 요소 데이터 가져오기
 
-`GetAllLines()` gives you all the lines, but what if you want to get a line according to that ElementID?
+`GetAllLines()`는 모든 라인들을 당신에게 제공합니다. 하지만 ElementID를 따라 라인 하나를 가져오고 싶다면?
 
-`GetLines()` can be used at times like these when we know ElementID and want the data for it.
+`GetLines()`는 ElementID를 알고 있으며 그것에 대한 데이터를 원할 때 사용할 수 있습니다.
 
-#### Getting Element Data by ElementID
+#### ElementID를 통해 요소 데이터 가져오기
 
 ```
-// If third parameter is added as true, we get a flatten result
+// 만약 3번째 파라미터를 true라고 하면, 평평한 결과를 얻게 됨
 const element = ifcapi.GetLine(modelID, elementID);
 
-// Now you can fetch GUID of that Element
+// 이제 위에서 얻은 요소의 GUID를 가져올 수 있음
 const guid = element.GlobalId.value;
 ```
 
-#### But what is Element?
+#### 하지만 요소란 무엇입니까?
 
-Every Entity can be considered as an Element which has it's own unique ElementID, by using the above code we can get various values that are contained in that Element Data. Few values that you can get and what we will **output on Frontend** are
+모든 엔티티(Entity)는 고유한 ElementID를 가진 요소(Element)로 간주될 수 있습니다. 위의 코드를 이용하여 해당 요소 데이터에 포함된 다양한 값들을 가져올 수 있습니다. 당신이 가져올 수 있는 값과 **Frontend에서 출력**되는 값들은 다음과 같습니다.
 
 * [GUID](https://technical.buildingsmart.org/resources/ifcimplementationguidance/ifc-guid/) : Globally Unique Identifier for the Element
 
