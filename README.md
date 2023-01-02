@@ -1073,26 +1073,26 @@ const guid = element.GlobalId.value;
 
 모든 엔티티(Entity)는 고유한 ElementID를 가진 요소(Element)로 간주될 수 있습니다. 위의 코드를 이용하여 해당 요소 데이터에 포함된 다양한 값들을 가져올 수 있습니다. 당신이 가져올 수 있는 값과 **Frontend에서 출력**되는 값들은 다음과 같습니다.
 
-* [GUID](https://technical.buildingsmart.org/resources/ifcimplementationguidance/ifc-guid/) : Globally Unique Identifier for the Element
+* [GUID](https://technical.buildingsmart.org/resources/ifcimplementationguidance/ifc-guid/) : 요소의 Globally Unique Identifier
 
-* Name - Name given to that Element
+* Name - 요소에 주어진 이름
 
-* IfcType - It refers to the type of Element it is e.g. `IFCWALL`, `IFCWINDOW`
+* IfcType - 요소의 타입을 참조합니다. 예. `IFCWALL`, `IFCWINDOW`
 
-* [IfcObjectType](https://standards.buildingsmart.org/IFC/RELEASE/IFC2x3/TC1/HTML/ifckernel/lexical/ifctypeobject.htm#:~:text=IfcTypeObject&text=Definition%20from%20buildingSMART%3A%20The%20object,%2D%20specific%20%2D%20occurrence%20modeling%20paradigm.) - Defines the specific information about a type
+* [IfcObjectType](https://standards.buildingsmart.org/IFC/RELEASE/IFC2x3/TC1/HTML/ifckernel/lexical/ifctypeobject.htm#:~:text=IfcTypeObject&text=Definition%20from%20buildingSMART%3A%20The%20object,%2D%20specific%20%2D%20occurrence%20modeling%20paradigm.) - 타입에 대한 특정 정보를 정의합니다.
 
-* [Tag](https://www.visualarq.com/features/collaboration/ifc/#:~:text=Tag%20feature.-,The%20IFC%20Tag,-The%20IFC%20tag) - The IFC tag feature lets you assign IFC properties to the objects when they are exported to IFC
+* [Tag](https://www.visualarq.com/features/collaboration/ifc/#:~:text=Tag%20feature.-,The%20IFC%20Tag,-The%20IFC%20tag) - IFC 태그 기능을 사용하면 IFC로 내보낼 때 객체에 IFC 프로퍼티를 할당할 수 있습니다.
 
-* and **Many More**
+* 그리고 **여러 가지가 있습니다**.
 
-#### Element Data
+#### 요소 데이터 (Element Data)
 
-Please **Ignore** `createRowInTable()` as of now, it will be covered in Frontend Section
+지금은 `createRowInTable()`을 **무시**하십시오. 그것에 대해서는 Frontend 섹션에서 다룰 것입니다.
 
-Just remember 1st parameter is the Label and the 2nd parameter is the respected value.
+지금은 그저 1번째 파라미터가 Label, 2번째 파라미터가 해당 Label에 대한 값이라는 것만 기억하십시오.
 
 ```
-// Now you can fetch GUID of that Element
+// 이제 요소의 GUID를 가져올 수 있습니다.
 const guid = element.GlobalId.value;
 createRowInTable("GUID", guid);
 
@@ -1109,43 +1109,43 @@ const tag = element.Tag.value;
 createRowInTable("Tag", tag);
 ```
 
-### Element Properties
+### 요소 프로퍼티 (Element Properties)
 
-Now that we have Element Data, we need to get the properties of that Element, the way IFC is structured we can't directly get Properties like we got Element Data, we have to fetch Lines which are Property Data and filter it according to the ExpressID we want.
+이제 저희는 요소 데이터를 갖게 되었습니다. 저희는 이 요소로부터 프로퍼티를 가져와야 합니다. IFC가 구조화된 방식으로는 요소 데이터를 얻은 것처럼 프로퍼티를 직접 가져올 수 없습니다. 저희는 Lines라는 프로퍼티 데이터를 가져와서 저희가 원하는 ExpressID를 따라 데이터를 걸러낼 것입니다.
 
-Feels too hectic? Don't worry, web-ifc with it's **Native Speed** gets us the data easily.
+너무 분주할 것 같다고요? 걱정하지 마세요. web-ifc는 **네이티브 속도**로 데이터를 쉽게 가져올 수 있습니다.
 
-#### Getting All Lines with Type
+#### Type을 이용하여 모든 Lines 가져오기
 
-We will get all `Lines` that has relation as properties with Elements i.e `IFCRELDEFINESBYPROPERTIES`.
+저희는 요소와 함께 프로퍼티와 관계가 있는 모든 `Lines`를 가져올 것입니다. 예. `IFCRELDEFINESBYPROPERTIES`
 
 ```
-// Get all the propertyset lines in the IFC file
+// IFC 파일에서 모든 프로퍼티 세트 라인들을 가져옵니다.
 let lines = ifcapi.GetLineIDsWithType(modelID, IFCRELDEFINESBYPROPERTIES);
 ```
 
-#### Get ElementID of Property Sets
+#### 프로퍼티 세트의 ElementID 가져오기
 
-* After getting the lines we will fetch the ElementID from those lines, next we use those ElementID to get the Element Data same like what we have done above.
+* Lines를 가져온 후에 이것들로부터 ElementID를 가져올 것입니다. 다음에는 이 ElementID를 가지고 위에서 했던 대로 요소 데이터를 가져올 것입니다.
 
-* Next, we will go through the Element Data and find out the RelatedObjects and if those RelatedObjects contain the ElementID for which we are trying to find properties we save them in a local array
+* 다음에는 요소 데이터를 통해 RelatedObjects를 찾아내고 만약 이 RelatedObjects 안에 프로퍼티를 찾고자 하는 ElementID가 포함되어 있다면 그것을 로컬 배열에 저장합니다.
 
 ```
-// In the below array we will store the IDs of the Property Sets found
+// 아래 배열에다가 발견한 프로퍼티 세트의 ID를 저장할 것입니다.
 let propSetIds = [];
 for (let i = 0; i < lines.size(); i++) {
-  // Getting the ElementID from Lines
+  // Lines로부터 ElementID 가져오기
   let relatedID = lines.get(i);
 
-  // Getting Element Data using the relatedID
+  // relatedID를 이용하여 요소 데이터 가져오기
   let relDefProps = ifcapi.GetLine(modelID, relatedID);
 
-  // Boolean for Getting the IDs if relevant IDs are present
+  // 만약 관련 ID가 존재할 경우 ID 가져오기 성공 여부
   let foundElement = false;
 
-  // RelatedObjects is a property that is an Array of Objects.
-  // The way IFC is structured, Entities that use same property are included inside RelatedObjects
-  // We Search inside RelatedObjects if our ElementID is present or not
+  // RelatedObjects는 프로퍼티, 즉 객체의 배열입니다.
+  // IFC가 구조화된 방식, 동일한 프로퍼티를 사용하는 엔티티가 RelatedObjects 안에 포함되어 있습니다.
+  // RelatedObjects 내부를 검색해서 ElementID가 존재하는지 여부를 확인합니다.
   relDefProps.RelatedObjects.forEach((relID) => {
     if (relID.value === elementID) {
       foundElement = true;
@@ -1153,45 +1153,45 @@ for (let i = 0; i < lines.size(); i++) {
   });
 
   if (foundElement) {
-    // Relevant IDs are found we then we go to RelatingPropertyDefinition
-    // RelatingPropertyDefinition contain the IDs of Property Sets
-    // But they should not be array, hence using (!Array.isArray())
+    // 관련 ID를 발견하면 RelatingPropertyDefinition으로 이동합니다.
+    // RelatingPropertyDefinition은 프로퍼티 세트의 ID를 포함합니다.
+    // 그러나 이것은 배열이 아니기 때문에 !Array.isArray() 를 사용해야 합니다.
     if (!Array.isArray(relDefProps.RelatingPropertyDefinition)) {
       console.log("Found");
       let handle = relDefProps.RelatingPropertyDefinition;
 
-      // Storing and pushing the IDs found in propSetIds Array
+      // propSetIds 배열에다가 발견한 ID를 저장함
       propSetIds.push(handle.value);
     }
   }
 }
 ```
 
-The heavy lifting has been done, now we will repeat few of the steps.
+무거운 짐은 다 들어올렸으니 이제는 몇 가지 단계들을 반복할 것입니다.
 
-#### Getting Property Sets from their ID
+#### 해당 ID로부터 프로퍼티 세트 가져오기
 
-* Yes you are right, getting Element Data using Element IDs!, now we will use the IDs from propSetIds and Get Data.
+* 네, 맞습니다. 요소 ID를 이용하여 요소 데이터를 가져옵니다. 이제 propSetIds에 저장된 ID를 사용하여 데이터를 가져옵니다.
 
-* Then we will check whether they have properties i.e. check if they contain Nominal Values
+* 그리고 나서 데이터가 프로퍼티를 갖고 있는지 확인할 것입니다. 예. Nominal 값을 포함하고 있는지 확인함.
 
-* If you want you can store Property Sets but in our case we will show them on Frontend, so no need to store.
+* 당신이 원한다면 프로퍼티 세트를 저장할 수 있지만, 저희의 경우 프론트엔드에서 보여줄 것이기 때문에 굳이 저장할 필요는 없습니다.
 
 ```
-// Getting the Property Sets from their IDs
+// 해당 ID로부터 프로퍼티 세트 가져오기
 let propsets = propSetIds.map((id) => ifcapi.GetLine(modelID, id, true));
 
 propsets.forEach((set) => {
-  // There can multiple Property Sets
+  // 여러 개의 프로퍼티 세트가 있을 수 있습니다.
   set.HasProperties.forEach((p) => {
-    // We will check if the Values that are present are not null
+    // 값이 존재하고 null아닌지 여부를 확인할 것입니다..
     if (p.NominalValue != null) {
-      // This is an e.g. filter, you can write down your various conditions to modify the result
+      // 이것은 예제 필터입니다. 결과를 변경하기 위해 다양한 조건들을 아래에 기입할 수 있습니다.
       if (p.NominalValue.label === "IFCBOOLEAN") {
-        // We will talk about this function in Frontend Part
+        // Frontend 파트에서 이 함수에 대해 이야기할 것입니다.
         createRowInTable(p.Name.value, p.NominalValue.value);
       } else {
-        // We will talk about this function in Frontend Part
+        // Frontend 파트에서 이 함수에 대해 이야기할 것입니다.
         createRowInTable(p.NominalValue.label, p.NominalValue.value);
       }
     }
@@ -1199,30 +1199,30 @@ propsets.forEach((set) => {
 });
 ```
 
-* Your complete code until now should look like [this](https://github.com/IFCjs/hello-world/tree/main/examples/web-ifc/ifc-to-json/properties/app.js)
+* 지금까지의 전체 코드는 [이것](https://github.com/IFCjs/hello-world/tree/main/examples/web-ifc/ifc-to-json/properties/app.js)과 같아야 합니다.
 
-### FrontEnd
+### 프론트엔드 (FrontEnd)
 
-* We are using this example as a [base](https://github.com/IFCjs/hello-world/tree/main/examples/web-ifc/ifc-to-json/frontend) and will be making additions to it
+* 이 예제를 [기반](https://github.com/IFCjs/hello-world/tree/main/examples/web-ifc/ifc-to-json/frontend)으로 사용할 것입니다. 그리고 여기에 추가로 덧붙일 것입니다.
 
-*Method to Create Rows** We will create a function to create rows dynamically, this will help us to insert data directly into table and show it on the FrontEnd.
+**행(Rows)을 생성하기 위한 메소드**: 저희는 행(rows)을 동적으로 만드는 함수를 만들 것입니다. 이것은 표에 데이터를 직접 삽입할 수 있도록 도와주고 프론트엔드에 그것을 보여줄 것입니다.
 
-* We will now use the `table` variable we had created globally while doing the setup
+* 이제 설정을 하는 동안 저희가 글로벌하게 생성한 `table` 변수를 사용할 것입니다.
 
 ```
 function createRowInTable(label, value) {
-  // Create a New Row Element
+  // 새로운 행(Row) 요소 생성하기
   const row = document.createElement("tr");
 
-  // Add Label to 1st Coloumn and Value to 2nd Coloumn
+  // 1번째 열(Column)에 라벨을, 2번째 열에 값을 추가함
   row.innerHTML = "<td>" + label + "</td><td>" + value + "</td>";
 
-  // Appending the Row to Table - It means inserting Row inside Table
+  // 표에 행 추가하기 - 표 내부에 행을 추가하는 것을 의미함
   table.appendChild(row);
 }
 ```
 
-#### Your HTML Code inside <body> should like this
+#### <body> 내부의 당신의 HTML 코드는 다음과 같아야 함
 
 ```
 <div class="file-opener">
@@ -1240,19 +1240,19 @@ function createRowInTable(label, value) {
     <div class="property-container">
       <div class="input-container">
         <input id="expressIDLabel" />
-        <!-- On Clicking this button we call getPropertyWithExpressId() -->
+        <!-- 이 버튼을 클릭할 시 getPropertyWithExpressId()를 호출함 -->
         <button class="property-button" onclick="getPropertyWithExpressId()">Get Properties</button>
       </div>
-      <!-- This is the area where our properties will be shown -->
+      <!-- 이것은 프로퍼티들을 표시할 영역임 -->
       <pre id="properties"></pre>
     </div>
   </div>
 </div>
 ```
 
-#### Now Styling
+#### 스타일링
 
-Containers:
+컨테이너:
 
 ```
 .ifc-container {
@@ -1273,7 +1273,7 @@ Containers:
 }
 ```
 
-Input Field and button:
+입력 필드 및 버튼:
 
 ```
 input {
@@ -1297,7 +1297,7 @@ input {
 }
 ```
 
-Table and Table Row:
+표(Table) 및 행(Row):
 
 ```
 table {
@@ -1313,11 +1313,11 @@ td {
 }
 ```
 
-## Next steps
+## 다음 단계
 
-Congratulations! You should now be able to **traverse any IFC** and extract the properties you are looking for.
+축하합니다! 이제 당신은 **어떤 IFC 파일이라고 순회**할 수 있으며 당신이 찾고자 하는 프로퍼티를 추축할 수 있을 것입니다.
 
-You can use the web-ifc APIs to get Material Data as well and many more to query the lines according to your need.
+web-ifc API를 이용하여 재질 데이터도 가져올 수 있으며 당신이 원하는 대로 라인들을 쿼리해서 더 많은 것들을 가져올 수도 있습니다.
 
 ## web-ifc-API
 
