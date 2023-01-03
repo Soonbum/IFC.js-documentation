@@ -3748,26 +3748,779 @@ In the next set of articles, we will talk about how to enable additional in-buil
 
 ## Json Property
 
-?
+As you might know, IFC is a data schema and what we call as a '.ifc' file is a STEP-File that is widely used to exchange data for 3D objects. This STEP-File is in text format and is not designed as a database. Wanting to be fast reading a single text file is like wishing to go as fast as a car, but with a cycle.
+
+While IFC.js is super efficient and it works well for medium IFC models, its not the most efficient especially for bigger models and thus you can't except high performance when making concatenated queries. There are ways to gain efficiency in this kind of queries: the easiest one is to generate a JSON with the properties and query that JSON instead.
+
+Here, we will learn how to deal with this situation, so nothing can stop us, no matter how big the IFC model is!
+
+* Check out this wiki link for details on [IFC file format](https://en.wikipedia.org/wiki/Industry_Foundation_Classes#File_Formats)
+
+Thankfully IFC.js allows you to pre-process the properties and geometry of an IFC model and convert it to something much more efficient. Specifically, convert the properties to JSON and the geometry to GLB files. After this preprocessing, even big models will run like a charm on any browser. This will make loading and working with files faster and more efficient.
+
+Enough theory. Lets see how to convert the properties to JSON.
+
+## How to do it
+
+### Loading the file
+
+Let's start out by loading our **IFC file**. This is done through `loadIfcUrl()` method
+
+```js
+async function init() {
+    await viewer.IFC.setWasmPath(wasmPath); 
+    const model = await viewer.IFC.loadIfcUrl(url);
+    }
+```
+
+### Serializing all properties
+
+Next, we take all the properties of the model and serialize them, that means, we will create a JSON file with all the properties. The idea beind this is to take properties from JSON instead of IFC directly. This way, you will be able to get the properties an order of magnitude much faster and is super efficient.
+
+IFC.js makes it super easy with the built in `serializeAllProperties()` method. This method serializes all the properties of an IFC (exluding the geometry) into an array of Blobs.
+
+```js
+const properties =  await viewer.IFC.properties.serializeAllProperties(model);
+```
+
+* Working with JSON is also more convenient as you can put the JSON file into a database like MongoDB.
+
+* As an alternative, you can also generate JSON properties along with geometry by using the method `viewer.GLTF.exportIfcFileAsGltf()` with option `getProperties: true`
+
+### Downloading JSON file
+
+Now that we have serialized all the properties and generated the JSON file, let's go ahead and download this file. We can then use this downloaded JSON file for our super efficient IFC model.
+
+In the code below we are creating a link that downloads the JSON file when we open the page
+
+```js
+const file = new File(properties, 'properties');
+const link = document.createElement('a'); 
+document.body.appendChild(link);
+link.href = URL.createObjectURL(file);
+link.download = 'properties.json';
+link.click();
+link.remove();
+```
+
+### Github code
+
+Check out the generated JSON file and the implementation of the code in the Github [page](https://github.com/IFCjs/hello-world/tree/main/examples/web-ifc-viewer/JSON-property-example)
+
+### Result
+
+Congratulations! You now have all the properties from the IFC file in a much efficient JSON format. If you open this file with Visual Studio Code and format it, you will see that this is all the data from the IFC, but in JSON format.
+
+* Go ahead and save this in a front-end database and make your application way way faster.
 
 ## Picking
 
-?
+Now that you're able to load models into your scene, we can jump into functionalities that make `web-ifc-viewer` really shine. Here we'll learn to make our models a little more **interactive**, using **picking functions** from the IFC.js API.
+
+* Dig into the code and check out all the details about the [selection](https://github.com/IFCjs/web-ifc-viewer/tree/master/viewer/src/components/ifc/selection) component methods on Github.
+
+## How to do it
+
+### Easy pickings
+
+Let's start out by using our mouse to highlight different parts of our model when **hovered**. Thankfully IFC.js makes it easy with the built in method `prePickIfcItem()`.
+
+```js
+window.onmousemove = () => viewer.IFC.selector.prePickIfcItem()
+```
+
+* Under the hood web-ifc-viewer borrows the [Raycaster](https://threejs.org/docs/index.html?q=raycaster#api/en/core/Raycaster) from Three.js. And since IFC.js created the official [IFCLoader](https://threejs.org/examples/webgl_loader_ifc.html) for Three.js, it's a beautiful marriage!
+
+### Preserve the pick
+
+Now, let's use `pickIfcItem()` to preserve our selection and then **center our model** in the camera's view.
+
+```js
+window.onclick = () => viewer.IFC.selector.pickIfcItem(true)
+```
+
+* If you don't want to center the model, just leave the first argument of *pickIfcItem()* empty, which defaults to *false*.
+
+If we go a step further and **destructure** the selection, we return information very useful in other IFC.js methods, such as `getProperties()`.
+
+```js
+window.onclick = async () => {
+  const {modelID, id} = await viewer.IFC.selector.pickIfcItem(true);
+    const props = await viewer.IFC.getProperties(modelID, id, true, false);
+    console.log(props);
+}
+```
+
+### Highlighting
+
+What if we wanted to **isolate** a certain part of our model and hide the rest? This is where `highlightIfcItem()` comes in handy. We'll just attach it to the `ondblclick` event for now.
+
+```js
+window.ondblclick = viewer.IFC.selector.highlightIfcItem(true)
+```
+
+### Clear it up
+
+Maybe we went a bit wild with our clicking and selecting. So let's call `unpickIfcItems()` and `unHighlightIfcItems()` to clear our doings with our `C` key.
+
+```js
+window.onkeydown = (event) => {
+    if(event.code === 'KeyC') {
+        viewer.IFC.selector.unpickIfcItems();
+        viewer.IFC.selector.unHighlightIfcItems();
+    }
+}
+```
+
+### Getting specific
+
+In some situations, we may want to use our **Express ID's** to interact with the model in a different way. In this tutorial we'll add a simple button to let the user highlight a part of the model that isn't so easily visible.
+
+Let's quickly **add a button** with some styling.
+
+```html
+<button id="express_22492">Front Door</button>
+<!-- style to your preference  -->
+```
+
+And finally specify our **Express ID** in the event handler with the `pickIfcItemsByID()` method,
+
+```js
+document.getElementById('express_22492')
+.addEventListener('click', () => {
+    viewer.IFC.selector.pickIfcItemsByID(0, [22492], true);
+})
+```
+
+## The result
+
+Here is an example of everything we've learned today:
+
+[Github repo](https://github.com/IFCjs/hello-world/tree/main/examples/web-ifc-viewer/picking/)
+
+## Next steps
+
+Congrats! You now know how to **pick** and **highlight** your model in a handful of different ways. Now it's up to you to use the tools creatively in your own project!
 
 ## Socket.IO
 
-?
+With unlimited power of IFC.js at your fingertips you can now easily view and perform operations on IFC files easily. What about **networking**? In this tutorial we will learn how to share camera position over **Socket.IO** and view it in other user's browser.
+
+* Dig into the code and check out all the details about the [Socket.IO Integration](https://github.com/aka-blackboots/hello-world/tree/main/examples/web-ifc-viewer/socket-io) on Github.
+
+## Import dependencies
+
+### Express
+
+```
+npm install express
+```
+
+Express provides us with tooling for HTTP server, it is framework based upon Node.
+
+### Socket.IO
+
+```
+npm install socket.io
+```
+
+Socket.IO provides bi-directional communication between a server and client.
+
+## How to do it
+
+### Folder Structure
+
+For this tutorial, our folder strucutre will be a little different, but if you've been following other tutorials. This will be easy!
+
+#### index.js
+
+Create a `index.js` file, this file will hold the code for **Server Management**. We will create a express app and using that app we will create a server using **Socket.IO**
+
+```js
+const express = require('express');
+
+// Creating a express app
+const app = express();
+const http = require('http');
+const server = http.createServer(app);
+
+const { Server } = require("socket.io");
+// Creating Socket Server
+const io = new Server(server);
+
+
+app.get('/', (req, res) => {
+    res.sendFile(__dirname + '/index.html');
+});
+```
+
+#### Static Folder
+
+We will use this folder to store all the files that will be necessary and will be served to user when they open the browser. Let's get started by creating a `static` folder inside your directory. Add `wasm` files and `ifc` files into this folder.
+
+```js
+// Adding Static Folder path, which will be used to store required files
+app.use("/static", express.static('./static/'));
+```
+
+#### Socket
+
+We can consider Socket as data forwarder, whenever there is connection made to **Server** we will send out the camera position to other clients connected on network.
+
+```js
+// Connection Event which is triggered when someone enters their initials and is registered on network
+io.on('connection', (socket) => {
+    socket.on('username', (initials) => {
+        console.log('Connected User'+initials);
+    });
+
+    // When Client Camera is moved we will Emit this data to other Clients
+    socket.on('camera_move', (data) => {
+        data.id = socket.id;
+        io.emit('camera_move', data);
+    });
+
+    socket.on('disconnect', () => {
+        console.log('User Disconnected');
+    });
+})
+```
+
+### Getting User Initials/Details
+
+We will get User Initials from a basic **form** which will be created inside `index.html`
+
+```html
+<div id="socket-connection-form">
+    <label for="initials-name">Enter Your Initials</label><br>
+    <input maxlength="2" type="text" id="initials-name" name="initials-name"><br>
+    <button id="socket-Connect-Button" onclick="connectToSocket()">Connect</button>
+</div>
+
+// Socket.IO creates a local client folder
+<script src="/socket.io/socket.io.js"></script>
+
+// Bundle File will be fetched from static folder    
+<script src="static/bundle.js"></script>
+```
+
+When user clicks on **Connect** button a call to `connectToSocket` will be made which will create the connection.
+
+### Getting Camera Position and Sending to Server
+
+Importing and Variables
+
+```js
+import {
+    CSS2DObject
+} from 'three/examples/jsm/renderers/CSS2DRenderer';
+
+let socket;
+// To Store your Position
+let clients = {}; 
+// To Store the Positions of other user's Camera Location
+let pointers = {};
+```
+
+Once the button is clicked we need to Pass the Initials user has entered with **Camera** position, **Initials** will help to visualise the User's camera position as label created using [CSS2DRenderer](https://threejs.org/docs/#examples/en/renderers/CSS2DRenderer)
+
+This code will be a little lengthy but trust us, it is easy!
+
+```js
+function connectToSocket() {
+    const initials = document.getElementById("initials-name").value;
+    console.log(initials)
+
+    if (initials) {
+        const connectButton = document.getElementById("socket-Connect-Button");
+        connectButton.innerHTML = "Connected!";
+        connectButton.disabled = true;
+
+        socket = io();
+        console.log(initials + ":Connecting to socket");
+        socket.emit('username', initials);
+
+        socket.on('camera_move, function (data) {
+            if (!clients.hasOwnProperty(data.id)) {
+                // Creating a New Label when there are no previous Labels available
+                const labelDiv = document.createElement('div');
+                labelDiv.className = 'label';
+                labelDiv.textContent = data.initials;
+                labelDiv.style.marginTop = '-1em';
+
+                // Passing the Label div to CSS2DObject()
+                pointers[data.id] = new CSS2DObject(labelDiv);
+                pointers[data.id].position.set(data.x, data.y, data.z);
+                viewer.context.scene.add(pointers[data.id]);
+                pointers[data.id].layers.set(0);
+            }
+
+            // Updating the Label position according to new Data
+            pointers[data.id].position.set(data.x, data.y, data.z);
+
+            clients[data.id] = data;
+        });
+
+        // Updating Camera Position every time it is updated and sending it using emit()
+        viewer.context.ifcCamera.cameraControls.addEventListener('update', e => {
+            const cameraPos = {
+                "initials": initials,
+                "id": "",
+                "x": viewer.context.getCamera().position.x,
+                "y": viewer.context.getCamera().position.y,
+                "z": viewer.context.getCamera().position.z
+            }
+
+            socket.emit('camera_move', cameraPos);
+        })
+    }
+}
+```
+
+### Little styling
+
+We will add basic styling for Connection form and Labels that will represent the position
+
+```css
+.label 
+{
+    color: #FFF;
+    font-family: sans-serif;
+    padding: 2px;
+    background: rgba( 0, 0, 0, .6 );
+}
+
+#socket-connection-form{
+    position: fixed;
+    top: 0;
+    right: 0;
+    padding: 20px;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+    text-align: center;
+    width: 200px;
+    display: inline-block;
+    background: white;
+}
+#socket-connection-form>label{
+    font-size: 18px;
+    padding: 4px;
+    font-family: Arial, Helvetica, sans-serif;
+}
+#socket-connection-form>input{
+    margin-top: 10px;
+    font-size: 18px;
+    padding: 4px;
+    font-family: Arial, Helvetica, sans-serif;
+    width: 100%;
+    margin-bottom: 14px;
+}
+#socket-connection-form>button{
+    padding: 12px;
+    border: unset;
+    background: #f57c00;
+    border-radius: 8px;
+    width: 100%;
+    font-size: 18px;
+}
+#socket-connection-form>button:hover{
+    box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+    transition: 0.2s;
+}
+```
+
+## The result
+
+Here is an example of everything we've learned today:
+
+[Github repo](https://github.com/aka-blackboots/hello-world/tree/main/examples/web-ifc-viewer/socket-io/)
+
+## Next steps
+
+Congrats! Now you know how to use **Socket.IO** to share the User's Camera position, now you can perform variety of Operations and Share those over network!
 
 ## IFC to gLTF
 
-?
+web-ifc-viewer is a 3D BIM viewer. From its vast set of tools, converting IFC to gLTF is one useful tool. This tutorial will guide you step by step how you can upload IFC file and get them converted to gLTF along with the relevant properties.
+
+You can find the complete source of the export functionality [here](https://github.com/IFCjs/hello-world/tree/main/examples/web-ifc-viewer/gltf-export) and source code of import functionality [here](https://github.com/IFCjs/hello-world/tree/main/examples/web-ifc-viewer/gltf-import)
+
+* Using IFC.js requires a basic knowledge of web development (HTML, CSS, JavaScript) and Three.js. If you have no previous experience with Three.js, you should probably look [here](https://threejs.org/manual/).
+
+## Setting up the project
+
+Before diving in deep, it is recommended that you have your **Two Projects** created one which will be used for **Exporting IFC to gLTF** and other for **Viewing gLTF Files**.
+
+You can use this [section](https://ifcjs.github.io/info/docs/Guide/web-ifc-viewer/Introduction#setting-up-3d-scene-web-ifc-viewer). Don't worry! it is just boiler plate code for getting web-ifc-viewer running.
+
+We will divide this tutorial into two sections as well, first for exporting and later for importing.
+
+## 1. IFC to gLTF
+
+### Importing Dependencies
+
+```js
+import {
+        IFCWALL,
+        IFCWALLSTANDARDCASE,
+        IFCSLAB,
+        IFCWINDOW,
+        IFCMEMBER,
+        IFCPLATE,
+        IFCCURTAINWALL,
+        IFCDOOR} from 'web-ifc';
+```
+
+### Conversion
+
+The next step is to add function call `onchange` of input in `app.js`
+
+* Whenever input tag is clicked upon we will call `loadIfc`
+
+```js
+const input = document.getElementById('file-input');
+input.onchange = loadIfc;
+
+async function loadIfc(event) {
+    // IFC to gLTF conversion will happen here
+    ...
+    }
+```
+
+**Next**, we will work on conversion
+
+* Creating URL from File Object
+
+* Using `exportIfcFileAsGltf` and passing config to it to get relevant gLTF files.
+
+* If we pass `splitByFloors` as true the `result` we get will have gLTF files separated according to Floors.
+
+* `categories` are used to get gLTF files for specific IFC elements, we will pass the imported `IFC types` here.
+
+* Setting `getProperties` as `true` generates a .json file which has the relevant properties stored in it.
+  
+* Getting the outcome of `exportIfcFileAsGltf()` in `result`
+
+```js
+async function loadIfc(event) {
+    const file = event.target.files[0];
+    const url = URL.createObjectURL(file);
+
+    const result = await viewer.GLTF.exportIfcFileAsGltf({
+        ifcFileUrl: url,
+        splitByFloors: true,
+        categories: {
+            walls: [IFCWALL, IFCWALLSTANDARDCASE],
+            slabs: [IFCSLAB],
+            windows: [IFCWINDOW],
+            curtainwalls: [IFCMEMBER, IFCPLATE, IFCCURTAINWALL],
+            doors: [IFCDOOR]
+        },
+        getProperties: true
+    });
+
+    // Using Result and Downloading gLTF files
+
+    // Creating Link Tag
+    const link = document.createElement('a');
+    document.body.appendChild(link);
+
+    // Looping in result
+    for(const categoryName in result.gltf) {
+        const category = result.gltf[categoryName];
+
+        // Looping in Category according to Levels
+        for(const levelName in category) {
+            const file = category[levelName].file;
+
+            // If file is present for a level under category we will download it
+            if(file) {
+                // Downloading gLTF file in local machine
+                link.download = `${file.name}_${categoryName}_${levelName}.gltf`;
+                link.href = URL.createObjectURL(file);
+                link.click();
+            }
+        }
+    }
+
+    // We will check for Properties in result and download the JSON file for it
+    for(let jsonFile of result.json) {
+        link.download = `${jsonFile.name}.json`;
+        link.href = URL.createObjectURL(jsonFile);
+        link.click();
+    }
+
+    // Removing the Node created for link
+    link.remove();
+}
+```
+
+### Let's try it
+
+If you did everything right, you should see something like below. This will download bunch of gLTF files.
+
+## 2. gLTF Viewer
+
+Now we have gLTF files and Properties file with us, we will use these files and show the model in `web-ifc-viewer`. We will use another project for this.
+
+### Loading gLTF files
+
+* Loading gLTF models using `viewer.GLTF.loadModel()`
+
+* Getting Properties from `properties.json`
+
+* Creating Spatial Tree
+
+```js
+let properties;
+
+async function load() {
+    // Load geometry
+    await viewer.IFC.setWasmPath('../../../');
+    await viewer.GLTF.loadModel('../../../GLTF/doors_Nivel 1.gltf');
+    await viewer.GLTF.loadModel('../../../GLTF/slabs_Nivel 1.gltf');
+    await viewer.GLTF.loadModel('../../../GLTF/slabs_Nivel 2.gltf');
+    await viewer.GLTF.loadModel('../../../GLTF/walls_Nivel 1.gltf');
+    await viewer.GLTF.loadModel('../../../GLTF/windows_Nivel 1.gltf');
+    await viewer.GLTF.loadModel('../../../GLTF/curtainwalls_Nivel 1.gltf');
+
+    // Load properties
+    const rawProperties = await fetch('../../../GLTF/properties.json');
+    properties = await rawProperties.json();
+
+    // Get spatial tree
+    const tree = await constructSpatialTree();
+    console.log(tree);
+}
+
+load();
+```
+
+### Creating Spatial Tree
+
+* Creating Project Node using Object of `IFCPROJECT`
+
+* Getting Relationships and contructing Spatial Tree Node and Passing back this structure
+
+* `constructSpatialTreeNode` is a recursive function which will be used to generate the data accordingly
+
+```js
+// Get spatial tree
+async function constructSpatialTree() {
+    // Getting Project Properties 
+    const ifcProject = getFirstItemOfType('IFCPROJECT');
+
+    // Creating Project Node
+    const ifcProjectNode = {
+        expressID: ifcProject.expressID,
+        type: 'IFCPROJECT',
+        children: [],
+    };
+
+    const relContained = getAllItemsOfType('IFCRELAGGREGATES');
+    const relSpatial = getAllItemsOfType('IFCRELCONTAINEDINSPATIALSTRUCTURE');
+
+    await constructSpatialTreeNode(
+        ifcProjectNode,
+        relContained,
+        relSpatial,
+    );
+
+    return ifcProjectNode;
+}
+
+// Utils functions
+function getFirstItemOfType(type) {
+    return Object.values(properties).find(item => item.type === type);
+}
+
+function getAllItemsOfType(type) {
+    return Object.values(properties).filter(item => item.type === type);
+}
+
+// Recursively constructs the spatial tree
+async function constructSpatialTreeNode(
+    item,
+    contains,
+    spatials,
+) {
+    const spatialRels = spatials.filter(
+        rel => rel.RelatingStructure === item.expressID,
+    );
+    const containsRels = contains.filter(
+        rel => rel.RelatingObject === item.expressID,
+    );
+
+    const spatialRelsIDs = [];
+    spatialRels.forEach(rel => spatialRelsIDs.push(...rel.RelatedElements));
+
+    const containsRelsIDs = [];
+    containsRels.forEach(rel => containsRelsIDs.push(...rel.RelatedObjects));
+
+    const childrenIDs = [...spatialRelsIDs, ...containsRelsIDs];
+
+    const children = [];
+    // Looping through the child elements and creating populating values for it
+    for (let i = 0; i < childrenIDs.length; i++) {
+        const childID = childrenIDs[i];
+        const props = properties[childID];
+        const child = {
+            expressID: props.expressID,
+            type: props.type,
+            children: [],
+        };
+
+        // For Every child element repeating the step and pushing it to children array
+        await constructSpatialTreeNode(child, contains, spatials);
+        children.push(child);
+    }
+
+    item.children = children;
+}
+```
+
+### Getting Properties
+
+With major steps done, now we will get properties of elements on double click. Let's dive in!
+
+* Using `id` we will get the properties and then get property sets for it
+
+```js
+window.ondblclick = async () => {
+    const result = await viewer.IFC.selector.pickIfcItem(true);
+    const foundProperties = properties[result.id];
+    getPropertySets(foundProperties);
+    console.log(foundProperties);
+};
+
+function getPropertySets(props) {
+    const id = props.expressID;
+    const propertyValues = Object.values(properties);
+    const allPsetsRels = propertyValues.filter(item => item.type === 'IFCRELDEFINESBYPROPERTIES');
+    const relatedPsetsRels = allPsetsRels.filter(item => item.RelatedObjects.includes(id));
+    const psets = relatedPsetsRels.map(item => properties[item.RelatingPropertyDefinition]);
+    for(let pset of psets) {
+        pset.HasProperty = pset.HasProperties.map(id => properties[id]);
+    }
+    props.psets = psets;
+}
+```
+
+### Lets try it
+
+If everything went right, the output will look as below
+
+## Conclusion
+
+Congratulations! You have successfully exported IFC file as gLTF files and have a viewer for it. Go to the next pages of the docs to find out what else can you do with IFC.js.
 
 ## Memory
 
-?
+* You can follow along with the full example on [Github](https://github.com/IFCjs/hello-world/tree/main/examples/web-ifc-viewer/memory).
+
+You have both freedom and responsibility when it comes to **memory management** in your IFC.js app. Fortunately, IFC.js lets you balance these to **release memory** very easily. Let's see how it's done.
+
+* IFC.js builds upon the Three.js **dispose()** function. See how IFC.js does it [here](https://github.com/IFCjs/web-ifc-viewer/blob/master/viewer/src/ifc-viewer-api.ts#L220) and [here](https://github.com/IFCjs/web-ifc-three/blob/main/web-ifc-three/src/IFC/components/MemoryCleaner.ts), and also read what Three.js [has to say](https://threejs.org/docs/#manual/en/introduction/How-to-dispose-of-objects).
+
+## How to do it
+
+### Monitoring the memory
+
+[stats.js](https://github.com/mrdoob/stats.js/) is a library to **monitor the memory and performance** of your Three.js app, made by the creator of Three.js himself. Let's go ahead and install with `npm i stats.js`, **import, initialize and attach it** to our viewer.
+
+```js
+import Stats from "stats.js/src/Stats";
+
+const stats = new Stats();
+addStats();
+
+function addStats() {
+    stats.showPanel(2);
+    document.body.append(stats.dom);
+    viewer.context.stats = stats;
+};
+```
+
+During development we don't have to second guess our memory management anymore, because now it's **visualized** for us.
+
+* If you don't remember how to setup your viewer, just look at the [full example](https://github.com/IFCjs/hello-world/tree/main/examples/web-ifc-viewer/memory) or at previous tutorials.
+
+### Load up the model
+
+First we'll **create** an HTML **input button** and use `loadIfc()` to load our models from file. Style as you wish!
+
+```html
+<input type="file" id="input-button" />
+```
+
+```js
+async function loadIfcFromFile(file) {
+  const model = await viewer.IFC.loadIfc(file, true);
+}
+```
+
+* We call [loadIfc()](https://github.com/IFCjs/web-ifc-viewer/blob/master/viewer/src/components/ifc/ifc-manager.ts#L42/) when a user loads an IFC file. Internally, it creates a URL then calls [loadIfcUrl()](https://github.com/IFCjs/web-ifc-viewer/blob/master/viewer/src/components/ifc/ifc-manager.ts#L53/) for us.
+
+Now **link** the button and the function.
+
+```
+const input_button = document.getElementById("input-button");
+input_button.addEventListener("input", (input) => {
+  loadIfcFromFile(input.target.files[0])},
+  false
+);
+```
+
+So that we can load and release the same model over and over, for this example we'll add a tiny hack to reset the DOM event.
+
+```
+input_button.addEventListener("click", (e) => {
+  e.target.value = "";
+});
+```
+
+### Dispose memory
+
+Finally let's create our function to **dispose** memory on command using `dispose()`. Here's how it's done:
+
+```js
+function releaseMemory() {
+  viewer.dispose();
+  viewer = null;
+  viewer = new IfcViewerAPI({ container });
+  viewer.IFC.setWasmPath("../../../");
+  addStats();
+}
+```
+
+Keep in mind: Once we call `dispose()`, we need to **re-initialize** our viewer instance (and Stats module)
+
+For this example let's attach our function to a new HTML button.
+
+```html
+<input type="button" id="release-button" value="Release Memory" />
+```
+
+```js
+const release_button = document.getElementById("release-button");
+release_button.addEventListener("click", () => releaseMemory());
+```
+
+Try loading a model and releasing the memory: you'll notice our model disappears and our visualizer confirms this. Remember that it **might take time** for the garbage collector to do its job.
+
+* We have [test files](https://github.com/IFCjs/test-ifc-files) for you to try out different models.
+
+## The result
+
+This is how the application looks like:
+
+[Github repo](https://github.com/IFCjs/hello-world/tree/main/examples/web-ifc-viewer/memory/)
+
+## Next steps
+
+Congratulations! Your IFC.js apps are now **free of memory leaks**. This memory management will keep your app squeaky clean and running smooth.
 
 ## web-ifc-viewer-API
 
-?
+???
 
 > 출처: https://ifcjs.github.io/info/docs/Introduction/
