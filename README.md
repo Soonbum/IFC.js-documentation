@@ -4521,6 +4521,397 @@ Congratulations! Your IFC.js apps are now **free of memory leaks**. This memory 
 
 ## web-ifc-viewer-API
 
-???
+The API is documented, so when you use any of the objects or methods listed in this documentation, you should see help from Intellisense, regardless of the IDE you're using. [Check it out!](https://github.com/IFCjs/web-ifc-viewer/blob/master/viewer/src/components/ifc/ifc-manager.ts).
+
+However, we realize that with Intellisense or comments it is not the most comfortable. On this page we will give an overview of what the API can do. We can see it in operation in detail in the specific tutorials section below.
+
+## IfcViewerAPI
+
+We import the object from the library. You can use the loadIfc() method to load IFC from a URL. For example to load an IFC we can do it as follows.
+
+```js
+import { IfcViewerAPI } from "web-ifc-viewer";
+
+const viewer = new IfcViewerAPI();
+
+const input = document.getElementById("file-input");
+input.addEventListener(
+    "change",
+    (changed) => {
+    const file = changed.target.files[0];
+    const url = URL.createObjectURL(file);
+    const model = await viewer.IFC.loadIfcUrl(url)
+})
+```
+
+Later we will review the details of how to use the different methods dedicated to load files.
+
+Many of the API operations run on a specific model. We will use ModelID to express on which model we want to operate.
+
+You can get the id of a model through the modelID property.
+
+```js
+const modelID = IfcViewerAPI.IFC.ifcModel.modelID;
+```
+
+## Setup
+
+### setWasmPath
+
+```js
+async IfcViewerAPI.IFC.setWasmPath(../../../)
+```
+
+Specifies the location of the web-ifc.wasm and web-ifc-mt.wasm files. These files are required to build any application with IFC.js. You can find them in node_modules/web-ifc/.
+
+* Be careful with your tools!!: If you use frameworks or libraries like React, Angular, Vue or Svelte it is possible that the root path of the project doesn't correspond to the root path of the served application. You will have to check in [each case](https://github.com/IFCjs/examples) how the paths of the statically served files are managed.
+
+#### Arguments:
+
+* `path`: Route of `web-ifc.wasm`.
+
+#### Example:
+
+```js
+await IfcViewerAPI.IFC.setWasmPath(dist / wasmDir);
+```
+
+When `web-ifc.wasm` is in `dis/wasmDir`.
+
+## Tools
+
+### addClippingPlane
+
+```js
+IfcViewerAPI.clipper.createPlane();
+```
+
+#### Example:
+
+```js
+window.onkeydown = (event) => {
+  if (event.code === "KeyP") {
+    IfcViewerAPI.clipper.createPlane();
+  }
+};
+```
+
+Adds a clipping plane on the face the cursor is pointing at.
+
+### removeClippingPlane
+
+```js
+IfcViewerAPI.clipper.deletePlane();
+```
+
+#### Example:
+
+```js
+window.onkeydown = (event) => {
+  if (event.code === "KeyO") {
+    IfcViewerAPI.clipper.deletePlane();
+  }
+};
+```
+
+Deletes the clipping plane pointed at by the cursor.
+
+### toggleClippingPlane
+
+```js
+IfcViewerAPI.clipper.toggle();
+```
+
+#### Example:
+
+```
+IfcViewerAPI.clipper.toggle();
+```
+
+Turns all clipping planes on/off.
+
+### openDropboxWindow
+
+```js
+this.dropbox.loadDropboxIfc();
+```
+
+#### Example:
+
+```js
+IfcViewerAPI.dropbox.loadDropboxIfc();
+```
+
+Opens a dropdown window where the user can select their IFC models.
+
+### loadIfc
+
+```js
+IfcViewerAPI.IFC.loadIfc(file: File,
+                         fitToFrame: boolean)
+```
+
+#### Arguments:
+
+* `file`: IFC as `File`.
+
+* `fitToFrame`: If `true`, brings the `perspectiveCamera` to the loaded IFC.
+
+#### Example:
+
+```js
+const input = document.getElementById('file-input')
+input.addEventListener('change', changed => {
+    const file = changed.target.files[0]
+    const model = await IfcViewerAPI.IFC.loadIfcUrl(file)
+})
+```
+
+Loads the given IFC in the current scene.
+
+### loadIfcUrl
+
+```js
+IfcViewerAPI.IFC.loadIfcUrl(url: string,
+                           fitToFrame: boolean,
+                            onProgress: any,
+                            onError: any)
+```
+
+#### Arguments:
+
+* `file`: Ifc as `url`.
+
+* `fitToFrame`: If `true`, brings the `perspectiveCamera` to the loaded IFC.
+
+* `onProgress`: A callback function to report on downloading progress.
+
+* `onError`: A callback function to report on loading errors.
+
+#### Example:
+
+```js
+const input = document.getElementById("file-input");
+input.addEventListener(
+    "change",
+    (changed) => {
+    const file = changed.target.files[0];
+    const url = URL.createObjectURL(file);
+    const model = await IfcViewerAPI.IFC.loadIfcUrl(url)
+})
+```
+
+Load the Ifc from a `URL.createObjectURL` and add it to the scene.
+
+### addGrid
+
+```js
+IfcViewerAPI.grid.setGrid(size: number, divisions: number,
+                          colorCenterLine: Color, colorGrid: Color)
+```
+
+#### Arguments:
+
+* `size`: Grid `size`.
+
+* `divisions`: Number of `divisions` in `X` & `Y`.
+
+* `colorCenterLine`: Color of the `X` & `Y` center lines of the `grid`.
+
+* `colorGrid`: Color of lines `X` & `Y` of the `grid`.
+
+#### Example:
+
+```js
+IfcViewerAPI.grid.setGrid(40);
+```
+
+Using `size` resizes the size of the mesh in X and Y.
+
+```js
+IfcViewerAPI.grid.division(20);
+```
+
+Using `division` configure the number of divisions in `X` & `Y`.
+
+```js
+IfcViewerAPI.grid.colorCenterLine(0x0000ff);
+```
+
+Using `colorCenterLine` can change the color of the central lines in the grid X & Y.
+
+```js
+IfcViewerAPI.grid.colorGrid(0x008000);
+```
+
+Using `colorGrid` can change the color of lines `X` & `Y` of the grid.
+
+* Add a base `mesh` to the scene: "GridHelper" [Check it out!](https://threejs.org/docs/#api/en/helpers/GridHelper)
+
+### addAxes
+
+```js
+IfcViewerAPI.axes.setAxes(size: number)
+```
+
+#### Arguments:
+
+* `size`: `size` of `axes`.
+
+#### Example:
+
+```js
+IfcViewerAPI.grid.setAxes(20);
+```
+
+Using `size` define the length of the `axes` on which the `ifcModel` is loaded.
+
+* Add axes to the scene: "AxesHelper" [Check it out!](https://threejs.org/docs/#api/en/helpers/AxesHelper)
+
+### getModelID
+
+```js
+IfcViewerAPI.IFC.getModelID() : number
+```
+
+#### Example:
+
+```js
+const modelID = await IfcViewerAPI.IFC.ifcModel.modelID;
+```
+
+Gets the Id of the model selected with the cursor.
+
+### getProperties
+
+```js
+IfcViewerAPI.IFC.getProperties(modelID: number, id: number,
+                                indirect: boolean)
+```
+
+#### Arguments:
+
+* `modelID`: `id` of model IFC.
+
+* `id`: Express IDs of the item.
+
+* `indirect`: is `true`? If `true`, also returns `psets`, `qsets` and type properties.
+
+#### Example:
+
+```js
+const properties = await IfcViewerAPI.IFC.getProperties(modelID, id, true);
+```
+
+Get the properties of a specified item.
+
+### getSpatialStructure
+
+```js
+IfcViewer.IFC.getSpatialStructure(modelID: number): any
+```
+
+#### Arguments:
+
+* `modelID`: `id` of model IFC.
+
+#### Example:
+
+```js
+const structure = await IfcViewerAPI.IFC.getSpatialStructure(modelID);
+```
+
+Gets the spatial structure of the specified model.
+
+### getAllItemsOfType
+
+```js
+IfcViewerAPI.IFC.getAllItemsOfType(modelID: number, type: number,
+                                    verbose: boolean): any
+```
+
+#### Arguments:
+
+* `modelID`: `id` of model IFC.
+
+* `type`: Type of element. You can import the `type` from `web-ifc`.
+
+* `verbose`: Is `true`? So you get the properties of all the elements.
+
+#### Example:
+
+```js
+const modelID = await IfcViewerAPI.IFC.ifcModel.modelID;
+IfcViewerAPI.IFC.getAllItemsOfType(modelID, 3, true);
+```
+
+Get all elements of the specified type in the specified IFC model.
+
+### prePickIfcItem
+
+```
+IfcViewerAPI.IFC.selector.prePickIfcItem();
+```
+
+#### Example:
+
+```
+window.onmousemove = () => IfcViewerAPI.IFC.selector.prePickIfcItem();
+```
+
+Highlights the item pointed by the cursor.
+
+### pickIfcItem
+
+```js
+IfcViewerAPI.IFC.selector.pickIfcItem(focusSelection: boolean):
+ {modelID: number, id: number}
+```
+
+#### Arguments:
+
+* `focusSelection`: If `true`, animate the `perspectiveCamera` to focus the current selection.
+
+#### Example:
+
+```js
+window.ondblclick = () => IfcViewerAPI.IFC.selector.pickIfcItem(true);
+```
+
+Highlights the element pointed at by the cursor and gets its properties.
+
+### pickIfcItemsByID
+
+```js
+IfcViewerAPI.IFC.selector.pickIfcItemsByID(modelID: number, ids: number
+                                            focusSelection: boolean)
+```
+
+#### Arguments:
+
+* `modelID`: `id` of model IFC.
+
+* `id`: Express IDs of the item.
+
+* `focusSelection`: If `true`, animate the `perspectiveCamera` to focus the current selection.
+
+#### Example:
+
+```js
+const modelID = await IfcViewerAPI.IFC.ifcModel.modelID;
+const pickID = await IfcViewerAPI.IFC.selector.pickIfcItemsByID(modelID, 0, true);
+```
+
+Highlights the item with the given ID with the picking material.
+
+Remember this...
+
+### dispose
+
+```js
+IfcViewerAPI.dispose();
+```
+
+* When to use dispose: Use this only when removing the **ifcViewerAPI** instance. This is especially important when using libraries and frameworks that handle the object lifecycle automatically. (eg React, Angular, etc.) If you're using one of these examples and you're instantiating `-ifc-viewer-api` inside a component make sure you use this method on the component for destruction.
 
 > 출처: https://ifcjs.github.io/info/docs/Introduction/
