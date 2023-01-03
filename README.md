@@ -2475,17 +2475,17 @@ Creates a new geometric subset.
 
 * `config` A configuration object with the following options:
 
-- `scene` Scene where the model is located.
+  - `scene` Scene where the model is located.
 
-- `modelID` ID of the model.
+  - `modelID` ID of the model.
 
-- `ids` Express IDs of the items of the model that will conform the subset.
+  - `ids` Express IDs of the items of the model that will conform the subset.
 
-- `removePrevious` Wether to remove the previous subset of this model with this material.
+  - `removePrevious` Wether to remove the previous subset of this model with this material.
 
-- `material` (optional) Material to apply to the subset. If no material is given, the subset has the original material.
+  - `material` (optional) Material to apply to the subset. If no material is given, the subset has the original material.
 
-- `customID` (optional) Optional custom name to give to the subset. This allows to create multiple subsets with the same material.
+  - `customID` (optional) Optional custom name to give to the subset. This allows to create multiple subsets with the same material.
 
 #### Example:
 
@@ -2564,7 +2564,116 @@ manager.removeFromSubset(model, walls);
 
 ## Picking
 
-?
+So far we have only loaded IFC models into the scene. That's already great, but it would be even better to be able to interact with that model, and that's precisely what we're going to do.
+
+### Import Three.js dependencies
+
+Before you can do things with objects, you need to be able to select them. This can be easily achieved with the [Three.js Raycaster](https://threejs.org/docs/#api/en/core/Raycaster), which can be imported from three's core library. In addition, we will import a [Vector2](https://threejs.org/docs/#api/en/math/Vector2) object to store the mouse position in the scene.
+
+```
+import { Raycaster, Vector2 } from "three";
+```
+
+* The Raycaster allows you to shoot "beams" that hit objects in the scene and return their information.
+
+### Import three-mesh-bvh (optional)
+
+In addition, we will import [the three-mesh-bvh library](https://github.com/gkjohnson/three-mesh-bvh) to make the selection of objects much more optimal. This can be installed with `npm i three-mesh-bvh`. Don't worry, you don't have to learn how to use that library. Just give us these library objects and IFC.js will take care of the rest.
+
+```
+import { acceleratedRaycast, computeBoundsTree, disposeBoundsTree } from "three-mesh-bvh";
+
+// Sets up optimized picking
+ifcLoader.ifcManager.setupThreeMeshBVH(computeBoundsTree, disposeBoundsTree, acceleratedRaycast);
+```
+
+### Store reference of IFC models
+
+Before doing anything else, it is necessary to save a reference to the IFC models in the scene in order to select them. To do this, we just need to create an array where we store the models we load:
+
+```
+//Sets up the IFC loading
+const ifcModels = [];
+const ifcLoader = new IFCLoader();
+
+async function loadIFC() {
+  await ifcLoader.ifcManager.setWasmPath("../../");
+  ifcLoader.load("../../IFC/01.ifc", (ifcModel) => {
+    ifcModels.push(ifcModel);
+    scene.add(ifcModel);
+  });
+}
+
+loadIFC();
+```
+
+### How to do it
+
+Next we will create an instance of the Raycaster and the mouse position vector. To optimise the application, the Raycaster will only retrieve information from the first object it encounters.
+
+```
+const raycaster = new Raycaster();
+raycaster.firstHitOnly = true;
+const mouse = new Vector2();
+```
+
+Now we need a function for the Raycaster to cast rays, calculating the position of the mouse on the screen. Note that:
+
+* The threeCanvas object is the HTML `canvas` element where the Three.js scene is being rendered. A reference to it can be retrieved with `getElementByID()`.
+
+* It is necessary to specify which objects the beam collides with. In this case, it will only collide with the loaded IFC models, i.e. if there are more objects in the scene, it will ignore them.
+
+```
+function cast(event) {
+  // Computes the position of the mouse on the screen
+  const bounds = threeCanvas.getBoundingClientRect();
+
+  const x1 = event.clientX - bounds.left;
+  const x2 = bounds.right - bounds.left;
+  mouse.x = (x1 / x2) * 2 - 1;
+
+  const y1 = event.clientY - bounds.top;
+  const y2 = bounds.bottom - bounds.top;
+  mouse.y = -(y1 / y2) * 2 + 1;
+
+  // Places it on the camera pointing to the mouse
+  raycaster.setFromCamera(mouse, camera);
+
+  // Casts a ray
+  return raycaster.intersectObjects(ifcModels);
+}
+```
+
+We have a function that fires a ray and returns the object it collides with, but we are not doing anything with that object. Let's create a second function that gets the index of the face the ray hit and logs in the console the Express ID of the object it belongs to.
+
+```
+function pick(event) {
+  const found = cast(event)[0];
+  if (found) {
+    const index = found.faceIndex;
+    const geometry = found.object.geometry;
+    const ifc = ifcLoader.ifcManager;
+    const id = ifc.getExpressId(geometry, index);
+    console.log(id);
+  }
+}
+```
+
+The Raycaster always returns an array of objects, even if *raycaster.firstHitOnly = true;*. In this case, the array will only contain one object that can be extracted with *[0]*.
+
+Finally, all that remains is to associate that function with an event (in this case it's a double click).
+
+```
+threeCanvas.ondblclick = pick;
+```
+
+If you have done everything right and double click on an item, you will see its Express ID in the console (you can access the console by pressing F12 or by inspecting the page).
+
+### Next steps
+
+Congratulations! You now know how to get the ID of an object by clicking on it. Now we can do many things using that ID.
+
+However, it would be nice if the user could see graphically that the object has been selected. For that, let's go to the next point, where we will learn how to highlight elements.
 
 ## Subsets
 
