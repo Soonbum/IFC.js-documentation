@@ -2677,11 +2677,307 @@ However, it would be nice if the user could see graphically that the object has 
 
 ## Subsets
 
-?
+In almost all BIM applications, elements are highlighted when the user moves the mouse over them or selects them. IFC.js is no exception, and in this tutorial we will see how to achieve this.
+
+[Previously](https://ifcjs.github.io/info/docs/Guide/web-ifc-three/Tutorials/Picking/) we have seen how to obtain the ID of an object on which we cast a ray with the [Raycaster](https://threejs.org/docs/#api/en/core/Raycaster). Now that we have those IDs, it's possible to highlight those elements using **geometric subsets**.
+
+* Geometric subsets?: **Geometric subsets** are any group of items in the model. For example: all doors, all ground floor elements or all elements fulfilling a given condition.
+
+### Import dependencies
+
+We'll need a [material](https://threejs.org/docs/#api/en/materials/Material) to highlight the items. You can choose any material you like; in this example we'll use a [MeshLambertmaterial](https://threejs.org/docs/#api/en/materials/MeshLambertMaterial), which we'll import from Three's core library.
+
+```js
+import { MeshLambertMaterial } from "three";
+```
+
+We'll use the Raycaster, so you'll also need [those dependencies](https://ifcjs.github.io/info/docs/Guide/web-ifc-three/Tutorials/Picking/#import-threejs-dependencies), as well as [three-mesh-bvh](https://ifcjs.github.io/info/docs/Guide/web-ifc-three/Tutorials/Picking/#import-three-mesh-bvh-optional) if we want optimal performance.
+
+## How to do it
+
+### Highlight material
+
+The first thing is to create the **highlight material**. Play with the configuration and make the material look nice! Pro tip: you can use `depthTest=false` so that the object is visible from any viewpoint.
+
+```js
+// Creates subset material
+const preselectMat = new MeshLambertMaterial({
+  transparent: true,
+  opacity: 0.6,
+  color: 0xff88ff,
+  depthTest: false,
+});
+```
+
+Note that geometric subsets are **uniquely identified** by their material.
+
+* If you create a subset with a wall using a material A, and then try to create a subset of another wall with the same material A, the second wall will be added to the subset of the first one.
+
+* If you create a subset with a wall using material A, and then try to create another subset of the same wall using material B, you will have created two independent subsets.
+
+* You can have two separate subsets with the same appearance using two instances of the same material.
+
+### Single subset
+
+We can create a highlight effect when the user hovers with [createSubset](https://ifcjs.github.io/info/docs/Guide/web-ifc-three/api#createsubset).
+
+```js
+const ifc = ifcLoader.ifcManager;
+
+// Reference to the previous selection
+let preselectModel = { id: -1 };
+
+function highlight(event, material, model) {
+  const found = cast(event)[0];
+  if (found) {
+    // Gets model ID
+    model.id = found.object.modelID;
+
+    // Gets Express ID
+    const index = found.faceIndex;
+    const geometry = found.object.geometry;
+    const id = ifc.getExpressId(geometry, index);
+
+    // Creates subset
+    ifcLoader.ifcManager.createSubset({
+      modelID: model.id,
+      ids: [id],
+      material: material,
+      scene: scene,
+      removePrevious: true,
+    });
+  } else {
+    // Removes previous highlight
+    ifc.removeSubset(model.id, material);
+  }
+}
+
+window.onmousemove = (event) => highlight(event, preselectMat, preselectModel);
+```
+
+There are several interesting things to look out for:
+
+* The implementation of `cast()` was shown [previously](https://ifcjs.github.io/info/docs/Guide/web-ifc-three/Tutorials/Picking/#how-to-do-it).
+
+* The variable `currentModel` is used to store a reference of the selected model; this way, when the user is not hovering an object, we are able to remove the previous subset with [removeSubset](https://ifcjs.github.io/info/docs/Guide/web-ifc-three/api#removesubset).
+
+* The IDs of the items whose subset to create have to be given as an **array** (even if it's a single ID).
+
+### Multiple subsets
+
+Working with **multiple subsets** is as easy as working with a single subset. We just need to create a new material, create a new subset with the same function and associate the creation of that subset to an event.
+
+In this example we are going to bind it to **double click** to simulate the effect of highlighting objects when they are selected.
+
+```js
+const selectMat = new MeshLambertMaterial({
+  transparent: true,
+  opacity: 0.6,
+  color: 0xff00ff,
+  depthTest: false,
+});
+
+const selectModel = { id: -1 };
+window.ondblclick = (event) => highlight(event, selectMat, selectModel);
+```
+
+### Extracting geometry
+
+If you create a geometry subset and do not specify a highlight material, the subset will have the **original materials**.
+
+* This would allow, for example, to create a geometric subset with all the ground floor elements of the BIM model and hide the rest.
+
+In the next example we will apply a transparent material to a copy of loaded IFC model and create a subset with the original materials when the mouse hovers over an item. For this we will use almost the same code as before.
+
+```js
+ifcLoader.load("../../IFC/01.ifc", (ifcModel) => {
+  ifcModel.visible = false;
+
+  const modelCopy = new Mesh(
+    ifcModel.geometry,
+    new MeshLambertMaterial({
+      transparent: true,
+      opacity: 0.1,
+      color: 0x77aaff,
+    })
+  );
+
+  scene.add(ifcModel);
+  scene.add(modelCopy);
+});
+
+// ...
+
+window.onmousemove = (event) => highlight(event, undefined, highlightModel);
+```
+
+## Next steps
+
+Congratulations! You should now be able to highlight elements and extract geometry from the BIM model. Good job!
+
+However, don't be so quick to claim victory. We haven't talked about the "I" in BIM yet, and that's even more important than the geometry. That's what the next lesson is for.
 
 ## Properties
 
-?
+Although virtually all BIM models have geometry, almost everyone agrees that what is really important is the "I" in BIM, i.e. **Information**. IFC.js can traverse any IFC file from top to bottom at **native speed** and with **almost no code**.
+
+This not only makes it possible to create web applications that **read information from IFC** files directly on the client side, but also to transfer that information into relational or non-relational databases and process it on the backend.
+
+* IFC.js can read IFC files by IDs, by spatial tree and by filtered search.
+
+There are several types of properties in the IFC scheme, each with a specific purpose, and IFC.js can get **all of them**. Some of the most common are:
+
+* Native properties: Specific to each IFC class.
+
+* Type properties: Describe properties of all elements of the same type (e.g. all envelope walls of a particular type).
+
+* Material properties: Describes all the materials that make up the layers of that element.
+
+* Property sets: Arbitrary sets of user-defined properties. There may be multiple sets of properties associated with one or more elements. Each property set contains an arbitrary group of properties related to each other.
+
+* Quantity sets: Sets of properties describing the dimensions of the elements to which they refer. Although it would also be possible to infer element dimensions implicitly from the geometry definition, this explicit description makes it much easier to create applications that measure IFC models.
+
+ But enough theory! Let's get down to work.
+
+## How to do it
+
+### Hello properties
+
+The basic way to extract properties from an IFC is from the ID of an element. In many cases, when the user selects an element, we will want to get its direct and indirect properties. [Previous tutorials](https://ifcjs.github.io/info/docs/Guide/web-ifc-three/Tutorials/Picking/) have shown how to get that ID easily.
+
+Now that we have that ID, how hard it is to get the properties of an element? You only need to add **one line of code** to what we saw in the [picking tutorial](https://ifcjs.github.io/info/docs/Guide/web-ifc-three/Tutorials/Picking/) to be able to see the properties of the selected element when double clicking.
+
+```js
+// Event that gets executed when an item is picked
+async function pick(event) {
+  const found = cast(event)[0];
+  if (found) {
+    const index = found.faceIndex;
+    const geometry = found.object.geometry;
+    const ifc = ifcLoader.ifcManager;
+    const id = ifc.getExpressId(geometry, index);
+    const modelID = found.object.modelID;
+    const props = await ifc.getItemProperties(modelID, id);
+    output.innerHTML = JSON.stringify(props, null, 2);
+  }
+}
+```
+
+#### But what are these properties?
+
+They are **native properties**, that is, the basic properties inherent to each ifc element type. The properties are given as a **JavaScript object**, so they are super easy to traverse.
+
+#### Why do some properties have numbers as values?
+
+These are not numbers, but **express IDs**! This means that you can use `getItemProperties()` again using that ID, and you'll get the properties of that **referenced** element.
+
+* That is how IFC works: each **element** has **properties**, and each **property** can be the reference to other **element**. So you can basically traverse the whole IFC navigating through references.
+
+#### References? But I want all the information directly!
+
+Don't worry, we got you covered! You can use an optional third parameter of `getItemProperties()`, which is a boolean that is false by default. If you set it to true, we will get all referenced elements recursively and give you everything nicely packed in a single JavaScript object.
+
+Nonetheless, we usually recommend avoiding this in order to avoid runtime overheads. Much better is to use `getItemProperties()` only for those IDs you need when you need them.
+
+#### How can I get other types of properties?
+
+The IFC.js API has other similar methods for all other property types: `getTypeProperties()`, `getMaterialProperties()` and `getPropertySets()`. This last method fetches both property sets and quantity sets.
+
+#### Is getItemProperties() the only way to traverse the IFC?
+
+Not at all! We'll see how to traverse the whole spatial structure next.
+
+### Traverse the IFC
+
+You can now browse the IFC information from the ID of an element, and you also know how to get the ID by clicking on objects in the scene. However, we know that **this is not enough**.
+
+* What if you want to get the properties of elements that have no geometric representation (e.g. `IfcSite`)?
+
+* What if you want to traverse the entire spatial structure of the IFC?
+
+Of course, all this is really easy with the IFC.js API.
+
+### Spatial tree
+
+As you may know, all IFCs have a general structure called **Spatial Element Structure** (we'll refer to it as `spatial tree`). It is composed of elements that define the relative position of all products (physical objects) in the project.
+
+* The spatial structure generally consists of IfcProject, IfcSite, IfcBuilding, IfcBuildingStorey and IfcSpace.
+
+You can get the spatial structure of the project simply calling `getSpatialStructure()`, where the only parameter is the `modelID`. This method will return the whole spatial structure of the project as a JavaScript object.
+
+Does this means that you get all the properties of all the products of the project? **Nope**, because that would be computationally expensive. Instead, you get a tree of items with the following information:
+
+```js
+interface Node {
+  expressID: number;
+  type: string;
+  children: Node[];
+}
+```
+
+Notice that you only get the **type** (e.g. `IfcWall`) and the **express ID**. If you want to get the properties of an element, you'll have to traverse the tree and call the abovementioned property getter methods over all the IDs.
+
+* If your goal is to display properties to users, it's generally better to only get the properties when the user requests it (e. g. clicks on a specific item in your GUI).
+
+For instance, if you request the spatial structure of a project, you might get something like this:
+
+```js
+{
+    expressID: 100,
+    type: "IfcProject",
+    children: [{
+        expressID: 101,
+        type: "IfcSite",
+        children: [{
+            expressID: 102,
+            type: "IfcBuilding",
+            children:[
+                {
+                    expressID: 103,
+                    type: "IfcBuildingStorey",
+                    children: {...}
+                },
+                {
+                    expressID: 104,
+                    type: "IfcBuildingStorey",
+                    children: {...}
+                }
+            ]
+        }]
+    }]
+}
+```
+
+### Get items by type
+
+Sometimes you'll want to retrieve **all elements of a certain type** (e.g. all `IfcWall` instances in the project). In these cases it is not useful to select elements by clicking on them or to get the spatial tree of the project.
+
+That's what the `getAllItemsOfType` method is for. Using it is really easy, and you can import the types directly from `web-ifc`. For instance, to get the properties of all the `IfcSlab` instances of the project, you can do the following:
+
+```js
+import { IFCSLAB } from "web-ifc";
+
+const ifc = ifcLoader.ifcManager;
+const modelID = 0;
+
+async function logAllSlabs() {
+  const slabsID = await ifc.getAllItemsOfType(modelID, IFCSLAB);
+
+  for (let i = 0; i <= slabsID.length; i++) {
+    const slabID = slabsID[i];
+    const slabProperties = await ifc.getItemProperties(0, slabID);
+    console.log(slabProperties);
+  }
+}
+
+logAllSlabs();
+```
+
+## Next steps
+
+Congratulations! You should now be able to **traverse any IFC** and extract the properties you are looking for.
+
+However, what can we do with these properties? One possible application can be found in the following tutorial, where we will see how to **hide and isolate** elements.
 
 ## Hiding
 
