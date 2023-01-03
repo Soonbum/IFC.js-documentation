@@ -2499,6 +2499,7 @@ const config = {
         removePrevious: true
 }
 manager.createSubset(config);
+```
 
 ### removeSubset
 
