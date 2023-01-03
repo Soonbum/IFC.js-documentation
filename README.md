@@ -1947,7 +1947,619 @@ If you get lost in any of the tutorials, don't worry! Take a look at the example
 
 ## API
 
-???
+All APIs are documented, so when you use any of the objects or methods seen in this documentation, you should see help in Intellisense, regardless of the IDE you are using. [Check it out!](https://github.com/IFCjs/web-ifc-three/blob/main/web-ifc-three/src/IFC/components/IFCManager.ts)
+
+However, we realise that reading intellisense or comments is not the most comfortable thing to do, so on this page we will make an overview of what the API can do. Everything will be covered in more detail in specific tutorials later on.
+
+### IfcLoader
+
+The only object we will import from the library. It contains all the logic needed to work with IFC. You can use its `load()` and `loadAsync()` methods to load IFCs from a URL, [just like any other Three.js Loader](https://threejs.org/docs/#api/en/loaders/Loader.load). For example, to load an IFC we can do the following:
+
+```
+import { IFCLoader } from "web-ifc-three/IFCLoader";
+
+const ifcLoader = new IFCLoader();
+ifcLoader.load("models/Example_model.ifc", (ifcModel) => scene.add(ifcModel));
+```
+
+With `web-ifc-three` you can load multiple models in the scene. Many of the API operations are executed on a specified model. To express on which model we want to operate we have to give its `ModelID`.
+
+You can get the ID of a model through the property `modelID`.
+
+```
+const modelID = ifcModel.modelID;
+```
+
+There are two ways to access the API:
+
+* Through the instances of `IfcModel` that the `IfcLoader` generates with `load` and `loadAsync`.
+
+* Through `IfcLoader.IfcManager`.
+
+* Both **IfcModel** instances and **IfcLoader.IfcManager** can be used interchangeably to access the API. There's one difference: when using **IfcModel**, the ModelID never has to be given as an argument (it's known implicitly).
+
+## Setup
+
+### setWasmPath
+
+```
+async IfcLoader.IfcManager.setWasmPath (
+                        path: string
+                        ): void;
+```
+
+Specifies the location of the `web-ifc.wasm` and `web-ifc-mt.wasm` files. These files are the web-ifc file and is required to create any application with IFC.js. You can find them in `node_modules/web-ifc/`.
+
+* Careful with your tooling!: If you use frameworks or libraries like React, Angular, Vue or Svelte it is possible that the root path of the project doesn't correspond to the root path of the served application. You will have to check in [each case](https://github.com/IFCjs/examples) how the paths of the statically served files are managed.
+
+#### Arguments:
+
+* `path` Route of `web-ifc.wasm`.
+
+#### Example:
+
+If `web-ifc.wasm` is in dist/wasmDir:
+
+```
+await ifcLoader.ifcManager.setWasmPath("dist/wasmDir/");
+```
+
+### setupThreeMeshBVH
+
+```
+IfcLoader.IfcManager.setupThreeMeshBVH (
+                        computeBoundsTree: any,
+                        disposeBoundsTree: any,
+                        acceleratedRaycast: any
+                        ): void;
+```
+
+This method allows object picking to be much faster, especially for very large models with heavy geometry. This method actually allows IFC.js to use the Garrett Johnson's amazing [library](https://github.com/gkjohnson/three-mesh-bvh) . u can install it with `npm i three-mesh-bvh` or `yarn add three-mesh-bvh`.
+
+* Using this method not mandatory, but if you want to be able to select objects in medium / large IFC models at 60 fps, it's necessary.
+
+#### Arguments:
+
+* `computeBoundsTree` Pre-made BufferGeometry extension function that builds a new BVH, assigns it to boundsTree, and applies the new index buffer to the geometry. - [source](https://github.com/gkjohnson/three-mesh-bvh#computeboundstree).
+
+* `disposeBoundsTree` BufferGeometry extension function that disposes of the BVH. - [source](https://github.com/gkjohnson/three-mesh-bvh#disposeboundstree).
+
+* `acceleratedRaycast` Accelerated raycast function with the same signature as THREE.Mesh.raycast. Uses the BVH for raycasting if it's available otherwise it falls back to the built-in approach. - [source](https://github.com/gkjohnson/three-mesh-bvh#acceleratedraycast).
+
+#### Example:
+
+```
+import { IFCLoader } from "web-ifc-three/dist/IFCLoader";
+
+import { acceleratedRaycast, computeBoundsTree, disposeBoundsTree } from "three-mesh-bvh";
+
+const ifcLoader = new IFCLoader();
+ifcLoader.ifcManager.setupThreeMeshBVH(acceleratedRaycast, computeBoundsTree, disposeBoundsTree);
+```
+
+### setOnProgress
+
+```
+IfcLoader.IfcManager.setOnProgress (
+      onProgress: (event: ParserProgress) => void
+                                    ): void;
+```
+
+Sets a callback function that is called every 10% of IFC loaded. This way, you can display a loading bar to show your user how the loading is going.
+
+#### Arguments:
+
+* `onProgress`: Callback function that is called every 10%. That function must have one argument that that receives an object with two properties: `loaded` (number of objects loaded) and `total` (number of objects in the file).
+
+#### Example:
+
+```
+function exampleCallback(event) {
+  const progress = (event.total / event.progress) * 100;
+  console.log("Progress: ", progress, "%");
+}
+
+ifcLoader.ifcManager.setOnProgress(exampleCallback);
+```
+
+### applyWebIfcConfig
+
+```
+async IfcLoader.IfcManager.applyWebIfcConfig (
+                                    settings: LoaderSettings
+                                    ): void;
+```
+
+Applies a configuration for [web-ifc](https://ifcjs.github.io/info/docs/Guide/web-ifc/Introduction), which is the parser that this library uses internally.
+
+#### Arguments:
+
+* `settings`: An object containing the following fields:
+
+* `COORDINATE_TO_ORIGIN: boolean`: Wether to bring the model to the center of the scene. Useful for geolocated models.
+
+* `USE_FAST_BOOLS: boolean`: Wether to use a faster (and less precise) boolean logic.
+
+* `BOOL_ABORT_THRESHOLD?: number`: The limit to the boolean operation computation.
+
+* `CIRCLE_SEGMENTS_LOW?: number`: The resolution for low segments curves.
+
+* `CIRCLE_SEGMENTS_MEDIUM?: number`: The resolution for medium segments curves (e.g. IfcSweptDiskSolid).
+
+* `CIRCLE_SEGMENTS_HIGH?: number`: The resolution for high segments curves (e.g. IfcCircle).
+
+#### Example:
+
+If a file is geolocated and we want to bring it to the origin of the scene:
+
+```
+await ifcLoader.ifcManager.applyWebIfcConfig({
+  COORDINATE_TO_ORIGIN: true,
+  USE_FAST_BOOLS: false,
+});
+```
+
+### useWebworkers
+
+```
+async IfcLoader.IfcManager.useWebWorkers (
+                                    active: boolean,
+                                    path?: string
+                                    ): void;
+```
+
+Toggles the web worker that contains the parsing logic. The rest of the API remains the same, but all the logic will happen in another thread of the machine, so the app will never be blocked by heavy operations.
+
+You need to copy the file `IFCWorker.js` to your project and pass the relative path as a second argument.
+
+#### Arguments:
+
+* `active`: Wether to use web workers or not.
+
+* `path`: Relative path to the worker file. Necessary if `active = true`.
+
+#### Example:
+
+If the file `IFCWorker.js` is in a folder called: `files`:
+
+```
+await ifcLoader.ifcManager.useWebWorkers({
+                                true,
+                                "files/IFCWorker.js"
+                                            });
+```
+
+### useJSONData
+
+```
+async IfcLoader.IfcManager.useJSONData (
+                                    useJSON: boolean
+                                    ): void;
+```
+
+Uses JSON property data instead of the WASM data, which consumes much less memory. Only use this in the following scenarios:
+
+* If you don't need to access the properties of the IFC
+
+* If you will provide the properties as JSON. You can get the JSON from an IFC file in advance following [this example](https://github.com/IFCjs/hello-world/tree/main/examples/web-ifc/ifc-to-json/node).
+
+#### Arguments:
+
+* `useJSON`: Wether to use JSON data or not.
+
+#### Example:
+
+```
+await ifcLoader.ifcManager.useJSONData(true);
+```
+
+### addModelJSONData#
+
+```
+async IfcLoader.IfcManager.addModelJSONData (
+                                modelID: number,
+                                data: { [id: number]: JSONObject
+                                        ): void;
+```
+
+Adds the properties of a model as JSON data. If you are using web workers, use `loadJsonDataFromWorker()` instead to avoid overheads.
+
+#### Arguments:
+
+* `modelID`: ID of the IFC model.
+
+* `data`: data as an object where the keys are the expressIDs and the values the properties. In addition, each value has the properties `expressID` (id of the item) and `type` (IFC class of the item).
+
+#### Example:
+
+```
+await ifcLoader.ifcManager.addModelJSONData(0, jsonData);
+```
+
+### loadJsonDataFromWorker
+
+```
+async IfcLoader.IfcManager.loadJsonDataFromWorker (
+                                        modelID: number,
+                                        path: string
+                                            ): void;
+```
+
+Loads the data of an IFC model from a JSON file directly from a web worker. If you are not using web workers, use `addModelJSONData()` instead.
+
+#### Arguments:
+
+* `modelID`: ID of the IFC model.
+
+* `path`: the path to the JSON file **relative to the web worker file**.
+
+#### Example:
+
+```
+await ifcLoader.ifcManager.loadJsonDataFromWorker(0, "path/to/data.json");
+```
+
+## Getters
+
+### getExpressId
+
+```
+IfcLoader.IfcManager.getExpressId (
+                        geometry: BufferGeometry,
+                        faceIndex: number
+                        ): number;
+```
+
+Gets the Express ID of an IFC element from a face index.
+
+* Why a face index?: Because when we select an object in 3d space with the mouse we get the index of that face. We usually want the ID of the object where that face belongs to in order to highlight it, isolate it or get all its properties.
+
+#### Arguments:
+
+* `geometry` [Geometry](https://threejs.org/docs/#api/en/core/BufferGeometry) of the model you clicked on with the mouse.
+
+* `faceIndex` Index of the face intersected with the [raycaster](https://threejs.org/docs/#api/en/core/Raycaster). If you are not familiar with the raycaster, don't worry; we'll cover this in detail in the tutorial about picking.
+
+#### Example:
+
+```
+const intersected = raycaster.intersectObject(mesh)[0];
+const index = intersected.faceIndex;
+const id = ifcLoader.ifcManager.getExpressId(mesh, index);
+```
+
+### getIfcType
+
+```
+IfcLoader.IfcManager.getIfcType (
+                        modelID: number,
+                        id: number,
+                        ): string;
+```
+
+Gets the IFC type of the specified element (e.g. IFCWALL).
+
+* Elements in IFC always have an associated type: IfcWall, IfcSlab, IfcWindow, IfcDoor, etc.
+
+#### Arguments:
+
+* `modelID` ID of the IFC model.
+
+* `id` Express ID of the item whose properties to obtain. You can get this either with `getExpressId` (if you are picking an object in the 3d view) or traversing the model with `getAllItemsOfType` or `getSpatialStructure`.
+
+#### Example:
+
+```
+const model = ifcModel.modelID;
+const id = 2142;
+const manager = loader.ifcLoader.ifcManager;
+const type = manager.getIfcType(model, id);
+```
+
+### getAllItemsOfType
+
+```
+async IfcLoader.IfcManager.getAllItemsOfType (
+                            modelID: number,
+                            type: number,
+                            verbose: boolean
+                            ): number[] | object[];
+```
+
+Returns all objects of the specified IFC type (e.g. all walls, all floors, all windows, etc.) of a specific model. It can return an array of `expressIDs`, or (if `verbose = true`) an array of objects containing the properties of the items found.
+
+#### Arguments:
+
+* `modelID` ID of the IFC model.
+
+* `type` IFC type of the elements you want to get. You can import these types directly from `web-ifc` (see example below).
+
+* `verbose` If true, gets the properties of all the items found. Be careful, as this can be a slow operation in bigger models.
+
+#### Example:
+
+```
+import { IFCWALLSTANDARDCASE as W } from "web-ifc";
+
+const manager = loader.ifcLoader.ifcManager;
+const walls = await manager.getAllItemsOfType(0, W, false);
+```
+
+### getItemProperties
+
+```
+async IfcLoader.IfcManager.getItemProperties (
+                            modelID: number,
+                            id: number,
+                            recursive = false
+                            ): object[];
+```
+
+Gets the native properties of the given element. In the IFC schema there are two types of properties: direct and indirect. How to obtain the indirect properties (psets, qsets and type properties) will be discussed later.
+
+* All methods related to properties return an array of objects where the keys are the name of the properties and the values are their values.
+
+#### Arguments:
+
+* `modelID` ID of the IFC model.
+
+* `id` Express ID of the item whose properties to obtain. You can get this either with `getExpressId` (if you are picking an object in the 3d view) or traversing the model with `getAllItemsOfType` or `getSpatialStructure`.
+
+* `recursive` If true, gets the properties of all the referenced elements recursively. Be careful, as this can be a slow operation in bigger models.
+
+#### Example:
+
+```
+const model = ifcModel.modelID;
+const id = 2142;
+const manager = loader.ifcLoader.ifcManager;
+const props = await manager.getItemProperties(model, id, false);
+```
+
+### getTypeProperties
+
+```
+async IfcLoader.IfcManager.getTypeProperties (
+                            modelID: number,
+                            id: number,
+                            recursive = false
+                            ): number[] | object[];
+```
+
+Gets the type properties of the given element.
+
+#### Arguments:
+
+* `modelID` ID of the IFC model.
+
+* `id` Express ID of the item whose properties to obtain. You can get this either with `getExpressId` (if you are picking an object in the 3d view) or traversing the model with `getAllItemsOfType` or `getSpatialStructure`.
+
+* `recursive` If true, gets the properties of all the referenced elements recursively. Be careful, as this can be a slow operation in bigger models.
+
+#### Example:
+
+```
+const model = ifcModel.modelID;
+const id = 2142;
+const manager = loader.ifcLoader.ifcManager;
+const props = await manager.getTypeProperties(model, id, false);
+```
+
+### getPropertySets
+
+```
+async IfcLoader.IfcManager.getPropertySets (
+                            modelID: number,
+                            id: number,
+                            recursive = false
+                            ): object[];
+```
+
+Gets the property sets and quantity sets of the given element.
+
+* Property sets?: Native and type properties are those that are predefined by the IFC schema: they always contain the same information. Property sets, on the other hand, are arbitrary and can be defined by the user.
+
+#### Arguments:
+
+* `modelID` ID of the IFC model.
+
+* `id` Express ID of the item whose properties to obtain. You can get this either with `getExpressId` (if you are picking an object in the 3d view) or traversing the model with `getAllItemsOfType` or `getSpatialStructure`.
+
+* `recursive` If true, gets the properties of all the referenced elements recursively. Be careful, as this can be a slow operation in bigger models.
+
+#### Example:
+
+```
+const model = ifcModel.modelID;
+const id = 2142;
+const manager = loader.ifcLoader.ifcManager;
+const props = await manager.getPropertySets(model, id, false);
+```
+
+### getMaterialsProperties
+
+```
+async IfcLoader.IfcManager.getMaterialsProperties (
+                            modelID: number,
+                            id: number,
+                            recursive = false
+                            ): object[];
+```
+
+Gets the material information of the given element.
+
+#### Arguments:
+
+* `modelID` ID of the IFC model.
+
+* `id` Express ID of the item whose properties to obtain. You can get this either with `getExpressId` (if you are picking an object in the 3d view) or traversing the model with `getAllItemsOfType` or `getSpatialStructure`.
+
+* `recursive` If true, gets the properties of all the referenced elements recursively. Be careful, as this can be a slow operation in bigger models.
+
+#### Example:
+
+```
+const model = ifcModel.modelID;
+const id = 2142;
+const manager = loader.ifcLoader.ifcManager;
+const props = await manager.getMaterialsProperties(model, id, false);
+```
+
+### getSpatialStructure
+
+```
+async IfcLoader.IfcManager.getSpatialStructure (
+                        modelID: number
+                        ): object;
+```
+
+Gets the spatial structure of the project.
+
+* The [spatial structure](https://standards.buildingsmart.org/IFC/DEV/IFC4_2/FINAL/HTML/schema/ifcproductextension/lexical/ifcspatialstructureelement.htm) is the hierarchical structure that organizes every IFC project (all physical items are referenced to an element of the spatial structure).
+
+#### Arguments:
+
+* `modelID` ID of the IFC model.
+
+#### Example:
+
+```
+const model = ifcModel.modelID;
+const manager = loader.ifcLoader.ifcManager;
+const ifcProject = await manager.getSpatialStructure(model);
+```
+
+## Subsets
+
+### getSubset
+
+```
+IfcLoader.IfcManager.getSubset (
+                        modelID: number,
+                        material?: Material,
+                        customID?: string
+                        ): object;
+```
+
+Gets the mesh of the subset with the specified [material](https://threejs.org/docs/#api/en/materials/Material). If no material is given, this returns the subset with the original materials.
+
+* Geometric subsets are extracts of the geometry of the model. For example, you could extract a subset with all the IfcDoors and IfcWindows that meet a certain condition and highlight or export them.
+
+#### Arguments:
+
+* `modelID` ID of the IFC model.
+
+* `material` (optional) Material assigned to the subset (if any).
+
+* `customID` (optional) Optional custom name of the subset (if any).
+
+#### Example:
+
+```
+const model = ifcModel.modelID;
+const manager = loader.ifcLoader.ifcManager;
+const subset = manager.getSubset(model);
+```
+
+### createSubset
+
+```
+IfcLoader.IfcManager.createSubset (
+                        config: SubsetConfig
+                        ): object;
+```
+
+Creates a new geometric subset.
+
+#### Arguments:
+
+* `config` A configuration object with the following options:
+
+- `scene` Scene where the model is located.
+
+- `modelID` ID of the model.
+
+- `ids` Express IDs of the items of the model that will conform the subset.
+
+- `removePrevious` Wether to remove the previous subset of this model with this material.
+
+- `material` (optional) Material to apply to the subset. If no material is given, the subset has the original material.
+
+- `customID` (optional) Optional custom name to give to the subset. This allows to create multiple subsets with the same material.
+
+#### Example:
+
+```
+const model = ifcModel.modelID;
+const manager = loader.ifcLoader.ifcManager;
+const config = {
+        modelID: model
+        scene: scene,
+        ids: [id],
+        removePrevious: true
+}
+manager.createSubset(config);
+
+### removeSubset
+
+```
+IfcLoader.IfcManager.removeSubset (
+                        modelID: number,
+                        material?: Material,
+                        customID?: string,
+                        ): object;
+```
+
+Removes the specified geometric subset.
+
+#### Arguments:
+
+* `modelID` ID of the IFC model.
+
+* `material` (optional) Material assigned to the subset (if any).
+
+* `customID` (optional) Optional custom name to give to the subset. This allows to create multiple subsets with the same material.
+
+#### Example:
+
+```
+const model = ifcModel.modelID;
+const manager = loader.ifcLoader.ifcManager;
+manager.removeSubset(model);
+```
+
+### removeFromSubset
+
+```
+IfcLoader.IfcManager.removeFromSubset (
+                        modelID: number,
+                        ids: number[],
+                        customID?: string,
+                        material?: Material
+                        ): void;
+```
+
+Removes the specified items from the specified geometric subset.
+
+#### Arguments:
+
+* `modelID` ID of the IFC model.
+
+* `ids` Express IDs of the items to remove from the subset.
+
+* `customID` (optional) Optional custom name to give to the subset. This allows to create multiple subsets with the same material.
+
+* `material` (optional) Material assigned to the subset (if any).
+
+#### Example:
+
+```
+import { IFCWALLSTANDARDCASE as W } from "web-ifc";
+const model = ifcModel.modelID;
+const manager = loader.ifcLoader.ifcManager;
+const walls = await manager.getAllItemsOfType(0, W, false);
+manager.removeFromSubset(model, walls);
+```
 
 ## Picking
 
