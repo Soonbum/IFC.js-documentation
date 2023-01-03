@@ -53,7 +53,7 @@ IFC.js는 2가지에 집중합니다:
 
 IFC.js로 BIM 애플리케이션을 만드는 것은 JavaScript, HTML, CSS로 웹 페이지를 만드는 것처럼 쉽습니다.
 
-```
+```js
 import { IfcLoader } from "web-ifc-three";
 import { Scene } from "three";
 
@@ -164,7 +164,7 @@ npm i @rollup/plugin-node-resolve --save-dev
 
 * `bundle.js`이라는 파일을 참조하는 **스크립트**: 이것은 rollup으로 만들게 될 앱의 번들(bundle)입니다.
 
-```
+```html
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -186,7 +186,7 @@ npm i @rollup/plugin-node-resolve --save-dev
 
 다음 CSS 파일은 canvas 전체 화면을 만들 것입니다:
 
-```
+```css
 * {
   margin: 0;
   padding: 0;
@@ -217,7 +217,7 @@ body {
 
 * Rollup? Rollup이란 매우 유명한 번들링 라이브러리입니다. 한 예로 Three.js가 사용하는 번들러입니다. 더 자세한 것은 [rollup 문서](https://rollupjs.org/guide/en/)를 보십시오.
 
-```
+```js
 import resolve from "@rollup/plugin-node-resolve";
 
 export default {
@@ -275,7 +275,7 @@ export default {
 
 Three.js를 이용하여 기본 3D 장면을 생성할 것입니다.
 
-```
+```js
 import { AmbientLight, AxesHelper, DirectionalLight, GridHelper, PerspectiveCamera, Scene, WebGLRenderer } from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 
@@ -358,7 +358,7 @@ window.addEventListener("resize", () => {
 
 마지막으로 IFC 파일을 로드하기 위해 IFC.js를 사용할 것입니다. 이것은 로더를 인스턴스화하고 사용자가 IFC 파일을 HTML input 요소에 업로드할 때 이벤트를 생성하여 수행할 수 있습니다.
 
-```
+```js
 import { IFCLoader } from "web-ifc-three/IFCLoader";
 
 // IFC 로딩 설정
@@ -378,7 +378,7 @@ input.addEventListener(
 
 만약 프로젝트의 제공된 파일들의 루트에 wasm 파일들을 저장하지 않았다면 `setWasmPath`로 해당 위치를 지정해 주어야 합니다. 예를 들어 프로젝트의 루트에 있는 `static`이라는 폴더에 포함된 `wasm`이라는 폴더에 저장했다면 다음과 같이 진행하시면 됩니다:
 
-```
+```js
 ifcLoader.ifcManager.setWasmPath("static/wasm/");
 ```
 
@@ -394,7 +394,7 @@ ifcLoader.ifcManager.setWasmPath("static/wasm/");
 
 1번째의 경우 IFC 파일의 URL을 참조하는 것으로 충분합니다. 즉, 애플리케이션의 상대 경로를 이용하는 것입니다. 예를 들어, IFC 파일이 프로젝트의 루트에 있는 "models" 폴더 안에 있다면 애플리케이션을 시작할 때 다음과 같이 IFC를 로드할 수 있습니다:
 
-```
+```js
 ifcLoader.load("models/Example_model.ifc", (ifcModel) => scene.add(ifcModel));
 ```
 
@@ -483,7 +483,7 @@ npm install web-ifc
 
 ## 빠른 설정
 
-```
+```js
 // 현재 터미널에 있지 않을 때마다 프로젝트에서 이것을 사용하십시오.
 const WebIFC = require("web-ifc/web-ifc-api.js");
 
@@ -642,7 +642,7 @@ package.json을 열고 scripts 섹션에 build와 watch라는 이름을 추가�
 
 프로젝트 루트에 구성 파일 **rollup.config.js**를 추가하십시오. 구성 파일의 내용은 다음과 같습니다:
 
-```
+```js
 import resolve from "@rollup/plugin-node-resolve";
 
 export default {
@@ -690,7 +690,7 @@ https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer
 
 ### index.html
 
-```
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -714,7 +714,7 @@ https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer
 
 **web-ifc/web-ifc-api**만 필요합니다. ifcFileLocation만 신경쓰시면 됩니다. 이 데모에서 루트 폴더에 저장된 ifcModel입니다.
 
-```
+```js
 import {IfcAPI} from "web-ifc/web-ifc-api";
 const ifcFileLocation = "duplex-apartment.ifc"; // 당신의 ifc 파일명으로 변경하는 것을 명심하세요
 let modelID = 0;
@@ -726,7 +726,7 @@ ifcapi.SetWasmPath("./wasm/"); // wasm 파일이 app.js와 같은 레벨에 있�
 
 파일을 가져오기 위해 XMLHttpRequest를 선택했습니다. 당신이 원하는 아무 방식을 선택하셔도 됩니다. 마지막에 필요한 것은 `new Uint8Array(oReq.response)` 뿐입니다.
 
-```
+```js
 /**
  * resolve a Uint8Array().
  * 
@@ -750,7 +750,7 @@ function getIfcFile(url) {
 
 거의 다 했습니다 ;) ifcapi가 초기화되면 ifcFile을 가져옵니다. 그리고 ifcapi를 이용해서 로드된 파일을 가지고 작업할 수 있습니다.
 
-```
+```js
 ifcapi.Init().then(()=>{
   getIfcFile(ifcFileLocation).then((ifcData) => {
     modelID = ifcapi.OpenModel(ifcData);
@@ -775,7 +775,7 @@ ifcapi.Init().then(()=>{
 
 자, 이제 모든 IFCSPACES를 가져와서 어딘가에 표시하고 싶습니다. 모든 IFCSPACES를 가져오는 함수를 만들어봅시다. 원하는 어떤 타입이라도 가져올 수 있습니다. 저는 IFCSPACE를 가져오기 위해 전적으로 자의적인 결정을 내렸습니다.
 
-```
+```js
 /**
  * ifc 파일로부터 모든 IFCSPACE 가져오기
  * @param integer modelID 
@@ -800,7 +800,7 @@ function getAllSpaces(modelID) {
 
 주위를 기울이면 **let lines = ifcapi.GetLineIDsWithType(modelID, IFCSPACE);**로부터 const IFCSPACE가 보일 것입니다. 이것은 ifc 파일로부터 모든 IFCSPACE를 가져온다는 것을 의미합니다. 다음과 같이 이것을 가져오는 것을 명심하십시오.
 
-```
+```js
 import {IfcAPI,IFCSPACE} from "web-ifc/web-ifc-api";
 ```
 
@@ -808,7 +808,7 @@ import {IfcAPI,IFCSPACE} from "web-ifc/web-ifc-api";
 
 .ifc 파일을 가져온 후에 ifcapi에서 로드되면 이제 모든 공간을 가져오기 위해 나의 함수를 호출할 수 있습니다.
 
-```
+```js
 ifcapi.Init().then(() => {
     getIfcFile(ifcFileLocation).then((ifcData) => {
         modelID = ifcapi.OpenModel(ifcData);
@@ -851,7 +851,7 @@ IFC scheme 내에는 여러 타입의 프로퍼티들이 있습니다. 각각은
 
 wasm 파일을 루트 디렉토리나 당신이 선택한 디렉토리에 복사했는지 확인해 보십시오. setWasmPath를 호출해야 합니다.
 
-```
+```js
 import {
     IfcAPI, IFCBUILDINGSTOREY
 } from "web-ifc/web-ifc-api";
@@ -865,7 +865,7 @@ import {
 
 이제 파일을 읽고 [`LoadFileData()`](https://github.com/IFCjs/hello-world/blob/main/examples/web-ifc/ifc-to-json/properties/app.js#:~:text=async%20function%20LoadFile(ifcAsText))를 호출하고 IFC 데이터를 텍스트 형태로 보낼 것입니다.
 
-```
+```js
 fetch("../../../../IFC/01.ifc")
   .then((response) => response.text())
   .then((data) => {
@@ -888,7 +888,7 @@ fetch("../../../../IFC/01.ifc")
 
 web-ifc API는 특정 타입에 대해 주어진 모델 안에서 모든 요소들의 ID를 리턴하는 GetLineIDsWithType 함수를 갖고 있습니다. 이 함수는 2가지 인자를 갖는데 모델 id와 요소 타입입니다. web-ifc API에 포함된 IFC 타입들은 enumeration으로 되어 있으며 GetLineIDsWithType 함수와 함께 사용하기 위해 반드시 가져와야 합니다.
 
-```
+```js
 ..
 
 async function getLevels() {
@@ -913,7 +913,7 @@ async function getLevels() {
 
 그래서 name 값을 리턴하기 위해 lvl.Name.value로 참조할 것입니다.
 
-```
+```js
 {
   "expressID": 144,
   "type": 3124254112,
@@ -958,7 +958,7 @@ async function getLevels() {
 
 모든 변경사항을 처리한 후에, 새로운 파일을 생성하고 웹 페이지에 다운로드 링크를 추가할 것입니다. 그러면 사용자가 파일을 다운로드할 수 있을 것입니다.
 
-```
+```js
 function createDownloadLink(lvl) {
   const data = ifcapi.ExportFileAsIFC(modelID);
   const blob = new Blob([data]);
@@ -1007,7 +1007,7 @@ IFC scheme에는 여러 개의 프로퍼티들이 있습니다. 각각은 특정
 
 #### 가져오기 및 글로벌 변수
 
-```
+```js
 import {
     IfcAPI, IFCRELDEFINESBYPROPERTIES
 } from "web-ifc/web-ifc-api";
@@ -1022,7 +1022,7 @@ const table = document.createElement("table");
 
 파일을 읽고 [`LoadFileData()`](https://github.com/IFCjs/hello-world/blob/main/examples/web-ifc/ifc-to-json/properties/app.js#:~:text=async%20function%20LoadFile(ifcAsText))를 호출할 것입니다. 그리고 IFC 데이터를 텍스트 형태로 송신할 것입니다.
 
-```
+```js
 fetch("../../../../IFC/01.ifc")
   .then((response) => response.text())
   .then((data) => {
@@ -1035,7 +1035,7 @@ fetch("../../../../IFC/01.ifc")
 
 **요소 데이터**를 가져오기 위한 모든 코드는 그 안에 있습니다.
 
-```
+```js
 function getPropertyWithExpressId(modelID=0) {
     // 만약 이전 값이 있으면 지움
     const prop = document.getElementById("properties");
@@ -1061,7 +1061,7 @@ function getPropertyWithExpressId(modelID=0) {
 
 #### ElementID를 통해 요소 데이터 가져오기
 
-```
+```js
 // 만약 3번째 파라미터를 true라고 하면, 평평한 결과를 얻게 됨
 const element = ifcapi.GetLine(modelID, elementID);
 
@@ -1091,7 +1091,7 @@ const guid = element.GlobalId.value;
 
 지금은 그저 1번째 파라미터가 Label, 2번째 파라미터가 해당 Label에 대한 값이라는 것만 기억하십시오.
 
-```
+```js
 // 이제 요소의 GUID를 가져올 수 있습니다.
 const guid = element.GlobalId.value;
 createRowInTable("GUID", guid);
@@ -1119,7 +1119,7 @@ createRowInTable("Tag", tag);
 
 저희는 요소와 함께 프로퍼티와 관계가 있는 모든 `Lines`를 가져올 것입니다. 예. `IFCRELDEFINESBYPROPERTIES`
 
-```
+```js
 // IFC 파일에서 모든 프로퍼티 세트 라인들을 가져옵니다.
 let lines = ifcapi.GetLineIDsWithType(modelID, IFCRELDEFINESBYPROPERTIES);
 ```
@@ -1130,7 +1130,7 @@ let lines = ifcapi.GetLineIDsWithType(modelID, IFCRELDEFINESBYPROPERTIES);
 
 * 다음에는 요소 데이터를 통해 RelatedObjects를 찾아내고 만약 이 RelatedObjects 안에 프로퍼티를 찾고자 하는 ElementID가 포함되어 있다면 그것을 로컬 배열에 저장합니다.
 
-```
+```js
 // 아래 배열에다가 발견한 프로퍼티 세트의 ID를 저장할 것입니다.
 let propSetIds = [];
 for (let i = 0; i < lines.size(); i++) {
@@ -1177,7 +1177,7 @@ for (let i = 0; i < lines.size(); i++) {
 
 * 당신이 원한다면 프로퍼티 세트를 저장할 수 있지만, 저희의 경우 프론트엔드에서 보여줄 것이기 때문에 굳이 저장할 필요는 없습니다.
 
-```
+```js
 // 해당 ID로부터 프로퍼티 세트 가져오기
 let propsets = propSetIds.map((id) => ifcapi.GetLine(modelID, id, true));
 
@@ -1209,7 +1209,7 @@ propsets.forEach((set) => {
 
 * 이제 설정을 하는 동안 저희가 글로벌하게 생성한 `table` 변수를 사용할 것입니다.
 
-```
+```js
 function createRowInTable(label, value) {
   // 새로운 행(Row) 요소 생성하기
   const row = document.createElement("tr");
@@ -1224,7 +1224,7 @@ function createRowInTable(label, value) {
 
 #### <body> 내부의 당신의 HTML 코드는 다음과 같아야 함
 
-```
+```html
 <div class="file-opener">
   <a class="invisible" id="save-button">Save JSON</a>
   <button class="basic-button" id="file-opener-button">Open IFC</button>
@@ -1254,7 +1254,7 @@ function createRowInTable(label, value) {
 
 컨테이너:
 
-```
+```css
 .ifc-container {
   height: 60%;
   border-bottom: 5px solid #f3f4f6;
@@ -1275,7 +1275,7 @@ function createRowInTable(label, value) {
 
 입력 필드 및 버튼:
 
-```
+```css
 input {
   font-size: 14px;
   padding: 4px;
@@ -1299,7 +1299,7 @@ input {
 
 표(Table) 및 행(Row):
 
-```
+```css
 table {
   width: 100%;
   border-collapse: collapse;
@@ -1329,7 +1329,7 @@ We realize that with Intellisense or comments it is not the most comfortable. On
 
 We import the object from the library. You can use the `FileReader`. Lets web applications asynchronously read the contents of files (or raw data buffers) stored on the user's computer, using File or Blob objects to specify the file or data to read.
 
-```
+```js
 import { IfcAPI } from "web-ifc/web-ifc-api";
 
 const IfcAPI = new IfcAPI();
@@ -1384,7 +1384,7 @@ function saveProperties(modelID, lines, allItems, excludeGeometry, index) {
 
 Load an ifc file and return all the information it contains in plain text
 
-```
+```js
 const properties = IfcAPI.properties;
 ```
 
@@ -1394,7 +1394,7 @@ The IfcAPI class includes a property called `properties` that contains all the l
 
 ### setWasmPath
 
-```
+```js
 IfcAPI.setWasmPath("../../../../");
 ```
 
@@ -1410,7 +1410,7 @@ Specifies the location of the web-ifc.wasm and web-ifc-mt.wasm files. These file
 
 ### Init
 
-```
+```js
 IfcAPI.init(customLocateFileHandler: LocateFileHandlerFn)
 ```
 
@@ -1420,7 +1420,7 @@ IfcAPI.init(customLocateFileHandler: LocateFileHandlerFn)
 
 #### Example:
 
-```
+```js
 IfcAPI.Init();
 ```
 
@@ -1428,7 +1428,7 @@ Initializes the WASM module `WebIFCWasm`, required before using any other functi
 
 ### OpenModel
 
-```
+```js
 IfcAPI.openModel(data: Uint8Array,
                  settings: LoaderSettings): number
 ```
@@ -1441,7 +1441,7 @@ IfcAPI.openModel(data: Uint8Array,
 
 #### Example:
 
-```
+```js
 IfcAPI.OpenModel(data, { LoaderSettings });
 ```
 
@@ -1449,7 +1449,7 @@ Opens a model and returns a modelID number
 
 ### CreateModel
 
-```
+```js
 IfcAPI.CreateModel(settings: LoaderSettings): number
 ```
 
@@ -1459,7 +1459,7 @@ IfcAPI.CreateModel(settings: LoaderSettings): number
 
 #### Example:
 
-```
+```js
 IfcAPI.CreateModel();
 ```
 
@@ -1467,7 +1467,7 @@ Creates a new model and returns a modelID number.
 
 ### ExportFileAsIFC
 
-```
+```js
 IfcAPI.ExportFileAsIFC(modelID: number): Uint8Array
 ```
 
@@ -1477,7 +1477,7 @@ IfcAPI.ExportFileAsIFC(modelID: number): Uint8Array
 
 #### Example:
 
-```
+```js
 IfcAPI.ExportFileAsIFC(modelID);
 ```
 
@@ -1485,7 +1485,7 @@ Exports a file to IFC using the `modelID`. Returns a `Uint8Array`
 
 ### CreateIfcGuidToExpressIdMapping
 
-```
+```js
 IfcAPI.CreateIfcGuidToExpressIdMapping(modelID: number)
 ```
 
@@ -1495,7 +1495,7 @@ IfcAPI.CreateIfcGuidToExpressIdMapping(modelID: number)
 
 #### Example:
 
-```
+```js
 const expressIdMapping = IfcAPI.CreateIfcGuidToExpressIdMapping(modelID);
 ```
 
@@ -1503,7 +1503,7 @@ Creates a map between element ExpressIDs and GlobalIDs. Each element has two ent
 
 ### CloseModel
 
-```
+```js
 IfcAPI.CloseModel(modelID: number)
 ```
 
@@ -1513,7 +1513,7 @@ IfcAPI.CloseModel(modelID: number)
 
 #### Example:
 
-```
+```js
 IfcAPI.CloseModel(modelID);
 ```
 
@@ -1521,7 +1521,7 @@ Closes a model and frees all related memory
 
 ### IsModelOpen
 
-```
+```js
 IfcAPI.IsModelOpen(modelID: number): boolean
 ```
 
@@ -1531,7 +1531,7 @@ IfcAPI.IsModelOpen(modelID: number): boolean
 
 #### Example:
 
-```
+```js
 IfcAPI.IsModelOpen(modelID);
 ```
 
@@ -1539,7 +1539,7 @@ Checks if a specific model ID is open or closed
 
 ### LoadAllGeometry
 
-```
+```js
 IfcAPI.LoadAllGeometry(modelID: number): Vector
 ```
 
@@ -1549,7 +1549,7 @@ IfcAPI.LoadAllGeometry(modelID: number): Vector
 
 #### Example:
 
-```
+```js
 IfcAPI.LoadAllGeometry(modelID);
 ```
 
@@ -1557,7 +1557,7 @@ Load geometry for a single element
 
 ### SetGeometryTransformation
 
-```
+```js
 IfcAPI.SetGeometryTransformation(modelID: number,
                                   transformationMatrix: Array)
 ```
@@ -1570,7 +1570,7 @@ IfcAPI.SetGeometryTransformation(modelID: number,
 
 #### Example:
 
-```
+```js
 IfcAPI.SetGeometryTransformation(modelID, transformationMatrix);
 ```
 
@@ -1578,7 +1578,7 @@ IfcAPI.SetGeometryTransformation(modelID, transformationMatrix);
 
 ### StreamAllMeshes
 
-```
+```js
 IfcAPI.StreamAllMeshes(modelID: number,
                       meshCallback:(mesh: FlatMesh))
 ```
@@ -1591,7 +1591,7 @@ IfcAPI.StreamAllMeshes(modelID: number,
 
 #### Example:
 
-```
+```js
 IfcAPI.StreamAllMeshes(modelID, (mesh) => {});
 ```
 
@@ -1599,7 +1599,7 @@ Collect all `meshes` by `modelID` and `messCallback`
 
 ### StreamAllMeshesWithTypes
 
-```
+```js
 IfcAPI.StreamAllMeshesWithTypes(modelID: number, types: Array<number>,
                             meshCallback:(mesh: FlatMesh))
 ```
@@ -1614,7 +1614,7 @@ IfcAPI.StreamAllMeshesWithTypes(modelID: number, types: Array<number>,
 
 #### Example:
 
-```
+```js
 IfcAPI.StreamAllMeshesWithTypes(modelID, types, meshCallback);
 ```
 
@@ -1622,7 +1622,7 @@ Collect all `meshes` by `modelID` and `messCallback` with `type`.
 
 ### WriteLine
 
-```
+```js
 IfcAPI.WriteLine(modelID: number, lineObject: any)
 ```
 
@@ -1634,7 +1634,7 @@ IfcAPI.WriteLine(modelID: number, lineObject: any)
 
 #### Example:
 
-```
+```js
 IfcAPI.WriteLine(modelID, lineObject);
 ```
 
@@ -1642,7 +1642,7 @@ Write a line using `modelID` and `lineObject`
 
 ### WriteRawLineData
 
-```
+```js
 IfcAPI.WriteRawLineData(modelID: number, data: RawLineData)
 ```
 
@@ -1654,7 +1654,7 @@ IfcAPI.WriteRawLineData(modelID: number, data: RawLineData)
 
 #### Example:
 
-```
+```js
 IfcAPI.WriteRawLineData(modelID);
 ```
 
@@ -1664,7 +1664,7 @@ Write a line data using `modelID` and `data`
 
 ### GetAllLines
 
-```
+```js
 IfcAPI.GetAllLines(modelID: Number): Vector
 ```
 
@@ -1674,7 +1674,7 @@ IfcAPI.GetAllLines(modelID: Number): Vector
 
 #### Example:
 
-```
+```js
 IfcAPI.GetAllLines(modelID);
 ```
 
@@ -1682,7 +1682,7 @@ Get all the lines of a model by its modelID
 
 ### GetAndClearErrors
 
-```
+```js
 IfcAPI.GetAndClearErrors(modelID: number): Vector
 ```
 
@@ -1692,7 +1692,7 @@ IfcAPI.GetAndClearErrors(modelID: number): Vector
 
 #### Example:
 
-```
+```js
 return IfcAPI.GetAndClearErrors(modelID);
 ```
 
@@ -1700,7 +1700,7 @@ Get and clear errors using `modelID`
 
 ### GetCoordinationMatrix
 
-```
+```js
 IfcAPI.GetCoordinationMatrix(modelID: number): Array
 ```
 
@@ -1710,7 +1710,7 @@ IfcAPI.GetCoordinationMatrix(modelID: number): Array
 
 #### Example:
 
-```
+```js
 IfcAPI.GetCoordinationMatrix(modelID);
 ```
 
@@ -1718,7 +1718,7 @@ Get the coordinate of a matrix using `modelID`
 
 ### GetFlatMesh
 
-```
+```js
 IfcAPI.GetFlatMesh(modelID: number, expressID: number): FlatMesh
 ```
 
@@ -1730,7 +1730,7 @@ IfcAPI.GetFlatMesh(modelID: number, expressID: number): FlatMesh
 
 #### Example:
 
-```
+```js
 IfcAPI.GetFlatMesh(modelID, expressID);
 ```
 
@@ -1738,7 +1738,7 @@ Load geometry for a single element
 
 ### GetGeometry
 
-```
+```js
 IfcAPI.GetGeometry(modelID: number, geometryExpressID: number): IfcGeometry
 ```
 
@@ -1750,7 +1750,7 @@ IfcAPI.GetGeometry(modelID: number, geometryExpressID: number): IfcGeometry
 
 #### Example:
 
-```
+```js
 const geometry = IfcAPI.GetGeometry(modelID, geometryExpressID);
 ```
 
@@ -1758,7 +1758,7 @@ Get `mesh` geometry using a `modelID`.
 
 ### GetIndexArray
 
-```
+```js
 IfcAPI.GetIndexArray(ptr: number, size: number): Uint32Array
 ```
 
@@ -1769,7 +1769,7 @@ IfcAPI.GetIndexArray(ptr: number, size: number): Uint32Array
 
 #### Example:
 
-```
+```js
 IfcAPI.GetIndexArray();
 ```
 
@@ -1777,7 +1777,7 @@ Get `index` of `Array` using `ptr` and `size`.
 
 ### GetLine
 
-```
+```js
 IfcAPI.GetLine(modelID: number, expressID; number,
                 flatten: boolean)
 ```
@@ -1792,7 +1792,7 @@ IfcAPI.GetLine(modelID: number, expressID; number,
 
 #### Example:
 
-```
+```js
 const props = IfcAPI.GetLine(modelID, id, (flatten = false));
 ```
 
@@ -1800,7 +1800,7 @@ Get the line using the modelID and expressID
 
 ### GetLineIdsWithType
 
-```
+```js
 IfcAPI.GetLineIdsWithType(modelId: number, type: number): Vector
 ```
 
@@ -1812,7 +1812,7 @@ IfcAPI.GetLineIdsWithType(modelId: number, type: number): Vector
 
 #### Example:
 
-```
+```js
 const lines = IfcAPI.GetLineIDsWithType(modelID, type);
 ```
 
@@ -1820,7 +1820,7 @@ Defines the type to get
 
 ### GetRawLineData#
 
-```
+```js
 IfcAPI.GetRawLineData(modelID: number, expressID: number): RawLineData
 ```
 
@@ -1832,7 +1832,7 @@ IfcAPI.GetRawLineData(modelID: number, expressID: number): RawLineData
 
 #### Example:
 
-```
+```js
 const rawLineData = IfcAPI.GetRawLineData(modelID, expressID);
 ```
 
@@ -1840,7 +1840,7 @@ Get a line of raw data using 'modelID' `and` 'expressID'
 
 ### getSubArray
 
-```
+```js
 IfcAPI.getSubArray(heap: any, startPtr: any,
                     sizeBytes: any)
 ```
@@ -1855,7 +1855,7 @@ IfcAPI.getSubArray(heap: any, startPtr: any,
 
 #### Example:
 
-```
+```js
 const subArray = IfcAPI.getSubArray(heap, startPtr, sizeBytes);
 ```
 
@@ -1863,7 +1863,7 @@ Get a `subArray` in `Array`
 
 ### GetVertexArray
 
-```
+```js
 IfcAPI.GetVertexArray(ptr: number, size: number): Float32Array
 ```
 
@@ -1875,7 +1875,7 @@ IfcAPI.GetVertexArray(ptr: number, size: number): Float32Array
 
 #### Example:
 
-```
+```js
 const vertexArray = IfcAPI.GetVertexArray(ptr, size);
 ```
 
@@ -1923,7 +1923,7 @@ You might be tempted to import the `IFCLoader` from Three.js to avoid importing 
 
 To use the `THREE.IFCLoader` instead of the original `IFCLoader` you only have to change the import statement:
 
-```
+```js
 // Import web-ifc-three (original) IFCLoader
 import { IFCLoader } from "web-ifc-three/IFCLoader";
 
@@ -1955,7 +1955,7 @@ However, we realise that reading intellisense or comments is not the most comfor
 
 The only object we will import from the library. It contains all the logic needed to work with IFC. You can use its `load()` and `loadAsync()` methods to load IFCs from a URL, [just like any other Three.js Loader](https://threejs.org/docs/#api/en/loaders/Loader.load). For example, to load an IFC we can do the following:
 
-```
+```js
 import { IFCLoader } from "web-ifc-three/IFCLoader";
 
 const ifcLoader = new IFCLoader();
@@ -1966,7 +1966,7 @@ With `web-ifc-three` you can load multiple models in the scene. Many of the API 
 
 You can get the ID of a model through the property `modelID`.
 
-```
+```js
 const modelID = ifcModel.modelID;
 ```
 
@@ -1982,7 +1982,7 @@ There are two ways to access the API:
 
 ### setWasmPath
 
-```
+```js
 async IfcLoader.IfcManager.setWasmPath (
                         path: string
                         ): void;
@@ -2000,13 +2000,13 @@ Specifies the location of the `web-ifc.wasm` and `web-ifc-mt.wasm` files. These 
 
 If `web-ifc.wasm` is in dist/wasmDir:
 
-```
+```js
 await ifcLoader.ifcManager.setWasmPath("dist/wasmDir/");
 ```
 
 ### setupThreeMeshBVH
 
-```
+```js
 IfcLoader.IfcManager.setupThreeMeshBVH (
                         computeBoundsTree: any,
                         disposeBoundsTree: any,
@@ -2028,7 +2028,7 @@ This method allows object picking to be much faster, especially for very large m
 
 #### Example:
 
-```
+```js
 import { IFCLoader } from "web-ifc-three/dist/IFCLoader";
 
 import { acceleratedRaycast, computeBoundsTree, disposeBoundsTree } from "three-mesh-bvh";
@@ -2039,7 +2039,7 @@ ifcLoader.ifcManager.setupThreeMeshBVH(acceleratedRaycast, computeBoundsTree, di
 
 ### setOnProgress
 
-```
+```js
 IfcLoader.IfcManager.setOnProgress (
       onProgress: (event: ParserProgress) => void
                                     ): void;
@@ -2053,7 +2053,7 @@ Sets a callback function that is called every 10% of IFC loaded. This way, you c
 
 #### Example:
 
-```
+```js
 function exampleCallback(event) {
   const progress = (event.total / event.progress) * 100;
   console.log("Progress: ", progress, "%");
@@ -2064,7 +2064,7 @@ ifcLoader.ifcManager.setOnProgress(exampleCallback);
 
 ### applyWebIfcConfig
 
-```
+```js
 async IfcLoader.IfcManager.applyWebIfcConfig (
                                     settings: LoaderSettings
                                     ): void;
@@ -2092,7 +2092,7 @@ Applies a configuration for [web-ifc](https://ifcjs.github.io/info/docs/Guide/we
 
 If a file is geolocated and we want to bring it to the origin of the scene:
 
-```
+```js
 await ifcLoader.ifcManager.applyWebIfcConfig({
   COORDINATE_TO_ORIGIN: true,
   USE_FAST_BOOLS: false,
@@ -2101,7 +2101,7 @@ await ifcLoader.ifcManager.applyWebIfcConfig({
 
 ### useWebworkers
 
-```
+```js
 async IfcLoader.IfcManager.useWebWorkers (
                                     active: boolean,
                                     path?: string
@@ -2122,7 +2122,7 @@ You need to copy the file `IFCWorker.js` to your project and pass the relative p
 
 If the file `IFCWorker.js` is in a folder called: `files`:
 
-```
+```js
 await ifcLoader.ifcManager.useWebWorkers({
                                 true,
                                 "files/IFCWorker.js"
@@ -2131,7 +2131,7 @@ await ifcLoader.ifcManager.useWebWorkers({
 
 ### useJSONData
 
-```
+```js
 async IfcLoader.IfcManager.useJSONData (
                                     useJSON: boolean
                                     ): void;
@@ -2149,13 +2149,13 @@ Uses JSON property data instead of the WASM data, which consumes much less memor
 
 #### Example:
 
-```
+```js
 await ifcLoader.ifcManager.useJSONData(true);
 ```
 
 ### addModelJSONData#
 
-```
+```js
 async IfcLoader.IfcManager.addModelJSONData (
                                 modelID: number,
                                 data: { [id: number]: JSONObject
@@ -2172,13 +2172,13 @@ Adds the properties of a model as JSON data. If you are using web workers, use `
 
 #### Example:
 
-```
+```js
 await ifcLoader.ifcManager.addModelJSONData(0, jsonData);
 ```
 
 ### loadJsonDataFromWorker
 
-```
+```js
 async IfcLoader.IfcManager.loadJsonDataFromWorker (
                                         modelID: number,
                                         path: string
@@ -2195,7 +2195,7 @@ Loads the data of an IFC model from a JSON file directly from a web worker. If y
 
 #### Example:
 
-```
+```js
 await ifcLoader.ifcManager.loadJsonDataFromWorker(0, "path/to/data.json");
 ```
 
@@ -2203,7 +2203,7 @@ await ifcLoader.ifcManager.loadJsonDataFromWorker(0, "path/to/data.json");
 
 ### getExpressId
 
-```
+```js
 IfcLoader.IfcManager.getExpressId (
                         geometry: BufferGeometry,
                         faceIndex: number
@@ -2222,7 +2222,7 @@ Gets the Express ID of an IFC element from a face index.
 
 #### Example:
 
-```
+```js
 const intersected = raycaster.intersectObject(mesh)[0];
 const index = intersected.faceIndex;
 const id = ifcLoader.ifcManager.getExpressId(mesh, index);
@@ -2230,7 +2230,7 @@ const id = ifcLoader.ifcManager.getExpressId(mesh, index);
 
 ### getIfcType
 
-```
+```js
 IfcLoader.IfcManager.getIfcType (
                         modelID: number,
                         id: number,
@@ -2249,7 +2249,7 @@ Gets the IFC type of the specified element (e.g. IFCWALL).
 
 #### Example:
 
-```
+```js
 const model = ifcModel.modelID;
 const id = 2142;
 const manager = loader.ifcLoader.ifcManager;
@@ -2258,7 +2258,7 @@ const type = manager.getIfcType(model, id);
 
 ### getAllItemsOfType
 
-```
+```js
 async IfcLoader.IfcManager.getAllItemsOfType (
                             modelID: number,
                             type: number,
@@ -2278,7 +2278,7 @@ Returns all objects of the specified IFC type (e.g. all walls, all floors, all w
 
 #### Example:
 
-```
+```js
 import { IFCWALLSTANDARDCASE as W } from "web-ifc";
 
 const manager = loader.ifcLoader.ifcManager;
@@ -2287,7 +2287,7 @@ const walls = await manager.getAllItemsOfType(0, W, false);
 
 ### getItemProperties
 
-```
+```js
 async IfcLoader.IfcManager.getItemProperties (
                             modelID: number,
                             id: number,
@@ -2309,7 +2309,7 @@ Gets the native properties of the given element. In the IFC schema there are two
 
 #### Example:
 
-```
+```js
 const model = ifcModel.modelID;
 const id = 2142;
 const manager = loader.ifcLoader.ifcManager;
@@ -2318,7 +2318,7 @@ const props = await manager.getItemProperties(model, id, false);
 
 ### getTypeProperties
 
-```
+```js
 async IfcLoader.IfcManager.getTypeProperties (
                             modelID: number,
                             id: number,
@@ -2338,7 +2338,7 @@ Gets the type properties of the given element.
 
 #### Example:
 
-```
+```js
 const model = ifcModel.modelID;
 const id = 2142;
 const manager = loader.ifcLoader.ifcManager;
@@ -2347,7 +2347,7 @@ const props = await manager.getTypeProperties(model, id, false);
 
 ### getPropertySets
 
-```
+```js
 async IfcLoader.IfcManager.getPropertySets (
                             modelID: number,
                             id: number,
@@ -2369,7 +2369,7 @@ Gets the property sets and quantity sets of the given element.
 
 #### Example:
 
-```
+```js
 const model = ifcModel.modelID;
 const id = 2142;
 const manager = loader.ifcLoader.ifcManager;
@@ -2378,7 +2378,7 @@ const props = await manager.getPropertySets(model, id, false);
 
 ### getMaterialsProperties
 
-```
+```js
 async IfcLoader.IfcManager.getMaterialsProperties (
                             modelID: number,
                             id: number,
@@ -2398,7 +2398,7 @@ Gets the material information of the given element.
 
 #### Example:
 
-```
+```js
 const model = ifcModel.modelID;
 const id = 2142;
 const manager = loader.ifcLoader.ifcManager;
@@ -2407,7 +2407,7 @@ const props = await manager.getMaterialsProperties(model, id, false);
 
 ### getSpatialStructure
 
-```
+```js
 async IfcLoader.IfcManager.getSpatialStructure (
                         modelID: number
                         ): object;
@@ -2423,7 +2423,7 @@ Gets the spatial structure of the project.
 
 #### Example:
 
-```
+```js
 const model = ifcModel.modelID;
 const manager = loader.ifcLoader.ifcManager;
 const ifcProject = await manager.getSpatialStructure(model);
@@ -2433,7 +2433,7 @@ const ifcProject = await manager.getSpatialStructure(model);
 
 ### getSubset
 
-```
+```js
 IfcLoader.IfcManager.getSubset (
                         modelID: number,
                         material?: Material,
@@ -2455,7 +2455,7 @@ Gets the mesh of the subset with the specified [material](https://threejs.org/do
 
 #### Example:
 
-```
+```js
 const model = ifcModel.modelID;
 const manager = loader.ifcLoader.ifcManager;
 const subset = manager.getSubset(model);
@@ -2463,7 +2463,7 @@ const subset = manager.getSubset(model);
 
 ### createSubset
 
-```
+```js
 IfcLoader.IfcManager.createSubset (
                         config: SubsetConfig
                         ): object;
@@ -2489,7 +2489,7 @@ Creates a new geometric subset.
 
 #### Example:
 
-```
+```js
 const model = ifcModel.modelID;
 const manager = loader.ifcLoader.ifcManager;
 const config = {
@@ -2503,7 +2503,7 @@ manager.createSubset(config);
 
 ### removeSubset
 
-```
+```js
 IfcLoader.IfcManager.removeSubset (
                         modelID: number,
                         material?: Material,
@@ -2523,7 +2523,7 @@ Removes the specified geometric subset.
 
 #### Example:
 
-```
+```js
 const model = ifcModel.modelID;
 const manager = loader.ifcLoader.ifcManager;
 manager.removeSubset(model);
@@ -2531,7 +2531,7 @@ manager.removeSubset(model);
 
 ### removeFromSubset
 
-```
+```js
 IfcLoader.IfcManager.removeFromSubset (
                         modelID: number,
                         ids: number[],
@@ -2554,7 +2554,7 @@ Removes the specified items from the specified geometric subset.
 
 #### Example:
 
-```
+```js
 import { IFCWALLSTANDARDCASE as W } from "web-ifc";
 const model = ifcModel.modelID;
 const manager = loader.ifcLoader.ifcManager;
@@ -2570,7 +2570,7 @@ So far we have only loaded IFC models into the scene. That's already great, but 
 
 Before you can do things with objects, you need to be able to select them. This can be easily achieved with the [Three.js Raycaster](https://threejs.org/docs/#api/en/core/Raycaster), which can be imported from three's core library. In addition, we will import a [Vector2](https://threejs.org/docs/#api/en/math/Vector2) object to store the mouse position in the scene.
 
-```
+```js
 import { Raycaster, Vector2 } from "three";
 ```
 
@@ -2580,7 +2580,7 @@ import { Raycaster, Vector2 } from "three";
 
 In addition, we will import [the three-mesh-bvh library](https://github.com/gkjohnson/three-mesh-bvh) to make the selection of objects much more optimal. This can be installed with `npm i three-mesh-bvh`. Don't worry, you don't have to learn how to use that library. Just give us these library objects and IFC.js will take care of the rest.
 
-```
+```js
 import { acceleratedRaycast, computeBoundsTree, disposeBoundsTree } from "three-mesh-bvh";
 
 // Sets up optimized picking
@@ -2591,7 +2591,7 @@ ifcLoader.ifcManager.setupThreeMeshBVH(computeBoundsTree, disposeBoundsTree, acc
 
 Before doing anything else, it is necessary to save a reference to the IFC models in the scene in order to select them. To do this, we just need to create an array where we store the models we load:
 
-```
+```js
 //Sets up the IFC loading
 const ifcModels = [];
 const ifcLoader = new IFCLoader();
@@ -2611,7 +2611,7 @@ loadIFC();
 
 Next we will create an instance of the Raycaster and the mouse position vector. To optimise the application, the Raycaster will only retrieve information from the first object it encounters.
 
-```
+```js
 const raycaster = new Raycaster();
 raycaster.firstHitOnly = true;
 const mouse = new Vector2();
@@ -2623,7 +2623,7 @@ Now we need a function for the Raycaster to cast rays, calculating the position 
 
 * It is necessary to specify which objects the beam collides with. In this case, it will only collide with the loaded IFC models, i.e. if there are more objects in the scene, it will ignore them.
 
-```
+```js
 function cast(event) {
   // Computes the position of the mouse on the screen
   const bounds = threeCanvas.getBoundingClientRect();
@@ -2646,7 +2646,7 @@ function cast(event) {
 
 We have a function that fires a ray and returns the object it collides with, but we are not doing anything with that object. Let's create a second function that gets the index of the face the ray hit and logs in the console the Express ID of the object it belongs to.
 
-```
+```js
 function pick(event) {
   const found = cast(event)[0];
   if (found) {
@@ -2663,7 +2663,7 @@ The Raycaster always returns an array of objects, even if *raycaster.firstHitOnl
 
 Finally, all that remains is to associate that function with an event (in this case it's a double click).
 
-```
+```js
 threeCanvas.ondblclick = pick;
 ```
 
