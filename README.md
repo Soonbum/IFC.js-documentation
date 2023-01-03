@@ -2981,19 +2981,556 @@ However, what can we do with these properties? One possible application can be f
 
 ## Hiding
 
-?
+With what we have seen in other tutorials we already know how to select elements in 3D, access their properties and highlight them using **subsets, which are parts of the whole model**.
+
+However, in many BIM applications it is also possible to **hide and isolate elements**. A common use case is to hide all elements that do not comply with a certain filter or show only those objects belonging to a floor of the building.
+
+Of course, this is a piece of cake using IFC.js. In this example we are going to create **filters by category**, so that the user can show or hide items using checkboxes.
+
+* As with the other tutorials, you can find the full example [here](https://github.com/IFCjs/hello-world/tree/main/examples/web-ifc-three/hiding).
+
+## How to do it
+
+### Get subsets of categories
+
+Visibility in IFC.js is based on **subset operations**. This allows complex visualisations to be created with minimal memory usage. The first thing we are going to do is to define which **IFC categories** we are going to allow the user to show or hide.
+
+To save memory, **categories in IFC.js are defined as numeric constants**. So let's create an object that maps the name of those constants to their numeric value, and a function to retrieve them:
+
+```js
+import { IFCWALLSTANDARDCASE, IFCSLAB, IFCDOOR, IFCWINDOW, IFCFURNISHINGELEMENT, IFCMEMBER, IFCPLATE } from "web-ifc";
+
+// List of categories names
+const categories = {
+  IFCWALLSTANDARDCASE,
+  IFCSLAB,
+  IFCFURNISHINGELEMENT,
+  IFCDOOR,
+  IFCWINDOW,
+  IFCPLATE,
+  IFCMEMBER,
+};
+
+// Gets the name of a category
+function getName(category) {
+  const names = Object.keys(categories);
+  return names.find((name) => categories[name] === category);
+}
+```
+
+Now let's create a couple of functions to **get all the IDs** of the elements belonging to a category and **create a subset** with those IDs.
+
+* Remember that many IFC.js functions are asynchronous, so we're going to use async and await.
+
+You can also use `removeFromSubset()` to remove a single item from a subset (e.g. hide a single item). If you combine that with `createSubset()` with `removePrevious = false`, you'll have full control of what is added to which subset and its visibility.
+
+```js
+// Gets the IDs of all the items of a specific category
+async function getAll(category) {
+  const manager = ifcLoader.ifcManager;
+  return manager.getAllItemsOfType(0, category, false);
+}
+
+// Creates a new subset containing all elements of a category
+async function newSubsetOfType(category) {
+  const ids = await getAll(category);
+  return ifcLoader.ifcManager.createSubset({
+    modelID: 0,
+    scene,
+    ids,
+    removePrevious: true,
+    customID: category.toString(),
+  });
+}
+```
+
+### Set up GUI
+
+We will now create a simple GUI to allow the user to control which categories are visible or invisible. We are going to **create a checkbox for each category** of the BIM model we are working with.
+
+This can easily be done with a little **HTML** and **CSS**:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="../../../favicon.ico" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="styles.css" />
+    <title>IFC.js</title>
+  </head>
+  <body>
+    <canvas id="three-canvas"></canvas>
+
+    <div class="checkboxes">
+      <div>
+        <input checked="true" id="IFCWALLSTANDARDCASE" type="checkbox" />
+        Walls
+      </div>
+      <div>
+        <input checked="true" id="IFCSLAB" type="checkbox" />
+        Slabs
+      </div>
+      <div>
+        <input checked="true" id="IFCWINDOW" type="checkbox" />
+        Windows
+      </div>
+      <div>
+        <input checked="true" id="IFCFURNISHINGELEMENT" type="checkbox" />
+        Furniture
+      </div>
+      <div>
+        <input checked="true" id="IFCDOOR" type="checkbox" />
+        Doors
+      </div>
+      <div>
+        <input checked="true" id="IFCMEMBER" type="checkbox" />
+        Curtain wall structure
+      </div>
+      <div>
+        <input checked="true" id="IFCPLATE" type="checkbox" />
+        Curtain wall plates
+      </div>
+    </div>
+
+    <script src="bundle.js"></script>
+  </body>
+</html>
+```
+
+```css
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  overflow: hidden;
+}
+
+#three-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  outline: none;
+}
+
+#file-input {
+  z-index: 1;
+  position: absolute;
+}
+
+.checkboxes {
+  position: absolute;
+  left: 1rem;
+  top: 1rem;
+}
+```
+
+### Bind GUI with visibility
+
+Now it only remains to **link the click event of each checkbox with the visibility of the corresponding category**, so that when the checkbox is activated the category becomes visible and when it is deactivated it disappears.
+
+Here it is worth noting that to make the code more concise we have given **each checkbox an ID with the same name as the category it links to**.
+
+```js
+// Stores the created subsets
+const subsets = {};
+
+async function setupAllCategories() {
+  const allCategories = Object.values(categories);
+  for (let i = 0; i < allCategories.length; i++) {
+    const category = allCategories[i];
+    await setupCategory(category);
+  }
+}
+
+// Creates a new subset and configures the checkbox
+async function setupCategory(category) {
+  subsets[category] = await newSubsetOfType(category);
+  setupCheckBox(category);
+}
+
+// Sets up the checkbox event to hide / show elements
+function setupCheckBox(category) {
+  const name = getName(category);
+  const checkBox = document.getElementById(name);
+  checkBox.addEventListener("change", (event) => {
+    const checked = event.target.checked;
+    const subset = subsets[category];
+    if (checked) scene.add(subset);
+    else subset.removeFromParent();
+  });
+}
+```
+
+And here is the result:
+
+## Next steps
+
+Congratulations! Now you know how to control the visibility of elements using any filter.
+
+* This would be the same if we want to filter with other properties (e.g. the floor they belong to using the spatial structure tree, seen in the properties section). Just make sure you get the IDs of the elements you want to filter.
+
+However, `web-ifc-three` has even more functionality. For example, what if we want to **open and close the viewer**? Let's take a look at it next.
 
 ## Memory
 
-?
+On many occasions we will want to create applications that are able to **open and close BIM viewers**. Although this may seem obvious, there is a problem: **memory management**.
+
+Now many will be scratching their heads, since memory management is not a common issue in web applications. JavaScript and other modern languages have **automatic memory management / garbage collector**, so the programmer doesn't have to worry about freeing up objects and arrays.
+
+However, when working with Three.js, data going to the graphics card (e.g. buffers) is **not affected by this automatic memory management**.
+
+That means that if we close a viewer made with Three.js (with or without IFC.js), we will create a **memory leak**. That is to say, we are blocking a part of the user's RAM memory. If the leak becomes too big, the application will become slower and slower and may **crash**.
+
+* You can find more information about this topic here.
+
+This becomes especially critical if we are creating a **SPA (Single Page Application)**, for example, using frameworks and libraries such as **React** or **Angular**. In these cases the web application is never reloaded, and the memory leak accumulates.
+
+Fortunately, IFC.js has taken this into account and allows you to **release the used memory very easily**. Let's see how.
+
+* You can find the full example of this tutorial [here](https://github.com/IFCjs/hello-world/tree/main/examples/web-ifc-three/memory).
+
+## How to do it
+
+### Monitoring the memory
+
+The first question you probably have if you haven't worked much with Three.js optimized scenes is how to see **how much memory your application consumes**. Otherwise, it is impossible to detect memory leaks.
+
+There are several ways to do this. The first is to use the **developer tools** of the browser you are using. For example, in Google Chrome there is a section called "Memory" where you can take snapshots and see how much memory the current tab is consuming.
+
+However, a more convenient way is to use the library [stats.js](https://github.com/mrdoob/stats.js/). This library allows to **monitor the performance and memory** of a Three.js application. It can be installed with `npm i stats.js` and can be used as follows:
+
+```js
+// Stats
+const stats = new Stats();
+stats.showPanel(2);
+document.body.append(stats.dom);
+
+// Animation loop
+const animate = () => {
+  stats.begin();
+
+  // Update other stuff
+  stats.end();
+  requestAnimationFrame(animate);
+};
+
+animate();
+```
+
+This will bring up the **scene statistics during execution**. By clicking on them we can toggle between performance and memory usage of the app.
+
+### Dispose memory
+
+Now let's create a function that removes all the memory consumed by IFC.js. There are 2 things to keep in mind:
+
+* If we have specified the **path to the WASM files** previously, we will have to do it again in the new instance of web-ifc-three.
+
+* This one is important: if we have stored a reference to the loaded IFC models in an array, an object or a class, **we have to delete them manually**. Otherwise, the memory will not be freed.
+
+```js
+async function releaseMemory() {
+  // This releases all IFCLoader memory
+  await ifcLoader.ifcManager.dispose();
+  ifcLoader = null;
+  ifcLoader = new IFCLoader();
+
+  // If the wasm path was set before, we need to reset it
+  await ifcLoader.ifcManager.setWasmPath("../../../");
+
+  // If IFC models are an array or object,
+  // you must release them there as well
+  // Otherwise, they won't be garbage collected
+  models.length = 0;
+}
+```
+
+### Set up simple GUI
+
+Finally, we are going to create an HTML button and link it to the function we created earlier.
+
+```html
+<input type="button" id="memory-button" value="Release memory" />
+```
+
+```js
+// Sets up memory disposal
+const button = document.getElementById("memory-button");
+button.addEventListener(`click`, () => releaseMemory());
+```
+
+This is how the application looks like:
+
+Try loading a model and releasing the memory: you'll see it go back to normal. Beware that **it can take some seconds**, as the browser garbage collector takes some time. Alternatively, you can manually apply the garbage collector using the browser's developer tools.
+
+### SPA
+
+It is very common to create **SPA** or **Single Page Applications** because they are more efficient and require less communication with the backend. Examples of tools to make these applications are **React**, **Angular**, **Vue**, etc.
+
+In many cases **these tools manage the lifecycle of the application components automatically**. For example, when the user closes the 3d view, the HTML element containing the view is automatically destroyed.
+
+To avoid memory leaks, it will be necessary to **free the application memory as seen in this tutorial each time the component containing the 3D view is destroyed**. In many cases there are hooks or similar mechanisms to execute this logic automatically each time the component is destroyed.
+
+## Next steps
+
+Congratulations! You now know how to manage the memory of the BIM applications you create with IFC.js, so your applications will be 100% free of memory leaks.
+
+Next we are going to look at some advanced model loading tools, such as multithreading and load process event.
 
 ## Multithreading
 
-?
+Everything seen so far is very cool, but we have a problem: when we load a very large model **the application freezes for some seconds**. This problem also happens when we want to extract many properties from the model. Is there any way to avoid this?
+
+Of course, IFC.js has foreseen this situation and has implemented **multithreading**. This means that heavy operations will be carried out in a parallel process that will not block the application, which will be updated asynchronously when the process concludes.
+
+This sounds complicated, and it is. But don't worry: we've got it all set up so you can have this in your BIM applications in a couple of lines of code.
+
+* You can find the full example of this tutorial [here](https://github.com/IFCjs/hello-world/tree/main/examples/web-ifc-three/multithreading).
+
+## How to do it
+
+### Set up the webworker
+
+In order to enable multithreading, the **webworker** must be configured. But what is a webworker? The webworker is the mechanism that web browsers have to be able to work with multithreading. But don't worry if you haven't heard of them before, **you don't need them to use multithreading in IFC.js**.
+
+If you work with `npm`, `yarn` or another package manager in your project there should be a folder called `node_modules`, with all the folders of the libraries your project is using. In `node_modules/web-ifc-three` you will find the two files needed to use webworkers: `IFCWorker.js` and `IFCWorker.js.map`.
+
+* You have to copy these two files to a directory in your project that will be served with the final application. This varies depending on the technology you are using (vanilla JS, React, Angular, etc). You can use the same directory you are using for the wasm files.
+
+Then you have to specify where this file is located, in the same way as with the wasm file. This can be done like this:
+
+```js
+async function setUpMultiThreading() {
+  const manager = ifcLoader.ifcManager;
+  // These paths depend on how you structure your project
+  await manager.useWebWorkers(true, "IFCWorker.js");
+  await manager.setWasmPath("../../../");
+}
+
+setUpMultiThreading();
+```
+
+And, voi lá! Believe it or not, you have already enabled multithreading in your project. If you now try to load a file in your application or try to get many properties at once, you will see that **the application does not freeze**.
+
+* Note that if you activate the webworker, the path to the wasm files must be relative to the webworker.
+
+Keep in mind that **the version of the webworker has to match the version of the library** you are using. This means that if you update the version of `web-ifc-three` in the future, you'll need to copy these files again. You can automate this using a command-line library to copy files like `cpy`.
+
+### Loading progress
+
+Using multithreading in your BIM application has numerous advantages. The most immediate is that we can now **show the user the loading progress of a model**. First we'll add a simple HTML message to show the progress:
+
+```html
+<div id="text-container">
+<p>Progress:</p>
+<p id="progress-text">0</p>
+<p>%</p>
+</div>
+```
+
+Next we are going to **link this HTML element to the model load event**. This can be easily done with the `setOnProgress()` method. Let's also apply some basic math to **convert progress into a percentage**.
+
+```js
+function setupProgressNotification() {
+  const text = document.getElementById("progress-text");
+  ifcLoader.ifcManager.setOnProgress((event) => {
+    const percent = (event.loaded / event.total) * 100;
+    const result = Math.trunc(percent);
+    text.innerText = result.toString();
+  });
+}
+
+setupProgressNotification();
+```
+
+If you have done everything correctly, we should be able to see the following viewer. If you try to load an IFC model, not only you will see that **the loading process does not block the 3D view**, but the **html text shows the loading progress in real time**.
+
+## Next steps
+
+Congratulations! You can now **create multithreaded BIM applications** that never freeze.
+
+You are now familiar with some advanced tools of IFC.js, but there's much more to learn. In later tutorials we will see how to not only read, but also **edit and create IFC files**.
 
 ## Mapbox
 
-?
+[Mapbox GL JS](https://docs.mapbox.com/mapbox-gl-js/) is a library that can be paired with IFC.js to provide **worldly context** for your models. Building on top of our knowledge from previous tutorials, we're going to find out how to **view our models inside a custom map**.
+
+* We all have different learning styles. Check out the [Github repo](https://github.com/IFCjs/hello-world/tree/main/examples/web-ifc-three/mapbox) for the full working example. This tutorial was modeled after [this Mapbox example](https://docs.mapbox.com/mapbox-gl-js/example/add-3d-model/).
+
+## How to do it
+
+### Groundwork
+
+We'll get you up and running with a simple map instance, but do check out the Mapbox GL JS [docs](https://docs.mapbox.com/mapbox-gl-js/) for more **in-depth guides** and sweet **examples**. Let's first load the Mapbox dependencies — in this guide we'll just add them with HTML tags.
+
+```html
+<script src='https://api.mapbox.com/mapbox-gl-js/v2.8.2/mapbox-gl.js'></script>
+<link href='https://api.mapbox.com/mapbox-gl-js/v2.8.2/mapbox-gl.css' rel='stylesheet' />
+```
+
+Then add a simple `div` to hold our map:
+
+```html
+<div id="map"></div>
+```
+
+Some styling
+
+```css
+#map {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+```
+
+And finally some imports from `web-ifc-three` and `three` that we'll use later on.
+
+```js
+import {
+  Matrix4, Vector3,
+  DirectionalLight, AmbientLight,
+  PerspectiveCamera, Scene, WebGLRenderer,
+} from "three";
+import { IFCLoader } from "web-ifc-three/IFCLoader";
+```
+
+### Init map
+
+With our structure in place, let's initialize our map.
+
+```js
+mapboxgl.accessToken = 'YOUR_API_KEY_HERE';
+const map = new mapboxgl.Map({
+  container: 'map',
+  style: 'mapbox://styles/mapbox/light-v10',
+  zoom: 20.5,
+  center: [13.4453, 52.4910],
+  pitch: 75,
+  bearing: -80,
+  antialias: true
+});
+```
+
+* You must make a free [Mapbox account](https://account.mapbox.com/auth/signup/) to get your own API key.
+
+### Prepping our model
+
+In order for Mapbox to display our model correctly, we need to define our **position, rotation and scale** in map terms.
+
+```js
+const modelOrigin = [13.4453, 52.4910];
+const modelAltitude = 0;
+const modelRotate = [Math.PI / 2, .72, 0];
+
+// translate to map coordinates
+const modelAsMercatorCoordinate = 
+mapboxgl.MercatorCoordinate.fromLngLat(modelOrigin, modelAltitude);
+
+const modelTransform = {
+    translateX: modelAsMercatorCoordinate.x,
+    translateY: modelAsMercatorCoordinate.y,
+    translateZ: modelAsMercatorCoordinate.z,
+    rotateX: modelRotate[0],
+    rotateY: modelRotate[1],
+    rotateZ: modelRotate[2],
+    scale: modelAsMercatorCoordinate.meterInMercatorCoordinateUnits()
+};
+```
+
+Depending on your model, you may have to tweak the `modelOrigin`, `modelAltitude` and `modelRotate` to get things fitting right.
+
+* If your coordinates aren't returning the place you expected, **try swapping** them! Mapbox uses **longitude**, **latitude** coordinates to match geoJSON.
+
+### Setting the scene
+
+Now we'll start to configure our **Three.js scene** for our **custom Mapbox layer**. First some larger scope **definitions**:
+
+```js
+const scene = new Scene();
+const camera = new PerspectiveCamera();
+const renderer = new WebGLRenderer({
+  // here we inject our Three.js scene into Mapbox
+  canvas: map.getCanvas(),
+  antialias: true
+});
+renderer.autoClear = false;
+```
+
+Then in `customLayer` we'll include an `onAdd` function to **load our IFC model** and some **lighting** to the scene, as well as a `render` function to apply our **position, rotation and scale** changes.
+
+```js
+const customLayer = {
+
+    id: '3d-model',
+    type: 'custom',
+    renderingMode: '3d',
+
+    onAdd: function () {
+
+        //load model
+        const ifcLoader = new IFCLoader();
+        ifcLoader.ifcManager.setWasmPath( '../../../' );
+        ifcLoader.load( '../../../IFC/01.ifc', function ( model ) {
+            scene.add( model );
+        });
+
+        //add lighting
+        const directionalLight = new DirectionalLight(0x404040);
+        const directionalLight2 = new DirectionalLight(0x404040);
+        const ambientLight = new AmbientLight( 0x404040, 3 ); 
+        directionalLight.position.set(0, -70, 100).normalize();
+        directionalLight2.position.set(0, 70, 100).normalize();
+
+        scene.add(directionalLight, directionalLight2, ambientLight);
+    },
+
+    render: function (gl, matrix) {
+
+        //apply model transformations
+        const rotationX = new Matrix4().makeRotationAxis(new Vector3(1, 0, 0), modelTransform.rotateX);
+        const rotationY = new Matrix4().makeRotationAxis(new Vector3(0, 1, 0), modelTransform.rotateY);
+        const rotationZ = new Matrix4().makeRotationAxis(new Vector3(0, 0, 1), modelTransform.rotateZ);
+        
+        const m = new Matrix4().fromArray(matrix);
+        const l = new Matrix4()
+        .makeTranslation(modelTransform.translateX, modelTransform.translateY, modelTransform.translateZ)
+        .scale(new Vector3(modelTransform.scale, -modelTransform.scale, modelTransform.scale))
+        .multiply(rotationX)
+        .multiply(rotationY)
+        .multiply(rotationZ);
+        
+        camera.projectionMatrix = m.multiply(l);
+        renderer.resetState();
+        renderer.render(scene, camera);
+        map.triggerRepaint();
+    }
+};
+```
+
+The last thing to do is simply add our `customLayer` when our map style is loaded.
+
+```js
+map.on('style.load', () => {
+    map.addLayer(customLayer, 'waterway-label');
+});
+```
+
+### The result
+
+[Github repo](https://github.com/IFCjs/hello-world/tree/main/examples/web-ifc-three/mapbox)
+
+## Next steps
+
+Yoohoo! You should now be able to **load your model into Mapbox** and place it anywhere in the world you'd like.
 
 ---
 
