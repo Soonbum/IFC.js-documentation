@@ -144,7 +144,7 @@ IFC.js로 BIM 애플리케이션을 만드는 것은 매우 쉽습니다. [여�
 
 처음 해야 할 것은 빈 폴더를 만들고 커맨드 `npm init`으로 새로운 npm 프로젝트를 시작하십시오. 이렇게 하면 프로젝트 이름, 버전, 커맨드, 디펜던시(dependencies) 같은 몇 가지 데이터를 포함하는 `package.json` 파일이 생성될 것입니다. 또한 npm을 통해 다음 디펜던시(dependencies)를 설치해야 합니다:
 
-```
+```bash
 // IFC.js 설치하기
 npm i web-ifc-three
 
@@ -238,7 +238,7 @@ export default {
 
 * `npm run watch`는 `watch mode`를 활성화할 것입니다. 이 모드는 코드를 변경하고 저장할 때마다 자동으로 파일을 업데이트합니다.
 
-```
+```js
 {
   "name": "example",
   "version": "1.0.0",
@@ -458,7 +458,7 @@ IFC.js는 단순한 라이브러리가 아닙니다: 이것은 BIM 도구들을 
 
 이제 당신의 머신에서 터미널을 여시고 현재 작업 디렉토리를 복제하고 싶은 디렉토리로 변경하십시오. 다음 커맨드들을 입력하십시오:
 
-```
+```bash
 // git clone을 타이핑하고 나서 다음과 같이 앞에서 복사한 URL을 붙여넣으세요.
 git clone https://github.com/YOUR-USERNAME/YOUR-REPOSITORY
 
@@ -476,7 +476,7 @@ git checkout -b ＜new-branch-name＞
 
 ### 로컬에서 빌드
 
-```
+```bash
 // web-ifc 설치하기
 npm install web-ifc
 ```
@@ -619,7 +619,7 @@ web-ifc 덕분에 이 모든 것이 용이합니다.
 
 ### 디펜던시(dependencies) 설치하기
 
-```
+```bash
 npm init
 npm install web-ifc
 npm install rollup --save-dev
@@ -631,7 +631,7 @@ npm install @open-wc/building-rollup --save-dev
 
 package.json을 열고 scripts 섹션에 build와 watch라는 이름을 추가합니다.
 
-```
+```js
   "scripts": {
     "build": "rollup -c ./rollup.config.js",
     "watch": "rollup -w -c ./rollup.config.js"
@@ -3563,7 +3563,7 @@ Adds a blue alert window containing an animated icon(💡) Color:(#1a73e8).
 
 #### Example:
 
-```
+```js
 import { IfcAlert } from "../../../src/components/Alert/Alert";
 
 <IfcAlert>Write here your text to display inside `IfcAlert`</IfcAlert>;
@@ -3575,7 +3575,7 @@ Add a gray card, it can contain icon. Color:(#f3f4f6).
 
 #### Example:
 
-```
+```js
 import { IfcCard } from "../../../src/components/Card/InfoCard";
 
 <IfcCard icon="🏆" title="TITLE">
@@ -3589,7 +3589,7 @@ Add a `Scene` with a link.
 
 #### Example:
 
-```
+```js
 import { Scene } from "../../../src/components/Scene/Scene";
 
 <Scene link={"https://ifcjs.github.io/hello-world/examples/web-ifc-three/helloworld/"} />;
@@ -3601,7 +3601,7 @@ Add selectable tab.
 
 #### Example:
 
-```
+```js
 import { Tab } from "../../../src/components/Tab/Tab";
 
 <IfcTab
@@ -3649,7 +3649,7 @@ The first thing to do is to create an empty folder and [start a new npm project]
 
 The next step is to install the dependencies necessary for this project. Below are the commands that install the respective dependencies:
 
-```
+```bash
 //Install web-ifc-viewer
 npm i web-ifc-viewer
 
@@ -3913,7 +3913,7 @@ With unlimited power of IFC.js at your fingertips you can now easily view and pe
 
 ### Express
 
-```
+```bash
 npm install express
 ```
 
@@ -3921,7 +3921,7 @@ Express provides us with tooling for HTTP server, it is framework based upon Nod
 
 ### Socket.IO
 
-```
+```bash
 npm install socket.io
 ```
 
@@ -4463,7 +4463,7 @@ async function loadIfcFromFile(file) {
 
 Now **link** the button and the function.
 
-```
+```js
 const input_button = document.getElementById("input-button");
 input_button.addEventListener("input", (input) => {
   loadIfcFromFile(input.target.files[0])},
@@ -4473,7 +4473,7 @@ input_button.addEventListener("input", (input) => {
 
 So that we can load and release the same model over and over, for this example we'll add a tiny hack to reset the DOM event.
 
-```
+```js
 input_button.addEventListener("click", (e) => {
   e.target.value = "";
 });
@@ -4625,7 +4625,7 @@ IfcViewerAPI.clipper.toggle();
 
 #### Example:
 
-```
+```js
 IfcViewerAPI.clipper.toggle();
 ```
 
@@ -4850,13 +4850,13 @@ Get all elements of the specified type in the specified IFC model.
 
 ### prePickIfcItem
 
-```
+```js
 IfcViewerAPI.IFC.selector.prePickIfcItem();
 ```
 
 #### Example:
 
-```
+```js
 window.onmousemove = () => IfcViewerAPI.IFC.selector.prePickIfcItem();
 ```
 
