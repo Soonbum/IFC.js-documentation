@@ -1321,13 +1321,13 @@ web-ifc API를 이용하여 재질 데이터도 가져올 수 있으며 당신�
 
 ## web-ifc-API
 
-The API is documented, so when you use any of the objects or methods listed in this documentation, you should see help from Intellisense, regardless of the IDE you're using.
+API는 문서화되어 있으므로 이 문서에 나열된 객체 또는 메소드를 사용할 때 당신이 사용하는 IDE가 무엇이든지 관계없이 IntelliSense로부터 도움을 받아야 합니다.
 
-We realize that with Intellisense or comments it is not the most comfortable. On this page we will give an overview of what the API can do. We can see it in operation in detail in the specific tutorials section below.
+IntelliSense 또는 코멘트로는 편안하지 않을 것입니다. 이 페이지에서는 API가 할 수 있는 것이 무엇인지에 대한 개요를 보여줄 것입니다. 저희는 아래의 특정 튜토리얼 섹션에서 자세히 동작하는 것을 볼 수 있을 것입니다.
 
 ## IfcAPI
 
-We import the object from the library. You can use the `FileReader`. Lets web applications asynchronously read the contents of files (or raw data buffers) stored on the user's computer, using File or Blob objects to specify the file or data to read.
+라이브러리로부터 객체를 가져옵니다. 여기서는 `FileReader`를 사용할 것입니다. 이것은 웹 애플리케이션이 파일 또는 데이터를 읽을 수 있는 File 또는 Blob 객체를 이용하여 사용자 컴퓨터에 저장된 파일(또는 raw 데이터 버퍼)의 내용을 비동기적으로 읽을 수 있게 해줍니다.
 
 ```js
 import { IfcAPI } from "web-ifc/web-ifc-api";
@@ -1382,15 +1382,15 @@ function saveProperties(modelID, lines, allItems, excludeGeometry, index) {
 }
 ```
 
-Load an ifc file and return all the information it contains in plain text
+ifc 파일을 로드하고 그것의 모든 정보를 평문(plain text) 형태로 리턴합니다.
 
 ```js
 const properties = IfcAPI.properties;
 ```
 
-The IfcAPI class includes a property called `properties` that contains all the logic and methods regarding `properties`, `psets`, `qsets`, etc.
+IfcAPI 클래스는 `properties`라고 불리는 프로퍼티를 포함하고 있습니다. 이것은 `properties`, `psets`, `qsets` 등에 대한 모든 로직과 메소드를 포함하고 있습니다.
 
-## Setup
+## 설정
 
 ### setWasmPath
 
@@ -1398,15 +1398,15 @@ The IfcAPI class includes a property called `properties` that contains all the l
 IfcAPI.setWasmPath("../../../../");
 ```
 
-Specifies the location of the web-ifc.wasm and web-ifc-mt.wasm files. These files are required to build any application with IFC.js. You can find them in node_modules/web-ifc/.
+web-ifc.wasm과 web-ifc-mt.wasm 파일의 위치를 지정합니다. 이 파일들은 IFC.js로 애플리케이션을 빌드할 때 반드시 있어야 합니다. node_modules/web-ifc/에서 발견할 수 있습니다.
 
-* Be careful with your tools!!: If you use frameworks or libraries like React, Angular, Vue or Svelte it is possible that the root path of the project doesn't correspond to the root path of the served application. You will have to check in [each case](https://github.com/IFCjs/examples) how the paths of the statically served files are managed.
+* 당신이 사용하는 도구를 유의하십시오!! 만약 당신이 React, Angular, Vue 또는 Svelte 같은 프레임워크나 라이브러리를 사용한다면 프로젝트의 루트 경로가 제공된 애플리케이션의 루트 경로와 일치하지 않을 수 있습니다. 정적으로 제공되는 파일의 경로가 어떻게 관리되고 있는지 [각 경우](https://github.com/IFCjs/examples)에 대해 확인해야 합니다.
 
-#### Arguments:
+#### 인자:
 
-* path: Route of `web-ifc.wasm`.
+* path: `web-ifc.wasm`의 경로.
 
-## Tools
+## 도구
 
 ### Init
 
@@ -1414,17 +1414,17 @@ Specifies the location of the web-ifc.wasm and web-ifc-mt.wasm files. These file
 IfcAPI.init(customLocateFileHandler: LocateFileHandlerFn)
 ```
 
-#### Arguments:
+#### 인자:
 
-* `customLocateFileHandler`: An optional locateFile function that let's you override the path from which the wasm module is loaded.
+* `customLocateFileHandler`: wasm 모듈이 로드되는 경로를 재지정할 수 있는 선택적인 locateFile 함수입니다.
 
-#### Example:
+#### 예제:
 
 ```js
 IfcAPI.Init();
 ```
 
-Initializes the WASM module `WebIFCWasm`, required before using any other functionality
+다른 기능을 사용하기 전에 반드시 있어야 하는 WASM 모듈 `WebIFCWasm`을 초기화합니다.
 
 ### OpenModel
 
@@ -1433,19 +1433,19 @@ IfcAPI.openModel(data: Uint8Array,
                  settings: LoaderSettings): number
 ```
 
-#### Arguments:
+#### 인자:
 
-* `data`: Buffer containing IFC `data`.
+* `data`: IFC `data`를 포함하는 버퍼입니다.
 
-* `settings`: `settings` for loading the model.
+* `settings`: 모델을 로딩하기 위한 `settings`입니다.
 
-#### Example:
+#### 예제:
 
 ```js
 IfcAPI.OpenModel(data, { LoaderSettings });
 ```
 
-Opens a model and returns a modelID number
+하나의 모델을 열고 `modelID` 번호를 리턴합니다.
 
 ### CreateModel
 
@@ -1453,9 +1453,9 @@ Opens a model and returns a modelID number
 IfcAPI.CreateModel(settings: LoaderSettings): number
 ```
 
-#### Arguments:
+#### 인자:
 
-* `settings`: Creates a new model and returns a `modelID` number.
+* `settings`: 새로운 모델을 생성하고 `modelID` 번호를 리턴합니다.
 
 #### Example:
 
@@ -1463,7 +1463,7 @@ IfcAPI.CreateModel(settings: LoaderSettings): number
 IfcAPI.CreateModel();
 ```
 
-Creates a new model and returns a modelID number.
+새로운 모델을 생성하고 `modelID` 번호를 리턴합니다.
 
 ### ExportFileAsIFC
 
@@ -1471,17 +1471,17 @@ Creates a new model and returns a modelID number.
 IfcAPI.ExportFileAsIFC(modelID: number): Uint8Array
 ```
 
-#### Arguments:
+#### 인자:
 
-* `modelID`: Model handle retrieved by `OpenModel`, model must no be closed.
+* `modelID`: `OpenModel`로 가져온 모델 핸들입니다. 모델은 닫히면 안 됩니다.
 
-#### Example:
+#### 예제:
 
 ```js
 IfcAPI.ExportFileAsIFC(modelID);
 ```
 
-Exports a file to IFC using the `modelID`. Returns a `Uint8Array`
+`modelID`를 이용하여 IFC 파일로 내보냅니다. `Uint8Array`를 리턴합니다.
 
 ### CreateIfcGuidToExpressIdMapping
 
@@ -1489,17 +1489,17 @@ Exports a file to IFC using the `modelID`. Returns a `Uint8Array`
 IfcAPI.CreateIfcGuidToExpressIdMapping(modelID: number)
 ```
 
-#### Arguments:
+#### 인자:
 
-* `modelID`: Model handle retrieved by `OpenModel`.
+* `modelID`: `OpenModel`로 가져온 모델 핸들입니다.
 
-#### Example:
+#### 예제:
 
 ```js
 const expressIdMapping = IfcAPI.CreateIfcGuidToExpressIdMapping(modelID);
 ```
 
-Creates a map between element ExpressIDs and GlobalIDs. Each element has two entries, (ExpressID -> GlobalID) and (GlobalID -> ExpressID).
+요소 ExpressID와 GlobalID 간의 맵을 생성합니다. 각 요소는 2개의 엔트리를 가지고 있습니다. (ExpressID -> GlobalID)와 (GlobalID -> ExpressID)
 
 ### CloseModel
 
@@ -1507,17 +1507,17 @@ Creates a map between element ExpressIDs and GlobalIDs. Each element has two ent
 IfcAPI.CloseModel(modelID: number)
 ```
 
-#### Arguments:
+#### 인자:
 
-* `modelID`: Model handle retrieved by `OpenModel`, model must not be closed
+* `modelID`: `OpenModel`로 가져온 모델 핸들입니다. 모델은 닫히면 안 됩니다.
 
-#### Example:
+#### 예제:
 
 ```js
 IfcAPI.CloseModel(modelID);
 ```
 
-Closes a model and frees all related memory
+하나의 모델을 닫고 관련된 모든 메모리를 해제합니다.
 
 ### IsModelOpen
 
@@ -1525,17 +1525,17 @@ Closes a model and frees all related memory
 IfcAPI.IsModelOpen(modelID: number): boolean
 ```
 
-#### Arguments:
+#### 인자:
 
-* `modelID`: Model handle retrieved by `OpenModel`.
+* `modelID`: `OpenModel`로 가져온 모델 핸들입니다.
 
-#### Example:
+#### 인자:
 
 ```js
 IfcAPI.IsModelOpen(modelID);
 ```
 
-Checks if a specific model ID is open or closed
+지정한 모델 ID가 열려 있는지, 닫혀 있는지 확인합니다.
 
 ### LoadAllGeometry
 
@@ -1543,17 +1543,17 @@ Checks if a specific model ID is open or closed
 IfcAPI.LoadAllGeometry(modelID: number): Vector
 ```
 
-#### Arguments:
+#### 인자:
 
-* `modelID`: Model handle retrieved by `OpenModel`.
+* `modelID`: `OpenModel`로 가져온 모델 핸들입니다.
 
-#### Example:
+#### 예제:
 
 ```js
 IfcAPI.LoadAllGeometry(modelID);
 ```
 
-Load geometry for a single element
+단일 요소에 대한 지오메트리를 로드합니다.
 
 ### SetGeometryTransformation
 
@@ -1562,19 +1562,19 @@ IfcAPI.SetGeometryTransformation(modelID: number,
                                   transformationMatrix: Array)
 ```
 
-#### Arguments:
+#### 인자:
 
-* `modelID`: Model handle retrieved by `OpenModel`.
+* `modelID`: `OpenModel`로 가져온 모델 핸들입니다.
 
-* `transformationMatrix` : Use `transformationMatrix` to encode transformations.
+* `transformationMatrix` : transformation을 인코드하려면 `transformationMatrix`를 이용하십시오.
 
-#### Example:
+#### 예제:
 
 ```js
 IfcAPI.SetGeometryTransformation(modelID, transformationMatrix);
 ```
 
- Configure the transformation of a geometry using `modelID` and `transformationMatrix`
+`modelID`와 `transformationMatrix`를 이용하여 지오메트리의 transformation을 구성합니다.
 
 ### StreamAllMeshes
 
@@ -1583,19 +1583,19 @@ IfcAPI.StreamAllMeshes(modelID: number,
                       meshCallback:(mesh: FlatMesh))
 ```
 
-#### Arguments:
+#### 인자:
 
-* `modelID`: Model handle retrieved by `OpenModel`.
+* `modelID`: `OpenModel`로 가져온 모델 핸들입니다.
 
-* `meshCallback`: Use `mesh`.
+* `meshCallback`: `mesh`를 이용하십시오.
 
-#### Example:
+#### 예제:
 
 ```js
 IfcAPI.StreamAllMeshes(modelID, (mesh) => {});
 ```
 
-Collect all `meshes` by `modelID` and `messCallback`
+`modelID`와 `messCallback`을 통해 모든 `meshes`를 수집합니다.
 
 ### StreamAllMeshesWithTypes
 
@@ -1604,21 +1604,21 @@ IfcAPI.StreamAllMeshesWithTypes(modelID: number, types: Array<number>,
                             meshCallback:(mesh: FlatMesh))
 ```
 
-#### Arguments:
+#### 인자:
 
-* modelID: Model handle retrieved by `OpenModel`, model must not be closed
+* modelID: `OpenModel`로 가져온 모델 핸들입니다. 모델은 닫히면 안 됩니다.
 
-* `types` : Select `type` of the `Array`
+* `types` : `Array`의 `type`을 선택하십시오.
 
-* `meshCallback`: Use `mesh`.
+* `meshCallback`: `mesh`를 이용하십시오.
 
-#### Example:
+#### 예제:
 
 ```js
 IfcAPI.StreamAllMeshesWithTypes(modelID, types, meshCallback);
 ```
 
-Collect all `meshes` by `modelID` and `messCallback` with `type`.
+`type`을 이용하여 `modelID`와 `messCallback`을 통해 모든 `meshes`를 수집합니다.
 
 ### WriteLine
 
@@ -1626,19 +1626,19 @@ Collect all `meshes` by `modelID` and `messCallback` with `type`.
 IfcAPI.WriteLine(modelID: number, lineObject: any)
 ```
 
-#### Arguments:
+#### 인자:
 
-* `modelID`: Model handle retrieved by `OpenModel`.
+* `modelID`: `OpenModel`로 가져온 모델 핸들입니다.
 
-* `lineObject`: Selected `lineObject` in a model.
+* `lineObject`: 모델에서 선택된 `lineObject`입니다.
 
-#### Example:
+#### 예제:
 
 ```js
 IfcAPI.WriteLine(modelID, lineObject);
 ```
 
-Write a line using `modelID` and `lineObject`
+`modelID`와 `lineObject`를 이용하여 라인 하나를 작성합니다.
 
 ### WriteRawLineData
 
@@ -1646,19 +1646,19 @@ Write a line using `modelID` and `lineObject`
 IfcAPI.WriteRawLineData(modelID: number, data: RawLineData)
 ```
 
-#### Arguments:
+#### 인자:
 
-* `modelID`: Model handle retrieved by `OpenModel`.
+* `modelID`: `OpenModel`로 가져온 모델 핸들입니다.
 
-* `data` : The raw `data` of each line
+* `data` : 각 라인의 raw `data`입니다.
 
-#### Example:
+#### 예제:
 
 ```js
 IfcAPI.WriteRawLineData(modelID);
 ```
 
-Write a line data using `modelID` and `data`
+`modelID`와 `data`를 이용하여 라인 데이터를 작성합니다.
 
 ## Get
 
@@ -1668,17 +1668,17 @@ Write a line data using `modelID` and `data`
 IfcAPI.GetAllLines(modelID: Number): Vector
 ```
 
-#### Arguments:
+#### 인자:
 
-* `modelID`: Express ID of model
+* `modelID`: 모델의 Express ID입니다.
 
-#### Example:
+#### 예제:
 
 ```js
 IfcAPI.GetAllLines(modelID);
 ```
 
-Get all the lines of a model by its modelID
+modelID를 통해 한 모델의 모든 라인들을 가져옵니다.
 
 ### GetAndClearErrors
 
@@ -1686,17 +1686,17 @@ Get all the lines of a model by its modelID
 IfcAPI.GetAndClearErrors(modelID: number): Vector
 ```
 
-#### Arguments:
+#### 인자:
 
-`modelID`: Express ID of model
+`modelID`: 모델의 Express ID입니다.
 
-#### Example:
+#### 예제:
 
 ```js
 return IfcAPI.GetAndClearErrors(modelID);
 ```
 
-Get and clear errors using `modelID`
+`modelID`를 이용하여 오류들을 가져오고 모두 지웁니다.
 
 ### GetCoordinationMatrix
 
@@ -1704,17 +1704,17 @@ Get and clear errors using `modelID`
 IfcAPI.GetCoordinationMatrix(modelID: number): Array
 ```
 
-#### Arguments:
+#### 인자:
 
-* `modelID`: Express ID of model
+* `modelID`: 모델의 Express ID입니다.
 
-#### Example:
+#### 예제:
 
 ```js
 IfcAPI.GetCoordinationMatrix(modelID);
 ```
 
-Get the coordinate of a matrix using `modelID`
+`modelID`를 이용하여 행렬의 좌표를 가져옵니다.
 
 ### GetFlatMesh
 
@@ -1722,19 +1722,19 @@ Get the coordinate of a matrix using `modelID`
 IfcAPI.GetFlatMesh(modelID: number, expressID: number): FlatMesh
 ```
 
-#### Arguments:
+#### 인자:
 
-* `modelID`: Model handle retrieved by `OpenModel`.
+* `modelID`: `OpenModel`로 가져온 모델 핸들입니다.
 
-* `expressID`: `expressID` of model.
+* `expressID`: 모델의 `expressID`입니다.
 
-#### Example:
+#### 예제:
 
 ```js
 IfcAPI.GetFlatMesh(modelID, expressID);
 ```
 
-Load geometry for a single element
+단일 요소에 대한 지오메트리를 로드합니다.
 
 ### GetGeometry
 
@@ -1742,19 +1742,19 @@ Load geometry for a single element
 IfcAPI.GetGeometry(modelID: number, geometryExpressID: number): IfcGeometry
 ```
 
-#### Arguments:
+#### 인자:
 
-* `modelID`: `expressID` of ifcModel
+* `modelID`: ifcModel의 `expressID`입니다.
 
-* `geometryExpressID`: `expressID` of geometry in ifcModel.
+* `geometryExpressID`: ifcModel 내 지오메트리의 `expressID`입니다.
 
-#### Example:
+#### 예제:
 
 ```js
 const geometry = IfcAPI.GetGeometry(modelID, geometryExpressID);
 ```
 
-Get `mesh` geometry using a `modelID`.
+`modelID`를 이용하여 `mesh` 지오메트리를 가져옵니다.
 
 ### GetIndexArray
 
@@ -1762,18 +1762,19 @@ Get `mesh` geometry using a `modelID`.
 IfcAPI.GetIndexArray(ptr: number, size: number): Uint32Array
 ```
 
-#### Arguments:
+#### 인자:
 
-* `ptr`: Parameter of get.
-* `size`: Set `size`
+* `ptr`: get의 파라미터입니다.
 
-#### Example:
+* `size`: `size`를 세트합니다.
+
+#### 예제:
 
 ```js
 IfcAPI.GetIndexArray();
 ```
 
-Get `index` of `Array` using `ptr` and `size`.
+`ptr`과 `size`를 이용하여 `Array`의 `index`를 가져옵니다.
 
 ### GetLine
 
@@ -1782,21 +1783,21 @@ IfcAPI.GetLine(modelID: number, expressID; number,
                 flatten: boolean)
 ```
 
-#### Arguments:
+#### 인자:
 
-* `modelID`: Model handle retrieved by `OpenModel`.
+* `modelID`: `OpenModel`로 가져온 모델 핸들입니다.
 
-* `expressID`: `expressID` of model.
+* `expressID`: 모델의 `expressID`입니다.
 
-* `flatten`: Set whether it is `flatten` or not.
+* `flatten`: `flatten`인지 아닌지 여부를 세트합니다.
 
-#### Example:
+#### 예제:
 
 ```js
 const props = IfcAPI.GetLine(modelID, id, (flatten = false));
 ```
 
-Get the line using the modelID and expressID
+modelID와 expressID를 이용하여 라인을 가져옵니다.
 
 ### GetLineIdsWithType
 
@@ -1804,19 +1805,19 @@ Get the line using the modelID and expressID
 IfcAPI.GetLineIdsWithType(modelId: number, type: number): Vector
 ```
 
-#### Arguments:
+#### 인자:
 
-* `modelID`: `expressID` of ifcModel
+* `modelID`: ifcModel의 `expressID`입니다.
 
-* `type`: Set of get `type`
+* `type`: 가져올 `type`을 세트합니다.
 
-#### Example:
+#### 예제:
 
 ```js
 const lines = IfcAPI.GetLineIDsWithType(modelID, type);
 ```
 
-Defines the type to get
+가져올 타입을 정의합니다.
 
 ### GetRawLineData#
 
@@ -1824,19 +1825,19 @@ Defines the type to get
 IfcAPI.GetRawLineData(modelID: number, expressID: number): RawLineData
 ```
 
-#### Arguments:
+#### 인자:
 
-* `modelID`: Model handle retrieved by `OpenModel`.
+* `modelID`: `OpenModel`로 가져온 모델 핸들입니다.
 
-* `expressID`: `expressID` of model.
+* `expressID`: 모델의 `expressID`입니다.
 
-#### Example:
+#### 예제:
 
 ```js
 const rawLineData = IfcAPI.GetRawLineData(modelID, expressID);
 ```
 
-Get a line of raw data using 'modelID' `and` 'expressID'
+`modelID`와 `expressID`를 이용하여 raw 데이터의 라인 하나를 가져옵니다.
 
 ### getSubArray
 
@@ -1845,21 +1846,21 @@ IfcAPI.getSubArray(heap: any, startPtr: any,
                     sizeBytes: any)
 ```
 
-#### Arguments:
+#### 인자:
 
-* `heap`: Set to `stack`
+* `heap`: `heap`을 세트합니다.
 
-* `startPtr`: Set to `startPtr` in `subArray`
+* `startPtr`: `subArray` 안의 `startPtr`을 세트합니다.
 
-* `sizeBytes`: Set to `sizeBytes`
+* `sizeBytes`: `sizeBytes`를 세트합니다.
 
-#### Example:
+#### 예제:
 
 ```js
 const subArray = IfcAPI.getSubArray(heap, startPtr, sizeBytes);
 ```
 
-Get a `subArray` in `Array`
+`Array` 안에서 `subArray`를 가져옵니다.
 
 ### GetVertexArray
 
@@ -1867,87 +1868,87 @@ Get a `subArray` in `Array`
 IfcAPI.GetVertexArray(ptr: number, size: number): Float32Array
 ```
 
-#### Arguments:
+#### 인자:
 
-* `ptr`: Set parameter of get.
+* `ptr`: 가져올 파라미터를 세트합니다.
 
-* `size`: Set to `size`.
+* `size`: `size`를 세트합니다.
 
-#### Example:
+#### 예제:
 
 ```js
 const vertexArray = IfcAPI.GetVertexArray(ptr, size);
 ```
 
-Get the `vertex` of `Array`
+`Array`의 `vertex`를 가져옵니다.
 
 ---
 
 # web-ifc-three
 
-## Introduction
+## 소개
 
-...but it has geometry.
+...하지만 지오메트리를 갖고 있습니다.
 
-[Web-ifc](https://ifcjs.github.io/info/docs/Guide/web-ifc-three/%22https://ifcjs.github.io/info/docs/Guide/web-ifc/Introduction%22) is a very powerful tool capable of reading and writing IFCs with near-native speed. However, almost all BIM applications show the user a 3D view of the models they are working with. You could use `web-ifc` in any graphics engine, but we have already done that for you in **web-ifc-three**.
+[Web-ifc](https://ifcjs.github.io/info/docs/Guide/web-ifc-three/%22https://ifcjs.github.io/info/docs/Guide/web-ifc/Introduction%22)는 거의 네이티브 속도로 IFC를 읽고 쓸 수 있는 매우 강력한 도구입니다. 그러나 거의 모든 BIM 애플리케이션들은 사용자에게 작업 중인 모델의 3D 뷰를 보여줍니다. 당신은 아무 그래픽 엔진에서나 `web-ifc`를 이용할 수 있습니다만 당신을 위해 이미 **web-ifc-three** 안에 만들어 두었습니다.
 
-`web-ifc-three` is a wrapper around `web-ifc` that reads all data from IFC files and transforms it into geometry that can be displayed and edited in any browser. You can install it with `npm i web-ifc-three` or `yarn add web-ifc-three`. Some cool facts about this module:
+`web-ifc-three`는 IFC 파일의 모든 데이터를 읽는 `web-ifc`의 랩퍼(wrapper)입니다. 그리고 브라우저에서 보고 편집할 수 있도록 데이터를 지오메트리로 변환합니다. `npm i web-ifc-three` 또는 `yarn add web-ifc-three`를 이용해 설치할 수 있습니다. 이 모듈에 대한 몇 가지 멋있는 사실들이 있습니다:
 
-* It's super easy to use.
+* 사용하는 것이 매우 편합니다.
 
-* It's the [official IFCLoader of Three.js](https://threejs.org/examples/webgl_loader_ifc.html).
+* [Three.js의 공식 IFCLoader](https://threejs.org/examples/webgl_loader_ifc.html)입니다.
 
-* It's very efficient, being able to display thousands of objects at 60 fps in a browser. It can display multiple models, change materials and filter items.
+* 이것은 브라우저에서 60 fps로 수천 개의 객체들을 표시할 수 있어서 매우 효율적입니다. 여러 개의 모델들을 표시하거나 재질을 변경하고 항목들을 걸러낼 수 있습니다.
 
-* It can get and traverse the spatial structure tree of multiple files. Also, it can access the properties of all the items, both clicking on them in the 3d view and with smart filters.
+* 여러 개의 파일의 공간 구조 트리(spatial structure tree)를 가져오고 순회할 수 있습니다. 또, 3D 뷰에서 객체를 클릭하거나 스마트 필터를 이용해서 모든 항목의 프로퍼티에 접근할 수 있습니다.
 
-In the following points, the API and its functionalities will be shown step by step. However, there are a couple of issues that are important to be clear about before using web-ifc-three.
+이후에 API와 기능들에 대해 단계적으로 보여줄 것입니다. 그러나 web-ifc-three를 이용하기 전에 명확하게 해야 할 몇 가지 중요한 것들이 있습니다.
 
-### Can I use `web-ifc` directly?
+### `web-ifc`를 직접 사용할 수 있습니까?
 
-With web-ifc you could build almost any BIM tool capable of reading and writing IFC. So why create a layer on top of it?
+web-ifc를 이용하면 IFC를 읽고 쓸 수 있는 대부분의 BIM 도구를 빌드할 수 있습니다. 그런데 왜 굳이 그 위에 레이어를 하나 더 만듭니까?
 
-Because almost all BIM tools are 3D, and we think it would not make sense for all developers to implement a viewer from scratch. If you are only interested in the data, you may be better off using web-ifc directly.
+대부분의 BIM 도구들은 3D이기 때문에 개발자들이 맨 처음부터 뷰어를 구현하는 것은 어리석다고 생각합니다. 만약 당신이 데이터에만 관심이 있다면 web-ifc를 직접 사용하는 것이 더 나을 것입니다.
 
-In addition, web-ifc-three makes working with IFCs much easier and safer even for the developer who has no previous experience with the format.
+게다가 web-ifc-three는 IFC 포맷에 대한 경험이 없는 개발자라도 IFC를 가지고 쉽고 안전하게 작업할 수 있도록 도와줍니다.
 
-* Web-ifc is way more flexible but requires more knowledge of the IFC schema and a greater implementation effort.
+* Web-ifc는 훨씬 유연하지만 IFC 스키마에 대한 지식과 더 많은 구현 노력을 필요로 합니다.
 
-### Can I use the `THREE.IFCLoader` directly?
+### `THREE.IFCLoader`를 직접 사용할 수 있습니까?
 
-As mentioned above, `web-ifc-three` is the official IFCLoader of Three.js. That is, if you import the IFCLoader from Three.js, the code will be the same as the code you will find in the `web-ifc-three` repository.
+위에서 언급한 대로, `web-ifc-three`는 Three.js의 공식 IFCLoader입니다. 즉, 당신이 Three.js로부터 IFCLoader를 가져오면 이 코드는 `web-ifc-three` 리포지토리에서 찾게 될 코드와 같다는 것입니다.
 
-You might be tempted to import the `IFCLoader` from Three.js to avoid importing `web-ifc-three` in your project. This should work, but beware that Three.js is a very large library, and its update rate is much slower than that of IFC.js.
+프로젝트엣 `web-ifc-three`를 가져오지 않고 Three.js에서 `IFCLoader`를 가져올 수도 있습니다. 물론 작동하기는 하지만 Three.js는 매우 큰 라이브러리이며 업데이트 속도는 IFC.js보다 많이 느립니다.
 
-* Slight delay: Three.js IFCLoader may not have the latest updates and the latest bugs we have fixed will remain unresolved in Three.js until the next version is released.
+* 약간의 지연: Three.js IFCLoader는 최신 업데이트가 없을 수도 있습니다. 그리고 저희가 수정한 최근 버그가 Three.js에서는 다음 버전이 출시될 때까지 해결되지 않은 채로 남아 있을 것입니다.
 
-To use the `THREE.IFCLoader` instead of the original `IFCLoader` you only have to change the import statement:
+본래 `IFCLoader` 대신 `THREE.IFCLoader`를 사용하려면 import 구문만 변경하면 됩니다:
 
 ```js
-// Import web-ifc-three (original) IFCLoader
+// 원래 web-ifc-three  IFCLoader 가져오기
 import { IFCLoader } from "web-ifc-three/IFCLoader";
 
-// Import three.js IFCLoader
+// three.js IFCLoader 가져오기
 import { IFCLoader } from "three/examples/jsm/loaders/IFCLoader";
 ```
 
-## Setup
+## 설정
 
-### DRY documentation
+### DRY (Don't Repeat Yourself) 문서
 
-We don't want to [repeat ourselves](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself); not even in our documentation.
+저희는 [우리 자신을 반복](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself)하고 싶지 않습니다; 심지어 저희 문서에서도 그렇습니다.
 
-The setup for starting a project with web-ifc has already been seen in [Hello World](https://ifcjs.github.io/info/docs/Hello%20world). If you have skipped that point, we recommend you to go and have a look at it. All tutorials will start from that scene.
+web-ifc를 이용하여 프로젝트를 시작하기 위한 설정은 이미 [Hello World](https://ifcjs.github.io/info/docs/Hello%20world)에서 보여 드렸습니다. 그 부분을 건너뛰었다면 거기로 가서 살펴 보시길 권해 드립니다. 모든 튜토리얼은 거기서부터 시작됩니다.
 
-* You are free to follow these tutorials using the Three.js IFCLoader instead.
+* 당신이 Three.js IFCLoader를 대신 사용하고 있다면 이 튜토리얼을 굳이 따르지 않아도 됩니다.
 
-If you get lost in any of the tutorials, don't worry! Take a look at the examples [here](https://github.com/IFCjs/hello-world) or come to the [Discord channel](https://discord.gg/g7Uzn2KSwB) and ask us directly. Also, let us know of any suggestions so we can improve these docs.
+만약 튜토리얼 중에 길을 잃었다면 걱정하지 마십시오! [여기](https://github.com/IFCjs/hello-world) 예제를 보시거나 [디스코드 채널](https://discord.gg/g7Uzn2KSwB)에 오셔서 직접 물어보시면 됩니다. 또 이 문서에서 개선해야 할 점을 가르쳐 주십시오.
 
-* Before going forward: Basic knowledge of Three.js and web development is assumed. If you don't have this background, we recommend that you start [here](https://threejs.org/manual/) before jumping into IFC.js.
+* 진행하기에 앞서: Three.js와 웹 개발에 대한 기본적인 지식이 있다고 가정하겠습니다. 만약 이러한 배경이 없다면 IFC.js로 넘어가기 전에 [여기](https://threejs.org/manual/)부터 시작하는 것을 권해 드립니다.
 
 ## API
 
-All APIs are documented, so when you use any of the objects or methods seen in this documentation, you should see help in Intellisense, regardless of the IDE you are using. [Check it out!](https://github.com/IFCjs/web-ifc-three/blob/main/web-ifc-three/src/IFC/components/IFCManager.ts)
+모든 API는 문서화되었습니다. 그래서 당신이 이 문서에 나와 있는 객체나 메소드 중에서 사용할 때 당신이 어떤 IDE를 사용하든지 간에 IntelliSense의 도움을 받으셔야 합니다. [이것을 확인해 보십시오!](https://github.com/IFCjs/web-ifc-three/blob/main/web-ifc-three/src/IFC/components/IFCManager.ts)
 
 However, we realise that reading intellisense or comments is not the most comfortable thing to do, so on this page we will make an overview of what the API can do. Everything will be covered in more detail in specific tutorials later on.
 
