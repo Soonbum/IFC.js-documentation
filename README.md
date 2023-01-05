@@ -631,7 +631,7 @@ npm install @open-wc/building-rollup --save-dev
 
 package.json을 열고 scripts 섹션에 build와 watch라는 이름을 추가합니다.
 
-```json
+```
   "scripts": {
     "build": "rollup -c ./rollup.config.js",
     "watch": "rollup -w -c ./rollup.config.js"
@@ -2922,7 +2922,7 @@ Notice that you only get the **type** (e.g. `IfcWall`) and the **express ID**. I
 
 For instance, if you request the spatial structure of a project, you might get something like this:
 
-```json
+```
 {
     expressID: 100,
     type: "IfcProject",
