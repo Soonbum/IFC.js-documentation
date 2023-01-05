@@ -1950,11 +1950,11 @@ web-ifc를 이용하여 프로젝트를 시작하기 위한 설정은 이미 [He
 
 모든 API는 문서화되었습니다. 그래서 당신이 이 문서에 나와 있는 객체나 메소드 중에서 사용할 때 당신이 어떤 IDE를 사용하든지 간에 IntelliSense의 도움을 받으셔야 합니다. [이것을 확인해 보십시오!](https://github.com/IFCjs/web-ifc-three/blob/main/web-ifc-three/src/IFC/components/IFCManager.ts)
 
-However, we realise that reading intellisense or comments is not the most comfortable thing to do, so on this page we will make an overview of what the API can do. Everything will be covered in more detail in specific tutorials later on.
+IntelliSense 또는 코멘트로는 편안하지 않을 것입니다. 이 페이지에서는 API가 할 수 있는 것이 무엇인지에 대한 개요를 보여줄 것입니다. 모든 것은 나중에 나오는 구체적인 튜토리얼에서 자세히 다룰 것입니다.
 
 ### IfcLoader
 
-The only object we will import from the library. It contains all the logic needed to work with IFC. You can use its `load()` and `loadAsync()` methods to load IFCs from a URL, [just like any other Three.js Loader](https://threejs.org/docs/#api/en/loaders/Loader.load). For example, to load an IFC we can do the following:
+저희가 라이브러리로부터 가져오게 될 유일한 객체입니다. 이것은 IFC를 가지고 작업하는 데 필요한 모든 로직을 포함하고 있습니다. [다른 Three.js Loader처럼](https://threejs.org/docs/#api/en/loaders/Loader.load) URL로부터 IFC를 로드하기 위해 `load()`와 `loadAsync()` 메소드를 사용할 수 있습니다. 예를 들어 IFC를 로드하기 위해 다음과 같이 할 수 있습니다:
 
 ```js
 import { IFCLoader } from "web-ifc-three/IFCLoader";
@@ -1963,23 +1963,23 @@ const ifcLoader = new IFCLoader();
 ifcLoader.load("models/Example_model.ifc", (ifcModel) => scene.add(ifcModel));
 ```
 
-With `web-ifc-three` you can load multiple models in the scene. Many of the API operations are executed on a specified model. To express on which model we want to operate we have to give its `ModelID`.
+`web-ifc-three`를 이용하여 장면 안에 여러 개의 모델들을 로드할 수 있습니다. 많은 API 동작들이 지정한 모델에서 실행됩니다. 동작하고 싶은 모델을 표현하려면 `ModelID`를 주어야 합니다.
 
-You can get the ID of a model through the property `modelID`.
+프로퍼티 `modelID`를 통해 모델의 ID를 가져올 수 있습니다.
 
 ```js
 const modelID = ifcModel.modelID;
 ```
 
-There are two ways to access the API:
+API에 접근하는 2가지 방식이 있습니다:
 
-* Through the instances of `IfcModel` that the `IfcLoader` generates with `load` and `loadAsync`.
+* `IfcLoader`가 `load` 및 `loadAsync`를 통해 생성하는 `IfcModel`의 인스턴스를 통해 접근할 수 있습니다.
 
-* Through `IfcLoader.IfcManager`.
+* `IfcLoader.IfcManager`를 통해 접근할 수 있습니다.
 
-* Both **IfcModel** instances and **IfcLoader.IfcManager** can be used interchangeably to access the API. There's one difference: when using **IfcModel**, the ModelID never has to be given as an argument (it's known implicitly).
+* **IfcModel** 인스턴스와 **IfcLoader.IfcManager** 모두 API에 접근하기 위해 번갈아가며 사용할 수 있습니다. 한 가지 차이점이 있습니다: **IfcModel**을 사용할 때에는 ModelID가 인자로 주어지지 않습니다. (암묵적으로 알고 있음)
 
-## Setup
+## 설정
 
 ### setWasmPath
 
@@ -1989,17 +1989,17 @@ async IfcLoader.IfcManager.setWasmPath (
                         ): void;
 ```
 
-Specifies the location of the `web-ifc.wasm` and `web-ifc-mt.wasm` files. These files are the web-ifc file and is required to create any application with IFC.js. You can find them in `node_modules/web-ifc/`.
+`web-ifc.wasm`과 `web-ifc-mt.wasm` 파일의 위치를 지정합니다. 이 파일들은 web-ifc 파일이며 IFC.js로 애플리케이션을 만들 때 반드시 필요합니다. `node_modules/web-ifc/`에서 발견할 수 있습니다.
 
-* Careful with your tooling!: If you use frameworks or libraries like React, Angular, Vue or Svelte it is possible that the root path of the project doesn't correspond to the root path of the served application. You will have to check in [each case](https://github.com/IFCjs/examples) how the paths of the statically served files are managed.
+* 당신이 사용하는 도구를 유의하십시오!! 만약 당신이 React, Angular, Vue 또는 Svelte 같은 프레임워크나 라이브러리를 사용한다면 프로젝트의 루트 경로가 제공된 애플리케이션의 루트 경로와 일치하지 않을 수 있습니다. 정적으로 제공되는 파일의 경로가 어떻게 관리되고 있는지 [각 경우](https://github.com/IFCjs/examples)에 대해 확인해야 합니다.
 
-#### Arguments:
+#### 인자:
 
-* `path` Route of `web-ifc.wasm`.
+* `path` `web-ifc.wasm`의 경로.
 
-#### Example:
+#### 예제:
 
-If `web-ifc.wasm` is in dist/wasmDir:
+만약 `web-ifc.wasm`이 dist/wasmDir 안에 있다면:
 
 ```js
 await ifcLoader.ifcManager.setWasmPath("dist/wasmDir/");
@@ -2015,19 +2015,19 @@ IfcLoader.IfcManager.setupThreeMeshBVH (
                         ): void;
 ```
 
-This method allows object picking to be much faster, especially for very large models with heavy geometry. This method actually allows IFC.js to use the Garrett Johnson's amazing [library](https://github.com/gkjohnson/three-mesh-bvh) . u can install it with `npm i three-mesh-bvh` or `yarn add three-mesh-bvh`.
+이 메소드는 객체 피킹(picking)을 훨씬 빠르게 해줍니다. 특히 무거운 지오메트리를 가진 초대형 모델의 경우에 그렇습니다. 이 메소드는 실제로 IFC.js가 Garrett Johnson의 놀라운 [라이브러리](https://github.com/gkjohnson/three-mesh-bvh)를 사용할 수 있게 해줍니다. `npm i three-mesh-bvh` 또는 `yarn add three-mesh-bvh`로 설치할 수 있습니다.
 
-* Using this method not mandatory, but if you want to be able to select objects in medium / large IFC models at 60 fps, it's necessary.
+* 이 메소드를 사용하는 것은 의무가 아니지만, 중대형 IFC 모델에서 60 fps로 객체를 선택하고 싶으면 필수로 사용해야 합니다.
 
-#### Arguments:
+#### 인자:
 
-* `computeBoundsTree` Pre-made BufferGeometry extension function that builds a new BVH, assigns it to boundsTree, and applies the new index buffer to the geometry. - [source](https://github.com/gkjohnson/three-mesh-bvh#computeboundstree).
+* `computeBoundsTree` 이것은 새로운 BVH를 빌드하고, 그것을 boundsTree에 할당하고, 지오메트리에 새로운 인덱스 버퍼를 적용하는 미리 만들어진 BufferGeometry 확장 함수입니다. - [소스](https://github.com/gkjohnson/three-mesh-bvh#computeboundstree)
 
-* `disposeBoundsTree` BufferGeometry extension function that disposes of the BVH. - [source](https://github.com/gkjohnson/three-mesh-bvh#disposeboundstree).
+* `disposeBoundsTree` 이것은 BVH를 폐기하는 BufferGeometry 확장 함수입니다. - [소스](https://github.com/gkjohnson/three-mesh-bvh#disposeboundstree)
 
-* `acceleratedRaycast` Accelerated raycast function with the same signature as THREE.Mesh.raycast. Uses the BVH for raycasting if it's available otherwise it falls back to the built-in approach. - [source](https://github.com/gkjohnson/three-mesh-bvh#acceleratedraycast).
+* `acceleratedRaycast` 이것은 THREE.Mesh.raycast와 동일한 시그니처를 가진 가속 raycast 함수입니다. 가능한 경우에는 raycasting에 BVH를 사용하지만, 그렇지 않을 경우 빌드-인 방식으로 돌아가게 됩니다. - [소스](https://github.com/gkjohnson/three-mesh-bvh#acceleratedraycast)
 
-#### Example:
+#### 예제:
 
 ```js
 import { IFCLoader } from "web-ifc-three/dist/IFCLoader";
@@ -2046,13 +2046,13 @@ IfcLoader.IfcManager.setOnProgress (
                                     ): void;
 ```
 
-Sets a callback function that is called every 10% of IFC loaded. This way, you can display a loading bar to show your user how the loading is going.
+IFC가 10%씩 로드될 때마다 호출되는 콜백 함수를 세트합니다. 이런 식으로 사용자에게 로딩 진행 상태를 보여주기 위해 로딩 바를 표시할 수 있습니다.
 
-#### Arguments:
+#### 인자:
 
-* `onProgress`: Callback function that is called every 10%. That function must have one argument that that receives an object with two properties: `loaded` (number of objects loaded) and `total` (number of objects in the file).
+* `onProgress`: 매 10%마다 호출되는 콜백 함수입니다. 이 함수는 2개의 프로퍼티를 가진 1개의 객체를 수신하는 하나의 인자를 가져야 합니다: (로드된 객체의 개수를 의미하는) `loaded`와 (파일 내 객체의 개수를 의미하는) `total`.
 
-#### Example:
+#### 예제:
 
 ```js
 function exampleCallback(event) {
