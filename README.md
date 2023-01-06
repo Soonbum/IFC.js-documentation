@@ -631,11 +631,11 @@ npm install @open-wc/building-rollup --save-dev
 
 package.json을 열고 scripts 섹션에 build와 watch라는 이름을 추가합니다.
 
-```
-  "scripts": {
-    "build": "rollup -c ./rollup.config.js",
-    "watch": "rollup -w -c ./rollup.config.js"
-  },
+```json
+  "scripts": {
+    "build": "rollup -c ./rollup.config.js",
+    "watch": "rollup -w -c ./rollup.config.js"
+  },
 ```
 
 ### Rollup 구성하기
@@ -643,18 +643,18 @@ package.json을 열고 scripts 섹션에 build와 watch라는 이름을 추가�
 프로젝트 루트에 구성 파일 **rollup.config.js**를 추가하십시오. 구성 파일의 내용은 다음과 같습니다:
 
 ```javascript
-import resolve from "@rollup/plugin-node-resolve";
+import resolve from "@rollup/plugin-node-resolve";
 
-export default {
-  input: "app.js",
-  output: [
+export default {
+  input: "app.js",
+  output: [
 
-    {
-      format: "esm",
-      file: "bundle.js",
-    },
-  ],
-  plugins: [resolve()],
+    {
+      format: "esm",
+      file: "bundle.js",
+    },
+  ],
+  plugins: [resolve()],
 };
 ```
 
@@ -691,19 +691,19 @@ https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer
 ### index.html
 
 ```html
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WEB-IFC</title>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WEB-IFC</title>
 </head>
 <body>
-  <div id="main">
-      <div id="result"></div>
-  </div>
-  <script src="bundle.js"></script>
+  <div id="main">
+      <div id="result"></div>
+  </div>
+  <script src="bundle.js"></script>
 </body>
 </html>
 ```
@@ -2109,19 +2109,19 @@ async IfcLoader.IfcManager.useWebWorkers (
                                     ): void;
 ```
 
-Toggles the web worker that contains the parsing logic. The rest of the API remains the same, but all the logic will happen in another thread of the machine, so the app will never be blocked by heavy operations.
+파싱 로직을 포함하는 웹 작업자로 전환합니다. 나머지 API는 동일하지만 모든 로직은 머신의 다른 스레드에서 발생하므로 앱은 과도한 연산 때문에 차단되지 않을 것입니다.
 
-You need to copy the file `IFCWorker.js` to your project and pass the relative path as a second argument.
+당신은 파일 `IFCWorker.js`를 당신의 프로젝트에 복사하고 상대 경로를 2번째 인자로 넘겨주어야 합니다.
 
-#### Arguments:
+#### 인자:
 
-* `active`: Wether to use web workers or not.
+* `active`: 웹 작업자를 사용할지 여부를 의미합니다.
 
-* `path`: Relative path to the worker file. Necessary if `active = true`.
+* `path`: 작업자 파일에 대한 상대 경로입니다. 만약 `active = true`이면 필수입니다.
 
-#### Example:
+#### 예제:
 
-If the file `IFCWorker.js` is in a folder called: `files`:
+만약 파일 `IFCWorker.js`가 `files`라는 폴더 안에 있을 경우:
 
 ```javascript
 await ifcLoader.ifcManager.useWebWorkers({
@@ -2138,17 +2138,17 @@ async IfcLoader.IfcManager.useJSONData (
                                     ): void;
 ```
 
-Uses JSON property data instead of the WASM data, which consumes much less memory. Only use this in the following scenarios:
+메모리 사용량이 적은 WASM 데이터 대신 JSON 프로퍼티 데이터를 사용합니다. 이것은 다음 시나리오를 따를 때에만 사용하십시오:
 
-* If you don't need to access the properties of the IFC
+* IFC의 프로퍼티에 접근할 필요가 없을 경우
 
-* If you will provide the properties as JSON. You can get the JSON from an IFC file in advance following [this example](https://github.com/IFCjs/hello-world/tree/main/examples/web-ifc/ifc-to-json/node).
+* 프로퍼티를 JSON 형태로 제공해야 할 경우. [이 예제](https://github.com/IFCjs/hello-world/tree/main/examples/web-ifc/ifc-to-json/node)처럼 IFC 파일에서 JSON을 가져올 수 있습니다.
 
-#### Arguments:
+#### 인자:
 
-* `useJSON`: Wether to use JSON data or not.
+* `useJSON`: JSON 데이터를 사용할지 여부를 의미합니다.
 
-#### Example:
+#### 예제:
 
 ```javascript
 await ifcLoader.ifcManager.useJSONData(true);
@@ -2163,15 +2163,15 @@ async IfcLoader.IfcManager.addModelJSONData (
                                         ): void;
 ```
 
-Adds the properties of a model as JSON data. If you are using web workers, use `loadJsonDataFromWorker()` instead to avoid overheads.
+모델의 프로퍼티를 JSON 데이터 형식으로 추가합니다. 만약 웹 작업자를 사용하고 있을 경우 오버헤드를 방지하기 위해 `loadJsonDataFromWorker()`를 대신 사용하십시오.
 
-#### Arguments:
+#### 인자:
 
-* `modelID`: ID of the IFC model.
+* `modelID`: IFC 모델의 ID입니다.
 
-* `data`: data as an object where the keys are the expressIDs and the values the properties. In addition, each value has the properties `expressID` (id of the item) and `type` (IFC class of the item).
+* `data`: 키가 expressID이고 값이 프로퍼티인 객체가 데이터입니다. 게다가 각 값은 프로퍼티 `expressID` (항목의 id)와 `type` (항목의 IFC 클래스)을 갖고 있습니다.
 
-#### Example:
+#### 예제:
 
 ```javascript
 await ifcLoader.ifcManager.addModelJSONData(0, jsonData);
@@ -2186,21 +2186,21 @@ async IfcLoader.IfcManager.loadJsonDataFromWorker (
                                             ): void;
 ```
 
-Loads the data of an IFC model from a JSON file directly from a web worker. If you are not using web workers, use `addModelJSONData()` instead.
+웹 작업자로부터 직접 가져온 JSON 파일로부터 IFC 모델의 데이터를 로드합니다. 만약 웹 작업자를 사용하지 않는다면 대신 `addModelJSONData()`를 이용하십시오.
 
-#### Arguments:
+#### 인자:
 
-* `modelID`: ID of the IFC model.
+* `modelID`: IFC 모델의 ID입니다.
 
-* `path`: the path to the JSON file **relative to the web worker file**.
+* `path`: JSON 파일의 경로입니다. **웹 작업자 파일에 상대적입니다**.
 
-#### Example:
+#### 예제:
 
 ```javascript
 await ifcLoader.ifcManager.loadJsonDataFromWorker(0, "path/to/data.json");
 ```
 
-## Getters
+## 게터 (Getters)
 
 ### getExpressId
 
@@ -2211,17 +2211,17 @@ IfcLoader.IfcManager.getExpressId (
                         ): number;
 ```
 
-Gets the Express ID of an IFC element from a face index.
+면(face) 인덱스로부터 IFC 요소의 Express ID를 가져옵니다.
 
-* Why a face index?: Because when we select an object in 3d space with the mouse we get the index of that face. We usually want the ID of the object where that face belongs to in order to highlight it, isolate it or get all its properties.
+* 왜 면(face) 인덱스입니까? 왜냐하면 우리가 마우스로 3D 공간에서 객체 하나를 선택할 때 어떤 면(face)의 인덱스를 가져오기 때문입니다. 저희는 일반적으로 그 면이 속한 객체의 ID를 원합니다. 그 다음에는 그 객체를 하이라이트로 표시하거나, 배제시키거나, 그것의 모든 프로퍼티들을 가져옵니다.
 
-#### Arguments:
+#### 인자:
 
-* `geometry` [Geometry](https://threejs.org/docs/#api/en/core/BufferGeometry) of the model you clicked on with the mouse.
+* `geometry`: 당신이 마우스로 클릭한 모델의 [지오메트리](https://threejs.org/docs/#api/en/core/BufferGeometry)입니다.
 
-* `faceIndex` Index of the face intersected with the [raycaster](https://threejs.org/docs/#api/en/core/Raycaster). If you are not familiar with the raycaster, don't worry; we'll cover this in detail in the tutorial about picking.
+* `faceIndex`: [raycaster](https://threejs.org/docs/#api/en/core/Raycaster)와 교차하는 면(face)의 인덱스입니다. raycaster가 무엇인지 잘 모르신다면 걱정하지 마십시오; 피킹(picking)에 대한 튜토리얼에서 이것을 자세히 다룰 것입니다.
 
-#### Example:
+#### 예제:
 
 ```javascript
 const intersected = raycaster.intersectObject(mesh)[0];
@@ -2238,17 +2238,17 @@ IfcLoader.IfcManager.getIfcType (
                         ): string;
 ```
 
-Gets the IFC type of the specified element (e.g. IFCWALL).
+지정한 요소의 IFC 타입을 가져옵니다. (예. IFCWALL)
 
-* Elements in IFC always have an associated type: IfcWall, IfcSlab, IfcWindow, IfcDoor, etc.
+* IFC에서 요소들은 항상 연관된 타입을 갖고 있습니다: IfcWall, IfcSlab, IfcWindow, IfcDoor 등.
 
-#### Arguments:
+#### 인자:
 
-* `modelID` ID of the IFC model.
+* `modelID`: IFC 모델의 ID입니다.
 
-* `id` Express ID of the item whose properties to obtain. You can get this either with `getExpressId` (if you are picking an object in the 3d view) or traversing the model with `getAllItemsOfType` or `getSpatialStructure`.
+* `id`: 프로퍼티들을 가져올 항목의 Express ID입니다. (만약 3D 뷰에서 객체를 피킹하고 있다면) `getExpressId`로 이것을 가져올 수 있으며, 그 외에도 `getAllItemsOfType` 또는 `getSpatialStructure`를 이용해 모델을 순회하면서 가져올 수도 있습니다.
 
-#### Example:
+#### 예제:
 
 ```javascript
 const model = ifcModel.modelID;
@@ -2267,17 +2267,17 @@ async IfcLoader.IfcManager.getAllItemsOfType (
                             ): number[] | object[];
 ```
 
-Returns all objects of the specified IFC type (e.g. all walls, all floors, all windows, etc.) of a specific model. It can return an array of `expressIDs`, or (if `verbose = true`) an array of objects containing the properties of the items found.
+지정한 모델의 지정한 IFC 타입(예. 모든 벽, 모든 바닥, 모든 창 등)의 모든 객체를 리턴합니다. `expressIDs` 배열, 또는 (if `verbose = true`) 발견한 항목들의 프로퍼티들을 포함하는 객체 배열을 리턴할 수 있습니다.
 
-#### Arguments:
+#### 인자:
 
-* `modelID` ID of the IFC model.
+* `modelID`: IFC 모델의 ID입니다.
 
-* `type` IFC type of the elements you want to get. You can import these types directly from `web-ifc` (see example below).
+* `type`: 당신이 가져오고 싶은 요소들의 IFC 타입입니다. `web-ifc`로부터 직접 이 타입들을 가져올 수 있습니다. (아래 예제를 보십시오)
 
-* `verbose` If true, gets the properties of all the items found. Be careful, as this can be a slow operation in bigger models.
+* `verbose`: 만약 true이면, 발견한 모든 항목들의 프로퍼티들을 가져옵니다. 큰 모델에서는 연산이 느려질 수 있으므로 주의하십시오.
 
-#### Example:
+#### 예제:
 
 ```javascript
 import { IFCWALLSTANDARDCASE as W } from "web-ifc";
@@ -2296,19 +2296,19 @@ async IfcLoader.IfcManager.getItemProperties (
                             ): object[];
 ```
 
-Gets the native properties of the given element. In the IFC schema there are two types of properties: direct and indirect. How to obtain the indirect properties (psets, qsets and type properties) will be discussed later.
+주어진 요소의 네이티브 프로퍼티들을 가져옵니다. IFC 스키마에서는 2가지 타입의 프로퍼티가 있습니다: 직접과 간접. 간접 프로퍼티(psets, qsets, type)들을 가져오는 방법은 나중에 설명할 것입니다.
 
-* All methods related to properties return an array of objects where the keys are the name of the properties and the values are their values.
+* 프로퍼티와 관련된 모든 메소드는 객체 배열을 리턴합니다. 객체는 키가 프로퍼티의 이름이고 값이 그 프로퍼티의 값입니다.
 
-#### Arguments:
+#### 인자:
 
-* `modelID` ID of the IFC model.
+* `modelID`: IFC 모델의 ID입니다.
 
-* `id` Express ID of the item whose properties to obtain. You can get this either with `getExpressId` (if you are picking an object in the 3d view) or traversing the model with `getAllItemsOfType` or `getSpatialStructure`.
+* `id`: 프로퍼티들을 가져올 항목의 Express ID입니다. (만약 3D 뷰에서 객체를 피킹하고 있다면) `getExpressId`로 이것을 가져올 수 있으며, 그 외에도 `getAllItemsOfType` 또는 `getSpatialStructure`를 이용해 모델을 순회하면서 가져올 수도 있습니다.
 
-* `recursive` If true, gets the properties of all the referenced elements recursively. Be careful, as this can be a slow operation in bigger models.
+* `recursive`: 만약 true이면, 참조된 요소들의 모든 프로퍼티들을 재귀적으로 가져옵니다. 큰 모델에서는 연산이 느려질 수 있으므로 주의하십시오.
 
-#### Example:
+#### 예제:
 
 ```javascript
 const model = ifcModel.modelID;
@@ -2327,17 +2327,17 @@ async IfcLoader.IfcManager.getTypeProperties (
                             ): number[] | object[];
 ```
 
-Gets the type properties of the given element.
+주어진 요소의 type 프로퍼티들을 가져옵니다.
 
-#### Arguments:
+#### 인자:
 
-* `modelID` ID of the IFC model.
+* `modelID`: IFC 모델의 ID입니다.
 
-* `id` Express ID of the item whose properties to obtain. You can get this either with `getExpressId` (if you are picking an object in the 3d view) or traversing the model with `getAllItemsOfType` or `getSpatialStructure`.
+* `id` 프로퍼티들을 가져올 항목의 Express ID입니다. (만약 3D 뷰에서 객체를 피킹하고 있다면) `getExpressId`로 이것을 가져올 수 있으며, 그 외에도 `getAllItemsOfType` 또는 `getSpatialStructure`를 이용해 모델을 순회하면서 가져올 수도 있습니다.
 
-* `recursive` If true, gets the properties of all the referenced elements recursively. Be careful, as this can be a slow operation in bigger models.
+* `recursive`: 만약 true이면, 참조된 모든 요소들의 프로퍼티들을 재귀적으로 가져옵니다. 큰 모델에서는 연산이 느려질 수 있으므로 주의하십시오.
 
-#### Example:
+#### 예제:
 
 ```javascript
 const model = ifcModel.modelID;
@@ -2356,19 +2356,19 @@ async IfcLoader.IfcManager.getPropertySets (
                             ): object[];
 ```
 
-Gets the property sets and quantity sets of the given element.
+주어진 요소의 프로퍼티 세트와 수량 세트를 가져옵니다.
 
-* Property sets?: Native and type properties are those that are predefined by the IFC schema: they always contain the same information. Property sets, on the other hand, are arbitrary and can be defined by the user.
+* 프로퍼티 세트? 네이티브 및 타입 프로퍼티는 IFC 스키마에 의해 미리 정의된 것입니다: 이것들은 항상 같은 정보를 포함합니다. 반면에 프로퍼티 세트는 임의적이며 사용자가 정의할 수 있습니다.
 
-#### Arguments:
+#### 인자:
 
-* `modelID` ID of the IFC model.
+* `modelID`: IFC 모델의 ID입니다.
 
-* `id` Express ID of the item whose properties to obtain. You can get this either with `getExpressId` (if you are picking an object in the 3d view) or traversing the model with `getAllItemsOfType` or `getSpatialStructure`.
+* `id` 프로퍼티들을 가져올 항목의 Express ID입니다. (만약 3D 뷰에서 객체를 피킹하고 있다면) `getExpressId`로 이것을 가져올 수 있으며, 그 외에도 `getAllItemsOfType` 또는 `getSpatialStructure`를 이용해 모델을 순회하면서 가져올 수도 있습니다.
 
-* `recursive` If true, gets the properties of all the referenced elements recursively. Be careful, as this can be a slow operation in bigger models.
+* `recursive`: 만약 true이면, 참조된 모든 요소들의 프로퍼티들을 재귀적으로 가져옵니다. 큰 모델에서는 연산이 느려질 수 있으므로 주의하십시오.
 
-#### Example:
+#### 예제:
 
 ```javascript
 const model = ifcModel.modelID;
@@ -2387,17 +2387,17 @@ async IfcLoader.IfcManager.getMaterialsProperties (
                             ): object[];
 ```
 
-Gets the material information of the given element.
+주어진 요소의 재질 정보를 가져옵니다.
 
-#### Arguments:
+#### 인자:
 
-* `modelID` ID of the IFC model.
+* `modelID`: IFC 모델의 ID입니다.
 
-* `id` Express ID of the item whose properties to obtain. You can get this either with `getExpressId` (if you are picking an object in the 3d view) or traversing the model with `getAllItemsOfType` or `getSpatialStructure`.
+* `id` 프로퍼티들을 가져올 항목의 Express ID입니다. (만약 3D 뷰에서 객체를 피킹하고 있다면) `getExpressId`로 이것을 가져올 수 있으며, 그 외에도 `getAllItemsOfType` 또는 `getSpatialStructure`를 이용해 모델을 순회하면서 가져올 수도 있습니다.
 
-* `recursive` If true, gets the properties of all the referenced elements recursively. Be careful, as this can be a slow operation in bigger models.
+* `recursive`: 만약 true이면, 참조된 모든 요소들의 프로퍼티들을 재귀적으로 가져옵니다. 큰 모델에서는 연산이 느려질 수 있으므로 주의하십시오.
 
-#### Example:
+#### 예제:
 
 ```javascript
 const model = ifcModel.modelID;
@@ -2414,15 +2414,15 @@ async IfcLoader.IfcManager.getSpatialStructure (
                         ): object;
 ```
 
-Gets the spatial structure of the project.
+객체의 공간 구조(spatial structure)를 가져옵니다.
 
-* The [spatial structure](https://standards.buildingsmart.org/IFC/DEV/IFC4_2/FINAL/HTML/schema/ifcproductextension/lexical/ifcspatialstructureelement.htm) is the hierarchical structure that organizes every IFC project (all physical items are referenced to an element of the spatial structure).
+* [공간 구조(spatial structure)](https://standards.buildingsmart.org/IFC/DEV/IFC4_2/FINAL/HTML/schema/ifcproductextension/lexical/ifcspatialstructureelement.htm)는 모든 IFC 프로젝트를 구성하는 계층적 구조입니다. (모든 물리적 항목들은 공간 구조의 요소에 참조됩니다)
 
-#### Arguments:
+#### 인자:
 
-* `modelID` ID of the IFC model.
+* `modelID`: IFC 모델의 ID입니다.
 
-#### Example:
+#### 예제:
 
 ```javascript
 const model = ifcModel.modelID;
@@ -2430,7 +2430,7 @@ const manager = loader.ifcLoader.ifcManager;
 const ifcProject = await manager.getSpatialStructure(model);
 ```
 
-## Subsets
+## 서브셋 (Subsets)
 
 ### getSubset
 
@@ -2448,11 +2448,11 @@ Gets the mesh of the subset with the specified [material](https://threejs.org/do
 
 #### Arguments:
 
-* `modelID` ID of the IFC model.
+* `modelID`: ID of the IFC model.
 
-* `material` (optional) Material assigned to the subset (if any).
+* `material`: (optional) Material assigned to the subset (if any).
 
-* `customID` (optional) Optional custom name of the subset (if any).
+* `customID`: (optional) Optional custom name of the subset (if any).
 
 #### Example:
 
@@ -2474,19 +2474,19 @@ Creates a new geometric subset.
 
 #### Arguments:
 
-* `config` A configuration object with the following options:
+* `config`: A configuration object with the following options:
 
-  * `scene` Scene where the model is located.
+  * `scene`: Scene where the model is located.
 
-  * `modelID` ID of the model.
+  * `modelID`: ID of the model.
 
-  * `ids` Express IDs of the items of the model that will conform the subset.
+  * `ids`: Express IDs of the items of the model that will conform the subset.
 
-  * `removePrevious` Wether to remove the previous subset of this model with this material.
+  * `removePrevious`: Wether to remove the previous subset of this model with this material.
 
-  * `material` (optional) Material to apply to the subset. If no material is given, the subset has the original material.
+  * `material`: (optional) Material to apply to the subset. If no material is given, the subset has the original material.
 
-  * `customID` (optional) Optional custom name to give to the subset. This allows to create multiple subsets with the same material.
+  * `customID`: (optional) Optional custom name to give to the subset. This allows to create multiple subsets with the same material.
 
 #### Example:
 
@@ -2516,11 +2516,11 @@ Removes the specified geometric subset.
 
 #### Arguments:
 
-* `modelID` ID of the IFC model.
+* `modelID`: ID of the IFC model.
 
-* `material` (optional) Material assigned to the subset (if any).
+* `material`: (optional) Material assigned to the subset (if any).
 
-* `customID` (optional) Optional custom name to give to the subset. This allows to create multiple subsets with the same material.
+* `customID`: (optional) Optional custom name to give to the subset. This allows to create multiple subsets with the same material.
 
 #### Example:
 
@@ -2545,13 +2545,13 @@ Removes the specified items from the specified geometric subset.
 
 #### Arguments:
 
-* `modelID` ID of the IFC model.
+* `modelID`: ID of the IFC model.
 
-* `ids` Express IDs of the items to remove from the subset.
+* `ids`: Express IDs of the items to remove from the subset.
 
-* `customID` (optional) Optional custom name to give to the subset. This allows to create multiple subsets with the same material.
+* `customID`: (optional) Optional custom name to give to the subset. This allows to create multiple subsets with the same material.
 
-* `material` (optional) Material assigned to the subset (if any).
+* `material`: (optional) Material assigned to the subset (if any).
 
 #### Example:
 
