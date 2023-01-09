@@ -2442,19 +2442,19 @@ IfcLoader.IfcManager.getSubset (
                         ): object;
 ```
 
-Gets the mesh of the subset with the specified [material](https://threejs.org/docs/#api/en/materials/Material). If no material is given, this returns the subset with the original materials.
+지정한 [재질](https://threejs.org/docs/#api/en/materials/Material)로 서브셋의 메시(mesh)를 가져옵니다. 만약 주어진 재질이 없으면 이것은 원래 재질을 가진 서브셋을 리턴합니다.
 
-* Geometric subsets are extracts of the geometry of the model. For example, you could extract a subset with all the IfcDoors and IfcWindows that meet a certain condition and highlight or export them.
+* 기하 서브셋은 모델의 지오메트리를 추출한 것입니다. 예를 들면, 특정 조건을 만족하는 모든 IfcDoors와 IfcWindows로 서브셋을 추출해서 그것들을 하이라이트로 표시하거나 내보낼 수 있습니다.
 
-#### Arguments:
+#### 인자:
 
-* `modelID`: ID of the IFC model.
+* `modelID`: IFC 모델의 ID입니다.
 
-* `material`: (optional) Material assigned to the subset (if any).
+* `material`: (선택적) 서브셋에 할당된 재질입니다. (존재할 경우)
 
-* `customID`: (optional) Optional custom name of the subset (if any).
+* `customID`: (선택적) 서브셋의 선택적인 커스텀 이름입니다. (존재할 경우)
 
-#### Example:
+#### 예제:
 
 ```javascript
 const model = ifcModel.modelID;
@@ -2470,25 +2470,25 @@ IfcLoader.IfcManager.createSubset (
                         ): object;
 ```
 
-Creates a new geometric subset.
+새로운 기하 서브셋을 생성합니다.
 
-#### Arguments:
+#### 인자:
 
-* `config`: A configuration object with the following options:
+* `config`: 다음 옵션들을 갖는 구성 객체입니다:
 
-  * `scene`: Scene where the model is located.
+  * `scene`: 모델이 위치한 장면입니다.
 
-  * `modelID`: ID of the model.
+  * `modelID`: 모델의 ID입니다.
 
-  * `ids`: Express IDs of the items of the model that will conform the subset.
+  * `ids`: 서브셋과 일치하게 될 모델의 항목들의 Express ID입니다.
 
-  * `removePrevious`: Wether to remove the previous subset of this model with this material.
+  * `removePrevious`: 이 재질을 가진 이 모델의 예전 서브셋을 지울지 여부를 의미합니다.
 
-  * `material`: (optional) Material to apply to the subset. If no material is given, the subset has the original material.
+  * `material`: (선택적) 서브셋에 적용할 재질입니다. 만약 주어진 재질이 없다면 서브셋은 원래 재질을 갖습니다.
 
-  * `customID`: (optional) Optional custom name to give to the subset. This allows to create multiple subsets with the same material.
+  * `customID`: (선택적) 서브셋에 제공할 선택적인 커스텀 이름입니다. 이것은 동일한 재질을 갖는 다수의 서브셋을 만들 수 있게 해줍니다.
 
-#### Example:
+#### 예제:
 
 ```javascript
 const model = ifcModel.modelID;
@@ -2512,17 +2512,17 @@ IfcLoader.IfcManager.removeSubset (
                         ): object;
 ```
 
-Removes the specified geometric subset.
+지정한 기하 서브셋을 제거합니다.
 
-#### Arguments:
+#### 인자:
 
-* `modelID`: ID of the IFC model.
+* `modelID`: IFC 모델의 ID입니다.
 
-* `material`: (optional) Material assigned to the subset (if any).
+* `material`: (선택적) 서브셋에 할당된 재질입니다. (존재할 경우)
 
-* `customID`: (optional) Optional custom name to give to the subset. This allows to create multiple subsets with the same material.
+* `customID`: (선택적) 서브셋에 제공할 선택적인 커스텀 이름입니다. 이것은 동일한 재질을 갖는 다수의 서브셋을 만들 수 있게 해줍니다.
 
-#### Example:
+#### 예제:
 
 ```javascript
 const model = ifcModel.modelID;
@@ -2541,19 +2541,19 @@ IfcLoader.IfcManager.removeFromSubset (
                         ): void;
 ```
 
-Removes the specified items from the specified geometric subset.
+지정된 기하 서브셋으로부터 지정한 항목들을 제거합니다.
 
-#### Arguments:
+#### 인자:
 
-* `modelID`: ID of the IFC model.
+* `modelID`: IFC 모델의 ID입니다.
 
-* `ids`: Express IDs of the items to remove from the subset.
+* `ids`: 서브셋으로부터 제거할 항목들의 Express ID입니다.
 
-* `customID`: (optional) Optional custom name to give to the subset. This allows to create multiple subsets with the same material.
+* `customID`: (선택적) 서브셋에 제공할 선택적인 커스텀 이름입니다. 이것은 동일한 재질을 갖는 다수의 서브셋을 만들 수 있게 해줍니다.
 
-* `material`: (optional) Material assigned to the subset (if any).
+* `material`: (선택적) 서브셋에 할당된 재질입니다. (존재할 경우)
 
-#### Example:
+#### 예제:
 
 ```javascript
 import { IFCWALLSTANDARDCASE as W } from "web-ifc";
@@ -2563,7 +2563,7 @@ const walls = await manager.getAllItemsOfType(0, W, false);
 manager.removeFromSubset(model, walls);
 ```
 
-## Picking
+## 피킹 (Picking)
 
 So far we have only loaded IFC models into the scene. That's already great, but it would be even better to be able to interact with that model, and that's precisely what we're going to do.
 
