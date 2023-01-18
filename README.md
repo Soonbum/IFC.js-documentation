@@ -2565,35 +2565,35 @@ manager.removeFromSubset(model, walls);
 
 ## 피킹 (Picking)
 
-So far we have only loaded IFC models into the scene. That's already great, but it would be even better to be able to interact with that model, and that's precisely what we're going to do.
+지금까지는 IFC 모델을 장면으로 로드하는 것만 했습니다. 이미 그것으로도 훌륭하지만 모델과 상호작용할 수 있으면 훨씬 더 좋을 것이고 그게 바로 우리가 앞으로 할 것입니다.
 
-### Import Three.js dependencies
+### Import Three.js 디펜던시
 
-Before you can do things with objects, you need to be able to select them. This can be easily achieved with the [Three.js Raycaster](https://threejs.org/docs/#api/en/core/Raycaster), which can be imported from three's core library. In addition, we will import a [Vector2](https://threejs.org/docs/#api/en/math/Vector2) object to store the mouse position in the scene.
+객체를 사용하여 작업을 수행하기 전에 객체를 선택할 수 있어야 합니다. 이것은 three의 코어 라이브러리로부터 가져올 수 있는 [Three.js Raycaster](https://threejs.org/docs/#api/en/core/Raycaster)로 쉽게 해낼 수 있습니다. 추가로 [Vector2](https://threejs.org/docs/#api/en/math/Vector2) 객체를 가져와서 장면 내 마우스 위치를 저장할 것입니다.
 
 ```javascript
 import { Raycaster, Vector2 } from "three";
 ```
 
-* The Raycaster allows you to shoot "beams" that hit objects in the scene and return their information.
+* Raycaster를 사용하면 장면에서 객체를 때리는 "빔"을 쏴서 그것의 정보를 리턴할 수 있습니다.
 
-### Import three-mesh-bvh (optional)
+### Import three-mesh-bvh (선택적)
 
-In addition, we will import [the three-mesh-bvh library](https://github.com/gkjohnson/three-mesh-bvh) to make the selection of objects much more optimal. This can be installed with `npm i three-mesh-bvh`. Don't worry, you don't have to learn how to use that library. Just give us these library objects and IFC.js will take care of the rest.
+추가로 [three-mesh-bvh 라이브러리](https://github.com/gkjohnson/three-mesh-bvh)를 가져와서 객체 선택을 훨씬 더 최적화할 것입니다. 이것은 `npm i three-mesh-bvh`로 설치할 수 있습니다. 걱정하지 마십시오. 당신은 이 라이브러리에 대한 사용법을 배울 필요가 없습니다. 이 라이브러리 객체들만 넘겨주면 IFC.js가 나머지를 처리할 것입니다.
 
 ```javascript
 import { acceleratedRaycast, computeBoundsTree, disposeBoundsTree } from "three-mesh-bvh";
 
-// Sets up optimized picking
+// 최적화된 피킹(picking) 설정하기
 ifcLoader.ifcManager.setupThreeMeshBVH(computeBoundsTree, disposeBoundsTree, acceleratedRaycast);
 ```
 
-### Store reference of IFC models
+### IFC 모델의 레퍼런스 저장하기
 
-Before doing anything else, it is necessary to save a reference to the IFC models in the scene in order to select them. To do this, we just need to create an array where we store the models we load:
+작업을 시작하기에 앞서, 장면 내 IFC 모델을 선택하기 위해 모델에 대한 레퍼런스를 저장해야 합니다. 이렇게 하려면 로드한 모델들을 저장할 배열 하나를 만들면 됩니다:
 
 ```javascript
-//Sets up the IFC loading
+// IFC 로딩 설정하기
 const ifcModels = [];
 const ifcLoader = new IFCLoader();
 
@@ -2608,7 +2608,7 @@ async function loadIFC() {
 loadIFC();
 ```
 
-### How to do it
+### 어떻게 해야 합니까?
 
 Next we will create an instance of the Raycaster and the mouse position vector. To optimise the application, the Raycaster will only retrieve information from the first object it encounters.
 
